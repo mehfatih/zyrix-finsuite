@@ -224,7 +224,7 @@ export default function ReportsPage() {
                   </div>
                   <div style={{ textAlign: "right" }}>
                     <div style={{ fontWeight: 900, fontSize: 18, color: C.primary }}>{t.amount.toLocaleString()} {t.currency}</div>
-                    <div style={{ fontSize: 11, color: C.warning, fontWeight: 700 }}>{L("Due", "يستحق", "Vade")}: {t.due}</div>
+                    <div style={{ fontSize: 11, color: "#D97706", fontWeight: 700 }}>{L("Due", "يستحق", "Vade")}: {t.due}</div>
                   </div>
                 </div>
               ))}
