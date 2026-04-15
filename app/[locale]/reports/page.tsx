@@ -96,7 +96,7 @@ export default function ReportsPage() {
           return <line key={f} x1="0" y1={y} x2={W} y2={y} stroke="#F1EEE8" strokeWidth="1" />;
         })}
         {data.map((d, i) => {
-          const v = (d as Record<string, number>)[valueKey] || 0;
+          const v = (d as unknown as Record<string, number>)[valueKey] || 0;
           const bh = (v / maxV) * H;
           const x = 20 + i * (barW + 6);
           return (
