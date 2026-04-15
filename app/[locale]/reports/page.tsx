@@ -86,7 +86,7 @@ export default function ReportsPage() {
 
   // SVG bar chart
   const BarChart = ({ data, color, valueKey = "value" }: { data: { label: string; value?: number; inflow?: number; outflow?: number }[]; color: string; valueKey?: string }) => {
-    const vals = data.map(d => (d as Record<string, number>)[valueKey] || 0);
+    const vals = data.map(d => (d as unknown as Record<string, number>)[valueKey] || 0);
     const maxV = Math.max(...vals, 1);
     const W = 700, H = 160, barW = Math.floor((W - 40) / data.length) - 6;
     return (
