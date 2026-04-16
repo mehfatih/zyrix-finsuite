@@ -7,8 +7,8 @@ const L={
   en:{ badge:"About Us", title:"Empowering Turkey's SMEs", sub:"Zyrix FinSuite was founded to automate the financial operations of small and medium-sized businesses.", mission:"Our Mission", missionText:"Give every SME in Turkey equal access to enterprise-grade software. Deliver AI-powered financial tools at an affordable price.", vision:"Our Vision", visionText:"By 2030, have 10% of Turkey's 3.7 million SMEs using our platform.", founder:"Founder", founderName:"Mehmet", founderTitle:"MBA — Digital Marketing & Media Buying Expert", founderBio:"With 10+ years in digital marketing and entrepreneurship, founded Zyrix to democratize financial tools that SMEs need.", values:"Our Values", vals:[{icon:"🎯",t:"Simplicity",d:"Making complex accounting simple for everyone."},{icon:"🔒",t:"Security",d:"Your data is safe on SSL-encrypted servers."},{icon:"🚀",t:"Innovation",d:"Continuously improving with AI and automation."},{icon:"🤝",t:"Support",d:"Always by your side with Turkish customer support."}], stats:[{v:"3.7M",l:"Potential SMEs"},{v:"14",l:"Completed Features"},{v:"$100",l:"Monthly Operation Cost"},{v:"2026",l:"Founded"}], cta:"Start Free 14 Days" },
   ar:{ badge:"من نحن", title:"نمكّن الشركات الصغيرة في تركيا", sub:"تأسست Zyrix FinSuite لأتمتة العمليات المالية للشركات الصغيرة والمتوسطة.", mission:"مهمتنا", missionText:"منح كل شركة صغيرة في تركيا وصولاً متساوياً لبرامج المؤسسات. تقديم أدوات مالية بالذكاء الاصطناعي بسعر معقول.", vision:"رؤيتنا", visionText:"بحلول 2030، يستخدم 10٪ من 3.7 مليون شركة صغيرة في تركيا منصتنا.", founder:"المؤسس", founderName:"محمد", founderTitle:"ماجستير — خبير التسويق الرقمي", founderBio:"بخبرة تزيد على 10 سنوات في التسويق الرقمي وريادة الأعمال، أسس Zyrix لجعل الأدوات المالية في متناول الجميع.", values:"قيمنا", vals:[{icon:"🎯",t:"البساطة",d:"نجعل العمليات المحاسبية المعقدة بسيطة للجميع."},{icon:"🔒",t:"الأمان",d:"بياناتك آمنة على خوادم مشفرة بـ SSL."},{icon:"🚀",t:"الابتكار",d:"نتطور باستمرار بالذكاء الاصطناعي والأتمتة."},{icon:"🤝",t:"الدعم",d:"دائماً إلى جانبك بدعم عملاء بالتركية والعربية."}], stats:[{v:"3.7M",l:"شركة محتملة"},{v:"14",l:"ميزة مكتملة"},{v:"$100",l:"تكلفة تشغيل شهرية"},{v:"2026",l:"سنة التأسيس"}], cta:"ابدأ مجاناً 14 يوماً" },
 };
-export default async function AboutPage(){
-  const locale=await getLocale();
+export default function AboutPage(){
+  const locale = useLocale();
   const l=L[locale as keyof typeof L]??L.tr;
   const isRTL=locale==="ar";
   return(
@@ -20,7 +20,6 @@ export default async function AboutPage(){
       </section>
 
       <section style={{maxWidth:1000,margin:"0 auto",padding:"64px 24px"}}>
-        {/* Stats */}
         <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:16,marginBottom:56}} className="ab-stats">
           {l.stats.map((s,i)=>(
             <div key={i} style={{textAlign:"center",padding:"20px 14px",background:"#F8FAFC",border:"1.5px solid #E5E7EB",borderRadius:14}}>
@@ -30,7 +29,6 @@ export default async function AboutPage(){
           ))}
         </div>
 
-        {/* Mission + Vision */}
         <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:20,marginBottom:56}} className="ab-mv">
           {[{t:l.mission,d:l.missionText,bg:"#EFF6FF",border:"#BFDBFE",icon:"🎯"},{t:l.vision,d:l.visionText,bg:"#ECFDF5",border:"#A7F3D0",icon:"🚀"}].map((item,i)=>(
             <div key={i} style={{background:item.bg,border:`1.5px solid ${item.border}`,borderRadius:16,padding:28}}>
@@ -41,7 +39,6 @@ export default async function AboutPage(){
           ))}
         </div>
 
-        {/* Founder */}
         <div style={{background:"#0F172A",borderRadius:20,padding:"32px 36px",marginBottom:56,display:"flex",gap:28,alignItems:"center"}} className="ab-founder">
           <div style={{width:80,height:80,borderRadius:"50%",background:"#2563EB",display:"flex",alignItems:"center",justifyContent:"center",fontSize:28,fontWeight:900,color:"#fff",flexShrink:0}}>M</div>
           <div>
@@ -52,7 +49,6 @@ export default async function AboutPage(){
           </div>
         </div>
 
-        {/* Values */}
         <h2 style={{fontSize:26,fontWeight:900,color:GOLD,marginBottom:24}}>{l.values}</h2>
         <div style={{display:"grid",gridTemplateColumns:"repeat(4,1fr)",gap:14}} className="ab-vals">
           {l.vals.map((v,i)=>(
