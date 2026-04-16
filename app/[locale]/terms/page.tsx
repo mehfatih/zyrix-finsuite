@@ -491,7 +491,7 @@ export default function TermsPage() {
                       ))}
                     </ul>
                   )}
-                  {s.footer && <p style={{ fontSize:13, color:"#2563EB", fontWeight:600, marginTop:8, padding:"8px 12px", background:"#EFF6FF", borderRadius:8 }}>{s.footer}</p>}
+                  {(s as any).footer && <p style={{ fontSize:13, color:"#2563EB", fontWeight:600, marginTop:8, padding:"8px 12px", background:"#EFF6FF", borderRadius:8 }}>{s.footer}</p>}
                 </div>
               )}
             </div>
