@@ -1,0 +1,56 @@
+// ================================================================
+// Zyrix FinSuite — vite.config.js
+// Optimized for production build + Railway/Vercel deploy
+// ================================================================
+
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import path from "path";
+
+export default defineConfig({
+  plugins: [react()],
+
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+      "@components": path.resolve(__dirname, "./src/components"),
+      "@pages":      path.resolve(__dirname, "./src/pages"),
+      "@services":   path.resolve(__dirname, "./src/services"),
+      "@hooks":      path.resolve(__dirname, "./src/hooks"),
+      "@context":    path.resolve(__dirname, "./src/context"),
+    },
+  },
+
+  server: {
+    port: 5173,
+    // Proxy API calls to backend in dev — avoids CORS issues locally
+    proxy: {
+      "/api": {
+        target: "https://finsuite-backend-production.up.railway.app",
+        changeOrigin: true,
+        secure: true,
+      },
+    },
+  },
+
+  build: {
+    outDir: "dist",
+    sourcemap: false,
+    // Split vendor chunks for better caching
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          react:  ["react", "react-dom"],
+          router: ["react-router-dom"],
+        },
+      },
+    },
+    // Warn if any chunk exceeds 500kb
+    chunkSizeWarningLimit: 500,
+  },
+
+  // Ensure env vars are available
+  define: {
+    __APP_VERSION__: JSON.stringify(process.env.npm_package_version),
+  },
+});
