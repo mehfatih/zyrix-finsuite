@@ -1,7 +1,6 @@
 import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, RequireAuth, useAuth } from "./context/AuthContext";
-import { ToastContainer } from "./components/ui";
 import LoginPage from "./pages/LoginPage";
 import CustomerDashboard from "./pages/CustomerDashboard";
 import AdminPanel from "./pages/AdminPanel";
@@ -20,14 +19,13 @@ export default function App() {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/login" element={<LoginPage />} />
+          <Route path="/login"      element={<LoginPage />} />
           <Route path="/dashboard/*" element={<RequireAuth><CustomerDashboard /></RequireAuth>} />
-          <Route path="/admin/*" element={<RequireAuth role="admin"><AdminPanel /></RequireAuth>} />
-          <Route path="/" element={<HomeRedirect />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="/admin/*"    element={<RequireAuth role="admin"><AdminPanel /></RequireAuth>} />
+          <Route path="/"           element={<HomeRedirect />} />
+          <Route path="*"           element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
-      <ToastContainer />
     </AuthProvider>
   );
 }
