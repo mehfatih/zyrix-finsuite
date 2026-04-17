@@ -8,10 +8,11 @@ const C = {
   text: "#FFFFFF", muted: "#8B8FA8", sidebar: "#13151f",
 };
 
-// ── Simple fetch wrapper ──────────────────────────
+const API = "https://finsuite-backend-production.up.railway.app";
+
 async function adminFetch(path, options = {}) {
   const token = localStorage.getItem("zyrix_token");
-  const res = await fetch(`http://localhost:3000${path}`, {
+  const res = await fetch(`${API}${path}`, {
     ...options,
     headers: {
       "Content-Type": "application/json",
@@ -24,29 +25,20 @@ async function adminFetch(path, options = {}) {
   return data;
 }
 
-// ── Hooks ─────────────────────────────────────────
 function useData(path) {
   const [data, setData] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState(null);
-
   const load = React.useCallback(async () => {
     setLoading(true);
-    try {
-      const res = await adminFetch(path);
-      setData(res?.data || res);
-    } catch (e) {
-      setError(e.message);
-    } finally {
-      setLoading(false);
-    }
+    try { setData((await adminFetch(path))?.data || null); }
+    catch (e) { setError(e.message); }
+    finally { setLoading(false); }
   }, [path]);
-
   React.useEffect(() => { load(); }, [load]);
   return { data, loading, error, reload: load };
 }
 
-// ── UI Components ─────────────────────────────────
 function Spinner() {
   return (
     <div style={{ display: "flex", justifyContent: "center", padding: 48 }}>
@@ -55,94 +47,233 @@ function Spinner() {
   );
 }
 
-function Card({ label, value, icon, color = C.purple }) {
+function Input({ label, value, onChange, type = "text", placeholder, required }) {
   return (
-    <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, padding: 20 }}>
-      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}>
-        <span style={{ color: C.muted, fontSize: 13 }}>{label}</span>
-        <span style={{ background: `${color}20`, borderRadius: 8, padding: "4px 8px", fontSize: 16 }}>{icon}</span>
-      </div>
-      <div style={{ color: C.text, fontSize: 26, fontWeight: 800 }}>{value ?? "—"}</div>
+    <div>
+      <label style={{ color: C.muted, fontSize: 12, display: "block", marginBottom: 5, fontWeight: 500 }}>
+        {label} {required && <span style={{ color: C.red }}>*</span>}
+      </label>
+      <input type={type} value={value} onChange={onChange} placeholder={placeholder} required={required}
+        style={{ width: "100%", background: "#0f1117", border: `1px solid ${C.border}`, color: C.text, borderRadius: 8, padding: "10px 14px", fontSize: 14, outline: "none", boxSizing: "border-box" }}
+        onFocus={e => e.target.style.borderColor = C.purple}
+        onBlur={e => e.target.style.borderColor = C.border} />
     </div>
   );
 }
 
-// ── Pages ─────────────────────────────────────────
+function Select({ label, value, onChange, options }) {
+  return (
+    <div>
+      <label style={{ color: C.muted, fontSize: 12, display: "block", marginBottom: 5, fontWeight: 500 }}>{label}</label>
+      <select value={value} onChange={onChange}
+        style={{ width: "100%", background: "#0f1117", border: `1px solid ${C.border}`, color: C.text, borderRadius: 8, padding: "10px 14px", fontSize: 14, outline: "none" }}>
+        {options.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
+      </select>
+    </div>
+  );
+}
+
+function Modal({ open, title, onClose, children }) {
+  if (!open) return null;
+  return (
+    <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.75)", zIndex: 200, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
+      <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 16, padding: 28, width: "100%", maxWidth: 520, boxShadow: "0 20px 60px rgba(0,0,0,0.5)" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
+          <h3 style={{ color: C.text, fontSize: 18, fontWeight: 700, margin: 0 }}>{title}</h3>
+          <button onClick={onClose} style={{ background: "#ffffff10", border: "none", color: C.muted, width: 30, height: 30, borderRadius: 8, cursor: "pointer", fontSize: 18 }}>×</button>
+        </div>
+        {children}
+      </div>
+    </div>
+  );
+}
+
+// ── Overview Page ─────────────────────────────────
 function OverviewPage() {
   const { data: stats, loading, error } = useData("/api/admin/stats");
+  const s = stats?.merchants;
 
   return (
     <div>
       <h1 style={{ color: C.text, fontSize: 24, fontWeight: 700, margin: "0 0 6px" }}>Overview</h1>
       <p style={{ color: C.muted, fontSize: 14, margin: "0 0 24px" }}>Platform statistics</p>
-
-      {error && (
-        <div style={{ background: `${C.red}15`, border: `1px solid ${C.red}30`, borderRadius: 8, padding: "12px 16px", marginBottom: 16, color: C.red, fontSize: 13 }}>
-          ⚠ {error}
-        </div>
-      )}
-
+      {error && <div style={{ background: `${C.red}15`, border: `1px solid ${C.red}30`, borderRadius: 8, padding: "12px 16px", color: C.red, fontSize: 13, marginBottom: 16 }}>⚠ {error}</div>}
       {loading ? <Spinner /> : (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 16 }}>
-          <Card label="Total Merchants" value={stats?.totalMerchants ?? stats?.total_merchants ?? "—"} icon="🏪" color={C.purple} />
-          <Card label="Active Merchants" value={stats?.activeMerchants ?? stats?.active_merchants ?? "—"} icon="✅" color={C.green} />
-          <Card label="Total Revenue" value={stats?.totalRevenue ? `$${Number(stats.totalRevenue).toLocaleString()}` : "—"} icon="💰" color={C.blue} />
-          <Card label="This Month" value={stats?.monthlyRevenue ? `$${Number(stats.monthlyRevenue).toLocaleString()}` : "—"} icon="📅" color={C.yellow} />
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 16, marginBottom: 24 }}>
+          {[
+            { label: "Total Merchants", value: s?.total ?? 0, icon: "🏪", color: C.purple },
+            { label: "Active", value: s?.active ?? 0, icon: "✅", color: C.green },
+            { label: "Trial", value: s?.trial ?? 0, icon: "⏳", color: C.yellow },
+            { label: "New This Month", value: s?.newThisMonth ?? 0, icon: "✨", color: C.blue },
+          ].map(({ label, value, icon, color }) => (
+            <div key={label} style={{ background: `linear-gradient(135deg,${color}12,${C.card} 70%)`, border: `1px solid ${color}30`, borderRadius: 12, padding: "18px 20px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 12 }}>
+                <span style={{ color: C.muted, fontSize: 12 }}>{label}</span>
+                <div style={{ background: `${color}20`, borderRadius: 8, padding: "5px 8px", fontSize: 15 }}>{icon}</div>
+              </div>
+              <div style={{ color: C.text, fontSize: 26, fontWeight: 800 }}>{value}</div>
+            </div>
+          ))}
         </div>
       )}
-
-      {/* Raw stats for debugging */}
       {!loading && stats && (
-        <div style={{ marginTop: 24, background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, padding: 20 }}>
-          <h3 style={{ color: C.text, fontSize: 15, fontWeight: 600, marginBottom: 12 }}>All Stats</h3>
-          <pre style={{ color: C.muted, fontSize: 12, overflow: "auto", margin: 0 }}>
-            {JSON.stringify(stats, null, 2)}
-          </pre>
+        <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, padding: 20 }}>
+          <h3 style={{ color: C.text, fontSize: 15, fontWeight: 600, marginBottom: 12 }}>Full Stats</h3>
+          <pre style={{ color: C.muted, fontSize: 12, overflow: "auto", margin: 0 }}>{JSON.stringify(stats, null, 2)}</pre>
         </div>
       )}
     </div>
   );
 }
 
+// ── Merchants Page ────────────────────────────────
 function MerchantsPage() {
   const { data, loading, error, reload } = useData("/api/admin/merchants");
-  const merchants = Array.isArray(data) ? data : data?.merchants || data?.items || [];
+  const merchants = data?.merchants || [];
+  const [createOpen, setCreateOpen] = useState(false);
+  const [detailMerchant, setDetailMerchant] = useState(null);
+  const [search, setSearch] = useState("");
+  const [creating, setCreating] = useState(false);
+  const [createError, setCreateError] = useState("");
+  const [successMsg, setSuccessMsg] = useState("");
+
+  const [form, setForm] = useState({
+    name: "", email: "", password: "", businessName: "",
+    phone: "", country: "US", plan: "FREE",
+  });
+
+  const set = (key, val) => setForm(f => ({ ...f, [key]: val }));
+
+  const handleCreate = async () => {
+    if (!form.name || !form.email || !form.password) {
+      setCreateError("Name, email and password are required"); return;
+    }
+    setCreating(true); setCreateError("");
+    try {
+      await adminFetch("/api/admin/merchants", {
+        method: "POST",
+        body: JSON.stringify(form),
+      });
+      setCreateOpen(false);
+      setForm({ name: "", email: "", password: "", businessName: "", phone: "", country: "US", plan: "FREE" });
+      setSuccessMsg(`Merchant "${form.name}" created successfully!`);
+      setTimeout(() => setSuccessMsg(""), 4000);
+      reload();
+    } catch (e) {
+      setCreateError(e.message);
+    } finally {
+      setCreating(false);
+    }
+  };
+
+  const handleStatusChange = async (id, status) => {
+    try {
+      await adminFetch(`/api/admin/merchants/${id}/status`, { method: "PUT", body: JSON.stringify({ status }) });
+      reload();
+    } catch (e) { alert(e.message); }
+  };
+
+  const handlePlanChange = async (id, plan) => {
+    try {
+      await adminFetch(`/api/admin/merchants/${id}/plan`, { method: "PUT", body: JSON.stringify({ plan }) });
+      reload();
+    } catch (e) { alert(e.message); }
+  };
+
+  const filtered = merchants.filter(m =>
+    !search || m.name?.toLowerCase().includes(search.toLowerCase()) || m.email?.toLowerCase().includes(search.toLowerCase())
+  );
+
+  const statusColor = { ACTIVE: C.green, SUSPENDED: C.red, TRIAL: C.yellow, INACTIVE: C.muted };
+  const planColor = { FREE: C.muted, STARTER: C.blue, PRO: C.purple, ENTERPRISE: C.yellow };
 
   return (
     <div>
-      <h1 style={{ color: C.text, fontSize: 24, fontWeight: 700, margin: "0 0 20px" }}>Merchants</h1>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 20 }}>
+        <div>
+          <h1 style={{ color: C.text, fontSize: 24, fontWeight: 700, margin: 0 }}>Merchants</h1>
+          <p style={{ color: C.muted, fontSize: 14, margin: "4px 0 0" }}>{merchants.length} total merchants</p>
+        </div>
+        <button onClick={() => setCreateOpen(true)}
+          style={{ background: C.purple, border: "none", color: "#fff", borderRadius: 10, padding: "10px 20px", cursor: "pointer", fontSize: 14, fontWeight: 600, display: "flex", alignItems: "center", gap: 7 }}>
+          + New Merchant
+        </button>
+      </div>
+
+      {successMsg && (
+        <div style={{ background: `${C.green}15`, border: `1px solid ${C.green}40`, borderRadius: 8, padding: "12px 16px", color: C.green, fontSize: 13, marginBottom: 16, display: "flex", alignItems: "center", gap: 8 }}>
+          ✅ {successMsg}
+        </div>
+      )}
+
       {error && <div style={{ color: C.red, fontSize: 13, marginBottom: 12 }}>⚠ {error}</div>}
+
+      {/* Search */}
+      <div style={{ marginBottom: 16 }}>
+        <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search by name or email..."
+          style={{ width: "100%", background: C.card, border: `1px solid ${C.border}`, color: C.text, borderRadius: 8, padding: "10px 14px", fontSize: 14, outline: "none", boxSizing: "border-box" }}
+          onFocus={e => e.target.style.borderColor = C.purple}
+          onBlur={e => e.target.style.borderColor = C.border} />
+      </div>
+
+      {/* Table */}
       {loading ? <Spinner /> : (
         <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, overflow: "hidden" }}>
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead>
               <tr style={{ background: "#ffffff08", borderBottom: `1px solid ${C.border}` }}>
-                {["Name", "Email", "Plan", "Status", "Joined"].map(h => (
-                  <th key={h} style={{ padding: "12px 16px", textAlign: "left", color: C.muted, fontSize: 11, fontWeight: 600, textTransform: "uppercase" }}>{h}</th>
+                {["Merchant", "Business", "Plan", "Status", "Customers", "Joined", "Actions"].map(h => (
+                  <th key={h} style={{ padding: "12px 16px", textAlign: "left", color: C.muted, fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em" }}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
-              {merchants.length === 0 ? (
-                <tr><td colSpan={5} style={{ padding: 40, textAlign: "center", color: C.muted }}>No merchants found</td></tr>
-              ) : merchants.map((m, i) => (
-                <tr key={m.id || i} style={{ borderBottom: `1px solid ${C.border}` }}
+              {filtered.length === 0 ? (
+                <tr><td colSpan={7} style={{ padding: 40, textAlign: "center", color: C.muted, fontSize: 14 }}>No merchants yet — create your first one!</td></tr>
+              ) : filtered.map((m, i) => (
+                <tr key={m.id || i} style={{ borderBottom: `1px solid ${C.border}20`, transition: "background 0.1s" }}
                   onMouseEnter={e => e.currentTarget.style.background = "#ffffff05"}
                   onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
-                  <td style={{ padding: "13px 16px", color: C.text, fontSize: 14 }}>{m.name || m.businessName || "—"}</td>
-                  <td style={{ padding: "13px 16px", color: C.muted, fontSize: 13 }}>{m.email || m.user?.email || "—"}</td>
+                  {/* Name */}
                   <td style={{ padding: "13px 16px" }}>
-                    <span style={{ background: `${C.purple}20`, color: C.purpleLight, borderRadius: 6, padding: "2px 8px", fontSize: 11, fontWeight: 600 }}>
-                      {m.plan || m.subscriptionPlan || "FREE"}
-                    </span>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                      <div style={{ width: 32, height: 32, borderRadius: "50%", background: `${C.purple}30`, display: "flex", alignItems: "center", justifyContent: "center", color: C.purpleLight, fontSize: 12, fontWeight: 700, flexShrink: 0 }}>
+                        {(m.name || "?")[0].toUpperCase()}
+                      </div>
+                      <div>
+                        <div style={{ color: C.text, fontSize: 13, fontWeight: 500 }}>{m.name}</div>
+                        <div style={{ color: C.muted, fontSize: 11 }}>{m.email}</div>
+                      </div>
+                    </div>
                   </td>
+                  {/* Business */}
+                  <td style={{ padding: "13px 16px", color: C.muted, fontSize: 13 }}>{m.businessName || "—"}</td>
+                  {/* Plan */}
                   <td style={{ padding: "13px 16px" }}>
-                    <span style={{ color: m.isActive || m.status === "active" ? C.green : C.red, fontSize: 12, fontWeight: 600 }}>
-                      {m.isActive || m.status === "active" ? "● Active" : "● Inactive"}
-                    </span>
+                    <select value={m.plan} onChange={e => handlePlanChange(m.id, e.target.value)}
+                      style={{ background: `${planColor[m.plan] || C.muted}20`, border: `1px solid ${planColor[m.plan] || C.muted}40`, color: planColor[m.plan] || C.muted, borderRadius: 6, padding: "3px 8px", fontSize: 11, fontWeight: 600, cursor: "pointer", outline: "none" }}>
+                      {["FREE", "STARTER", "PRO", "ENTERPRISE"].map(p => <option key={p} value={p}>{p}</option>)}
+                    </select>
                   </td>
+                  {/* Status */}
+                  <td style={{ padding: "13px 16px" }}>
+                    <select value={m.status} onChange={e => handleStatusChange(m.id, e.target.value)}
+                      style={{ background: `${statusColor[m.status] || C.muted}20`, border: `1px solid ${statusColor[m.status] || C.muted}40`, color: statusColor[m.status] || C.muted, borderRadius: 6, padding: "3px 8px", fontSize: 11, fontWeight: 600, cursor: "pointer", outline: "none" }}>
+                      {["ACTIVE", "TRIAL", "SUSPENDED", "INACTIVE"].map(s => <option key={s} value={s}>{s}</option>)}
+                    </select>
+                  </td>
+                  {/* Customers count */}
+                  <td style={{ padding: "13px 16px", color: C.muted, fontSize: 13 }}>{m._count?.customers ?? 0}</td>
+                  {/* Date */}
                   <td style={{ padding: "13px 16px", color: C.muted, fontSize: 12 }}>
                     {m.createdAt ? new Date(m.createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "—"}
+                  </td>
+                  {/* Actions */}
+                  <td style={{ padding: "13px 16px" }}>
+                    <button onClick={() => setDetailMerchant(m)}
+                      style={{ background: `${C.purple}20`, border: `1px solid ${C.purple}40`, color: C.purpleLight, borderRadius: 6, padding: "5px 12px", cursor: "pointer", fontSize: 12, fontWeight: 600 }}>
+                      Details
+                    </button>
                   </td>
                 </tr>
               ))}
@@ -150,10 +281,83 @@ function MerchantsPage() {
           </table>
         </div>
       )}
+
+      {/* Create Modal */}
+      <Modal open={createOpen} title="Create New Merchant" onClose={() => { setCreateOpen(false); setCreateError(""); }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+            <Input label="Full Name" value={form.name} onChange={e => set("name", e.target.value)} placeholder="Ahmed Al-Rashid" required />
+            <Input label="Business Name" value={form.businessName} onChange={e => set("businessName", e.target.value)} placeholder="My Company" />
+          </div>
+          <Input label="Email" type="email" value={form.email} onChange={e => set("email", e.target.value)} placeholder="merchant@company.com" required />
+          <Input label="Password" type="password" value={form.password} onChange={e => set("password", e.target.value)} placeholder="Min 8 characters" required />
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+            <Input label="Phone" value={form.phone} onChange={e => set("phone", e.target.value)} placeholder="+1 234 567 8900" />
+            <Input label="Country" value={form.country} onChange={e => set("country", e.target.value)} placeholder="US" />
+          </div>
+          <Select label="Plan" value={form.plan} onChange={e => set("plan", e.target.value)}
+            options={[
+              { value: "FREE", label: "Free" },
+              { value: "STARTER", label: "Starter" },
+              { value: "PRO", label: "Pro" },
+              { value: "ENTERPRISE", label: "Enterprise" },
+            ]} />
+          {createError && (
+            <div style={{ background: `${C.red}15`, border: `1px solid ${C.red}30`, borderRadius: 8, padding: "10px 14px", color: C.red, fontSize: 13 }}>
+              ⚠ {createError}
+            </div>
+          )}
+          <div style={{ display: "flex", gap: 10, marginTop: 4 }}>
+            <button onClick={handleCreate} disabled={creating}
+              style={{ flex: 1, background: creating ? "#4a3f9e" : C.purple, border: "none", color: "#fff", borderRadius: 8, padding: "11px 0", cursor: creating ? "not-allowed" : "pointer", fontSize: 14, fontWeight: 600 }}>
+              {creating ? "Creating..." : "Create Merchant"}
+            </button>
+            <button onClick={() => { setCreateOpen(false); setCreateError(""); }}
+              style={{ background: C.card, border: `1px solid ${C.border}`, color: C.muted, borderRadius: 8, padding: "11px 18px", cursor: "pointer", fontSize: 14 }}>
+              Cancel
+            </button>
+          </div>
+        </div>
+      </Modal>
+
+      {/* Detail Modal */}
+      <Modal open={!!detailMerchant} title="Merchant Details" onClose={() => setDetailMerchant(null)}>
+        {detailMerchant && (
+          <div>
+            <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 20 }}>
+              <div style={{ width: 48, height: 48, borderRadius: "50%", background: `${C.purple}30`, display: "flex", alignItems: "center", justifyContent: "center", color: C.purpleLight, fontSize: 18, fontWeight: 800 }}>
+                {(detailMerchant.name || "?")[0].toUpperCase()}
+              </div>
+              <div>
+                <div style={{ color: C.text, fontSize: 17, fontWeight: 700 }}>{detailMerchant.name}</div>
+                <div style={{ color: C.muted, fontSize: 13 }}>{detailMerchant.email}</div>
+              </div>
+            </div>
+            {[
+              ["Business Name", detailMerchant.businessName],
+              ["Phone", detailMerchant.phone],
+              ["Country", detailMerchant.country],
+              ["Plan", detailMerchant.plan],
+              ["Status", detailMerchant.status],
+              ["Merchant ID", detailMerchant.merchantId],
+              ["Customers", detailMerchant._count?.customers ?? 0],
+              ["Invoices", detailMerchant._count?.invoices ?? 0],
+              ["Deals", detailMerchant._count?.deals ?? 0],
+              ["Joined", detailMerchant.createdAt ? new Date(detailMerchant.createdAt).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" }) : "—"],
+            ].map(([k, v]) => (
+              <div key={k} style={{ display: "flex", justifyContent: "space-between", padding: "11px 0", borderBottom: `1px solid ${C.border}` }}>
+                <span style={{ color: C.muted, fontSize: 13 }}>{k}</span>
+                <span style={{ color: C.text, fontSize: 13, fontWeight: 500 }}>{v ?? "—"}</span>
+              </div>
+            ))}
+          </div>
+        )}
+      </Modal>
     </div>
   );
 }
 
+// ── Profile Page ──────────────────────────────────
 function ProfilePage() {
   const { user, logout } = useAuth();
   return (
@@ -162,7 +366,7 @@ function ProfilePage() {
       <div style={{ background: C.card, border: `1px solid ${C.border}`, borderRadius: 12, padding: 24, maxWidth: 480 }}>
         <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 24 }}>
           <div style={{ background: `linear-gradient(135deg, ${C.purple}, #3A1F9E)`, borderRadius: "50%", width: 56, height: 56, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 20, fontWeight: 800 }}>
-            {(user?.name || user?.email || "A")[0].toUpperCase()}
+            {(user?.name || "A")[0].toUpperCase()}
           </div>
           <div>
             <div style={{ color: C.text, fontSize: 18, fontWeight: 700 }}>{user?.name || "Admin"}</div>
@@ -190,7 +394,6 @@ function Sidebar({ page, setPage, user, logout }) {
     { id: "merchants", label: "Merchants", icon: "🏪" },
     { id: "profile",   label: "Profile",   icon: "👤" },
   ];
-
   return (
     <aside style={{ background: C.sidebar, borderRight: `1px solid ${C.border}`, width: 220, minHeight: "100vh", display: "flex", flexDirection: "column", padding: "20px 12px", gap: 2 }}>
       <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 32, padding: "0 6px" }}>
@@ -202,7 +405,6 @@ function Sidebar({ page, setPage, user, logout }) {
           <div style={{ color: C.red, fontSize: 10, background: `${C.red}20`, borderRadius: 4, padding: "1px 5px", display: "inline-block" }}>ADMIN</div>
         </div>
       </div>
-
       {NAV.map(item => (
         <button key={item.id} onClick={() => setPage(item.id)} style={{
           background: page === item.id ? `${C.purple}22` : "transparent",
@@ -210,13 +412,14 @@ function Sidebar({ page, setPage, user, logout }) {
           borderRadius: 8, color: page === item.id ? C.purpleLight : C.muted,
           padding: "9px 12px", cursor: "pointer", textAlign: "left",
           display: "flex", alignItems: "center", gap: 10, fontSize: 14, fontWeight: 500,
-        }}>
+        }}
+          onMouseEnter={e => { if (page !== item.id) e.currentTarget.style.background = "#ffffff08"; }}
+          onMouseLeave={e => { if (page !== item.id) e.currentTarget.style.background = "transparent"; }}>
           <span>{item.icon}</span>{item.label}
         </button>
       ))}
-
       <div style={{ marginTop: "auto", paddingTop: 16, borderTop: `1px solid ${C.border}` }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 9, marginBottom: 10 }}>
           <div style={{ background: C.red, borderRadius: "50%", width: 30, height: 30, display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontSize: 12, fontWeight: 700 }}>
             {(user?.name || "A")[0].toUpperCase()}
           </div>
@@ -237,17 +440,15 @@ function Sidebar({ page, setPage, user, logout }) {
 export default function AdminPanel() {
   const { user, logout } = useAuth();
   const [page, setPage] = useState("overview");
-
   const pages = {
     overview:  <OverviewPage />,
     merchants: <MerchantsPage />,
     profile:   <ProfilePage />,
   };
-
   return (
     <>
-      <style>{`@keyframes spin { to { transform: rotate(360deg) } } * { box-sizing: border-box; } body { margin: 0; }`}</style>
-      <div style={{ background: C.bg, minHeight: "100vh", display: "flex", fontFamily: "'Inter', system-ui, sans-serif" }}>
+      <style>{`@keyframes spin{to{transform:rotate(360deg)}}*{box-sizing:border-box}body{margin:0}`}</style>
+      <div style={{ background: C.bg, minHeight: "100vh", display: "flex", fontFamily: "'Inter','Segoe UI',system-ui,sans-serif" }}>
         <Sidebar page={page} setPage={setPage} user={user} logout={logout} />
         <main style={{ flex: 1, padding: "32px 36px", overflow: "auto" }}>
           {pages[page]}
