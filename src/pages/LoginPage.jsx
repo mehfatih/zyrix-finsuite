@@ -1,90 +1,134 @@
-// ================================================================
-// Zyrix FinSuite — Login Page
-// Handles both admin (finsuite-admin@zyrix.co) and customer login
-// ================================================================
-
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 
-export default function LoginPage() {
-  const { login, loading } = useAuth();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [busy, setBusy] = useState(false);
+const P = {
+  bg: "#F0F4FF", card: "#FFFFFF", border: "#E2E8F8",
+  purple: "#6C3AFF", pink: "#F43F8E", text: "#1E1B4B",
+  sub: "#64748B", muted: "#94A3B8", light: "#F8FAFF",
+  emerald: "#10B981", rose: "#F43F5E", amber: "#F59E0B",
+};
 
-  const ADMIN_EMAILS = ["finsuite-admin@zyrix.co"];
+export default function LoginPage() {
+  const { login } = useAuth();
+  const [email, setEmail]       = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError]       = useState("");
+  const [warning, setWarning]   = useState("");
+  const [loading, setLoading]   = useState(false);
+  const [focused, setFocused]   = useState("");
 
   const handleSubmit = async (e) => {
     e?.preventDefault();
-    if (!email || !password) { setError("Please enter email and password."); return; }
-    setError("");
-    setBusy(true);
+    if (!email || !password) { setError("Please enter email and password"); return; }
+    setError(""); setWarning(""); setLoading(true);
     try {
       const user = await login(email, password);
-      const isAdmin = user.role === "admin" || user.role === "super_admin" || ADMIN_EMAILS.includes(email);
+      // Check for trial warning from response (handled in AuthContext)
+      const role = user?.role?.toUpperCase();
+      const isAdmin = role === "ADMIN" || role === "SUPER_ADMIN";
       window.location.href = isAdmin ? "/admin" : "/dashboard";
     } catch (err) {
-      setError(err.message || "Invalid credentials. Please try again.");
+      setError(err.message || "Invalid credentials");
     } finally {
-      setBusy(false);
+      setLoading(false);
     }
   };
 
   return (
-    <div style={{ minHeight: "100vh", background: "#0f1117", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "Inter, system-ui, sans-serif" }}>
-      <div style={{ width: "100%", maxWidth: 400, padding: "0 20px" }}>
-        {/* Logo */}
-        <div style={{ textAlign: "center", marginBottom: 36 }}>
-          <div style={{ width: 52, height: 52, background: "#6C5DD3", borderRadius: 14, display: "inline-flex", alignItems: "center", justifyContent: "center", marginBottom: 12 }}>
-            <span style={{ color: "#fff", fontSize: 22, fontWeight: 800 }}>Z</span>
-          </div>
-          <h1 style={{ color: "#fff", fontSize: 24, fontWeight: 700, margin: 0 }}>Zyrix FinSuite</h1>
-          <p style={{ color: "#8B8FA8", fontSize: 14, marginTop: 6 }}>Sign in to your account</p>
-        </div>
+    <>
+      <style>{`*{box-sizing:border-box}body{margin:0;background:${P.bg}}input::placeholder{color:${P.muted}}`}</style>
+      <div style={{ minHeight:"100vh", background:P.bg, display:"flex", fontFamily:"'DM Sans','Segoe UI',system-ui,sans-serif" }}>
 
-        {/* Card */}
-        <div style={{ background: "#1a1d27", border: "1px solid #2a2d3e", borderRadius: 16, padding: 28 }}>
-          <form onSubmit={handleSubmit}>
-            <div style={{ marginBottom: 16 }}>
-              <label style={{ color: "#8B8FA8", fontSize: 12, display: "block", marginBottom: 6 }}>Email</label>
-              <input
-                type="email" value={email} onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com" autoComplete="email" autoFocus
-                style={{ width: "100%", background: "#13151f", border: "1px solid #2a2d3e", color: "#fff", borderRadius: 8, padding: "11px 14px", fontSize: 14, outline: "none", boxSizing: "border-box" }}
-                onFocus={(e) => e.target.style.borderColor = "#6C5DD3"}
-                onBlur={(e) => e.target.style.borderColor = "#2a2d3e"}
-              />
-            </div>
-
-            <div style={{ marginBottom: 20 }}>
-              <label style={{ color: "#8B8FA8", fontSize: 12, display: "block", marginBottom: 6 }}>Password</label>
-              <input
-                type="password" value={password} onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••" autoComplete="current-password"
-                style={{ width: "100%", background: "#13151f", border: "1px solid #2a2d3e", color: "#fff", borderRadius: 8, padding: "11px 14px", fontSize: 14, outline: "none", boxSizing: "border-box" }}
-                onFocus={(e) => e.target.style.borderColor = "#6C5DD3"}
-                onBlur={(e) => e.target.style.borderColor = "#2a2d3e"}
-              />
-            </div>
-
-            {error && (
-              <div style={{ background: "#FF456015", border: "1px solid #FF456040", borderRadius: 8, padding: "10px 14px", marginBottom: 16 }}>
-                <p style={{ color: "#FF4560", fontSize: 13, margin: 0 }}>{error}</p>
+        {/* Left — Branding */}
+        <div style={{ width:"40%", background:`linear-gradient(135deg,${P.purple} 0%,${P.pink} 100%)`, display:"flex", flexDirection:"column", justifyContent:"center", padding:"60px 48px", position:"relative", overflow:"hidden" }}>
+          <div style={{ position:"absolute", top:-60, right:-60, width:200, height:200, borderRadius:"50%", background:"rgba(255,255,255,0.08)" }}/>
+          <div style={{ position:"absolute", bottom:-40, left:-40, width:160, height:160, borderRadius:"50%", background:"rgba(255,255,255,0.06)" }}/>
+          <div style={{ position:"relative" }}>
+            <a href="/" style={{ textDecoration:"none" }}>
+              <div style={{ width:52, height:52, borderRadius:14, background:"rgba(255,255,255,0.2)", display:"flex", alignItems:"center", justifyContent:"center", marginBottom:24, cursor:"pointer" }}>
+                <span style={{ color:"#fff", fontWeight:900, fontSize:24 }}>Z</span>
               </div>
-            )}
-
-            <button type="submit" disabled={busy}
-              style={{ width: "100%", background: busy ? "#4a3f9e" : "#6C5DD3", border: "none", color: "#fff", borderRadius: 8, padding: "12px", fontSize: 15, fontWeight: 600, cursor: busy ? "not-allowed" : "pointer" }}>
-              {busy ? "Signing in..." : "Sign In"}
-            </button>
-          </form>
+            </a>
+            <h1 style={{ color:"#fff", fontSize:32, fontWeight:900, margin:"0 0 12px" }}>Zyrix FinSuite</h1>
+            <p style={{ color:"rgba(255,255,255,0.8)", fontSize:15, lineHeight:1.6, margin:"0 0 36px" }}>
+              İşletmenizi akıllıca yönetin. Türkiye'nin en hızlı büyüyen ERP & CRM platformu.
+            </p>
+            {[
+              { icon:"📄", text:"Akıllı faturalama" },
+              { icon:"👥", text:"CRM & müşteri takibi" },
+              { icon:"🤖", text:"AI destekli analizler" },
+              { icon:"🔒", text:"Verileriniz güvende" },
+            ].map(f => (
+              <div key={f.text} style={{ display:"flex", alignItems:"center", gap:10, marginBottom:12 }}>
+                <div style={{ width:32, height:32, borderRadius:8, background:"rgba(255,255,255,0.15)", display:"flex", alignItems:"center", justifyContent:"center", fontSize:16, flexShrink:0 }}>{f.icon}</div>
+                <span style={{ color:"rgba(255,255,255,0.9)", fontSize:14 }}>{f.text}</span>
+              </div>
+            ))}
+          </div>
         </div>
 
-        <p style={{ color: "#8B8FA8", fontSize: 12, textAlign: "center", marginTop: 20 }}>
-          Zyrix FinSuite © {new Date().getFullYear()} — Powered by Zyrix
-        </p>
+        {/* Right — Form */}
+        <div style={{ flex:1, display:"flex", alignItems:"center", justifyContent:"center", padding:"40px 60px" }}>
+          <div style={{ width:"100%", maxWidth:420 }}>
+            <div style={{ marginBottom:32 }}>
+              <h2 style={{ color:P.text, fontSize:26, fontWeight:800, margin:"0 0 6px" }}>Hoş Geldiniz 👋</h2>
+              <p style={{ color:P.sub, fontSize:14, margin:0 }}>Hesabınıza giriş yapın</p>
+            </div>
+
+            <form onSubmit={handleSubmit} style={{ display:"flex", flexDirection:"column", gap:16 }}>
+              <div>
+                <label style={{ color:P.sub, fontSize:12, display:"block", marginBottom:5, fontWeight:600 }}>E-posta</label>
+                <input type="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="ornek@sirket.com" autoFocus
+                  onFocus={()=>setFocused("email")} onBlur={()=>setFocused("")}
+                  style={{ width:"100%", background:P.light, border:`1.5px solid ${focused==="email"?P.purple:P.border}`, color:P.text, borderRadius:10, padding:"11px 14px", fontSize:14, outline:"none", transition:"border-color 0.15s" }} />
+              </div>
+
+              <div>
+                <label style={{ color:P.sub, fontSize:12, display:"block", marginBottom:5, fontWeight:600 }}>Şifre</label>
+                <input type="password" value={password} onChange={e=>setPassword(e.target.value)} placeholder="••••••••"
+                  onFocus={()=>setFocused("pass")} onBlur={()=>setFocused("")}
+                  style={{ width:"100%", background:P.light, border:`1.5px solid ${focused==="pass"?P.purple:P.border}`, color:P.text, borderRadius:10, padding:"11px 14px", fontSize:14, outline:"none", transition:"border-color 0.15s" }} />
+              </div>
+
+              {error && (
+                <div style={{ background:`${P.rose}10`, border:`1.5px solid ${P.rose}25`, borderRadius:10, padding:"11px 14px", color:P.rose, fontSize:13, fontWeight:600 }}>
+                  ⚠ {error}
+                </div>
+              )}
+
+              {warning && (
+                <div style={{ background:`${P.amber}10`, border:`1.5px solid ${P.amber}25`, borderRadius:10, padding:"11px 14px", color:P.amber, fontSize:13, fontWeight:600 }}>
+                  ⚡ {warning}
+                </div>
+              )}
+
+              <button type="submit" disabled={loading} style={{
+                background: loading ? P.muted : `linear-gradient(135deg,${P.purple},${P.pink})`,
+                border:"none", color:"#fff", borderRadius:12, padding:"13px 0",
+                fontSize:15, fontWeight:700, cursor:loading?"not-allowed":"pointer",
+                boxShadow:`0 4px 20px ${P.purple}30`, transition:"all 0.2s",
+              }}>
+                {loading ? "Giriş yapılıyor..." : "Giriş Yap →"}
+              </button>
+            </form>
+
+            <div style={{ textAlign:"center", marginTop:20, color:P.sub, fontSize:13 }}>
+              Hesabınız yok mu?{" "}
+              <a href="/register" style={{ color:P.purple, fontWeight:700, textDecoration:"none" }}>
+                30 Gün Ücretsiz Deneyin 🚀
+              </a>
+            </div>
+
+            <div style={{ textAlign:"center", marginTop:12 }}>
+              <a href="#" style={{ color:P.muted, fontSize:12, textDecoration:"none" }}>Şifremi unuttum</a>
+            </div>
+
+            <div style={{ marginTop:32, paddingTop:20, borderTop:`1px solid ${P.border}`, textAlign:"center", color:P.muted, fontSize:11 }}>
+              Zyrix FinSuite © 2026 — 🇹🇷 Türkiye'de yapıldı
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
