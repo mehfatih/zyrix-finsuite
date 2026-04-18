@@ -66,7 +66,7 @@ export default function OnboardingPage() {
     language:     "TR",
   });
 
-  const set = (k: string, v: string) => setForm(f => ({ ...f, [k]: v }));
+  const set = (k, v) => setForm(f => ({ ...f, [k]: v }));
 
   const handleComplete = async () => {
     setLoading(true);
@@ -244,7 +244,7 @@ export default function OnboardingPage() {
                   ["📊 Tür", BUSINESS_TYPES.find(b=>b.id===form.businessType)?.label || "—"],
                   ["💰 Para Birimi", CURRENCIES.find(c=>c.id===form.currency)?.label || form.currency],
                 ].map(([k,v])=>(
-                  <div key={k as string} style={{ display:"flex", justifyContent:"space-between", padding:"8px 0", borderBottom:`1px solid ${P.border}` }}>
+                  <div key={String(k)} style={{ display:"flex", justifyContent:"space-between", padding:"8px 0", borderBottom:`1px solid ${P.border}` }}>
                     <span style={{ color:P.sub, fontSize:13 }}>{k}</span>
                     <span style={{ color:P.text, fontSize:13, fontWeight:600 }}>{v}</span>
                   </div>
