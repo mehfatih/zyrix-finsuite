@@ -405,9 +405,146 @@ function GreetingBanner({ user }) {
 }
 
 // ── Main ──────────────────────────────────────────
+
+// ── Notifications Panel ───────────────────────────
+function NotificationsPanel({ onClose }) {
+  const [notifs, setNotifs] = useState([]);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    apiFetch("/api/notifications")
+      .then(r => setNotifs(r?.data?.notifications || []))
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, []);
+  const markAllRead = async () => {
+    await apiFetch("/api/notifications/read-all", { method:"PATCH" });
+    setNotifs(n => n.map(x => ({ ...x, isRead:true })));
+  };
+  const typeColor = { SUCCESS:P.emerald, WARNING:P.amber, ERROR:P.rose, INFO:P.cyan };
+  return (
+    <div style={{ position:"fixed", top:0, right:0, bottom:0, width:360, background:P.card, borderLeft:`1.5px solid ${P.border}`, zIndex:300, display:"flex", flexDirection:"column", boxShadow:"-8px 0 32px rgba(108,58,255,0.12)" }}>
+      <div style={{ padding:"20px 20px 16px", borderBottom:`1.5px solid ${P.border}`, display:"flex", justifyContent:"space-between", alignItems:"center" }}>
+        <div style={{ color:P.text, fontSize:16, fontWeight:800 }}>🔔 Bildirimler</div>
+        <div style={{ display:"flex", gap:8 }}>
+          <button onClick={markAllRead} style={{ background:`${P.purple}12`, border:`1px solid ${P.purple}25`, color:P.purple, borderRadius:8, padding:"5px 10px", cursor:"pointer", fontSize:11, fontWeight:700 }}>Tümünü Oku</button>
+          <button onClick={onClose} style={{ background:P.light, border:`1px solid ${P.border}`, color:P.sub, borderRadius:8, padding:"5px 10px", cursor:"pointer", fontSize:14 }}>✕</button>
+        </div>
+      </div>
+      <div style={{ flex:1, overflow:"auto", padding:12 }}>
+        {loading ? (
+          <div style={{ textAlign:"center", padding:40, color:P.muted }}>Yükleniyor...</div>
+        ) : notifs.length === 0 ? (
+          <div style={{ textAlign:"center", padding:40 }}>
+            <div style={{ fontSize:40, marginBottom:12 }}>🎉</div>
+            <div style={{ color:P.sub, fontSize:14 }}>Yeni bildirim yok</div>
+          </div>
+        ) : notifs.map(n => (
+          <div key={n.id} style={{ background:n.isRead?P.light:`${typeColor[n.type]||P.cyan}08`, border:`1px solid ${n.isRead?P.border:typeColor[n.type]||P.cyan}25`, borderRadius:12, padding:"12px 14px", marginBottom:8 }}>
+            <div style={{ display:"flex", justifyContent:"space-between", marginBottom:4 }}>
+              <span style={{ color:typeColor[n.type]||P.cyan, fontSize:11, fontWeight:700, textTransform:"uppercase" }}>{n.type}</span>
+              <span style={{ color:P.muted, fontSize:11 }}>{new Date(n.createdAt).toLocaleDateString("tr-TR")}</span>
+            </div>
+            <div style={{ color:P.text, fontSize:13, fontWeight:600, marginBottom:3 }}>{n.title}</div>
+            <div style={{ color:P.sub, fontSize:12, lineHeight:1.5 }}>{n.body}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ── Sidebar ───────────────────────────────────────
+function Sidebar({ page, setPage, user, logout, unreadCount, onNotifClick, onSettingsClick, mobileOpen, onMobileClose }) {
+  const NAV = [
+    { id:"overview",  icon:"⊞", label:"Overview" },
+    { id:"customers", icon:"👥", label:"Customers" },
+    { id:"deals",     icon:"🤝", label:"Deals" },
+    { id:"invoices",  icon:"📄", label:"Invoices" },
+    { id:"tasks",     icon:"✅", label:"Tasks" },
+  ];
+  return (
+    <>
+      {mobileOpen && <div onClick={onMobileClose} style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.4)", zIndex:199 }} />}
+      <aside style={{ width:230, background:P.sidebar, borderRight:`1.5px solid ${P.border}`, display:"flex", flexDirection:"column", padding:"20px 12px", gap:3, position:"fixed", top:0, left:0, height:"100vh", zIndex:200, boxShadow:"4px 0 24px rgba(108,58,255,0.06)", transform:mobileOpen===false?"translateX(-100%)":"translateX(0)", transition:"transform 0.3s ease" }}>
+        <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:28, padding:"0 8px" }}>
+          <div style={{ width:38, height:38, borderRadius:12, background:`linear-gradient(135deg,${P.purple},${P.pink})`, display:"flex", alignItems:"center", justifyContent:"center", boxShadow:`0 4px 16px ${P.purple}35` }}>
+            <span style={{ color:"#fff", fontWeight:900, fontSize:17 }}>Z</span>
+          </div>
+          <div>
+            <div style={{ color:P.text, fontWeight:800, fontSize:16, lineHeight:1 }}>Zyrix</div>
+            <div style={{ color:P.purple, fontSize:9, fontWeight:700, letterSpacing:"0.12em", textTransform:"uppercase" }}>FinSuite</div>
+          </div>
+        </div>
+        {NAV.map(item => {
+          const active = page === item.id;
+          return (
+            <button key={item.id} onClick={() => { setPage(item.id); onMobileClose?.(); }} style={{ background:active?`linear-gradient(90deg,${P.purple}15,${P.purple}06)`:"transparent", border:`1.5px solid ${active?P.purple+"30":"transparent"}`, borderRadius:12, color:active?P.purple:P.sub, padding:"10px 14px", cursor:"pointer", textAlign:"left", display:"flex", alignItems:"center", gap:10, fontSize:14, fontWeight:active?700:500, transition:"all 0.15s" }}
+              onMouseEnter={e=>{ if(!active){e.currentTarget.style.background=`${P.purple}08`;e.currentTarget.style.color=P.purple;}}}
+              onMouseLeave={e=>{ if(!active){e.currentTarget.style.background="transparent";e.currentTarget.style.color=P.sub;}}}>
+              <span style={{ fontSize:17 }}>{item.icon}</span>{item.label}
+            </button>
+          );
+        })}
+        <div style={{ marginTop:"auto", display:"flex", flexDirection:"column", gap:4 }}>
+          <button onClick={onNotifClick} style={{ background:"transparent", border:"1.5px solid transparent", borderRadius:12, color:P.sub, padding:"10px 14px", cursor:"pointer", textAlign:"left", display:"flex", alignItems:"center", gap:10, fontSize:14, fontWeight:500 }}
+            onMouseEnter={e=>{e.currentTarget.style.background=`${P.purple}08`;e.currentTarget.style.color=P.purple;}}
+            onMouseLeave={e=>{e.currentTarget.style.background="transparent";e.currentTarget.style.color=P.sub;}}>
+            <span style={{ fontSize:17 }}>🔔</span>Bildirimler
+            {unreadCount>0 && <span style={{ marginLeft:"auto", background:P.rose, color:"#fff", borderRadius:20, fontSize:10, fontWeight:700, padding:"1px 6px" }}>{unreadCount}</span>}
+          </button>
+          <button onClick={onSettingsClick} style={{ background:"transparent", border:"1.5px solid transparent", borderRadius:12, color:P.sub, padding:"10px 14px", cursor:"pointer", textAlign:"left", display:"flex", alignItems:"center", gap:10, fontSize:14, fontWeight:500 }}
+            onMouseEnter={e=>{e.currentTarget.style.background=`${P.purple}08`;e.currentTarget.style.color=P.purple;}}
+            onMouseLeave={e=>{e.currentTarget.style.background="transparent";e.currentTarget.style.color=P.sub;}}>
+            <span style={{ fontSize:17 }}>⚙️</span>Ayarlar
+          </button>
+        </div>
+        <div style={{ paddingTop:16, borderTop:`1.5px solid ${P.border}`, marginTop:8 }}>
+          <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:12, padding:"8px 10px", background:P.light, borderRadius:12 }}>
+            <div style={{ width:34, height:34, borderRadius:"50%", background:`linear-gradient(135deg,${P.purple},${P.pink})`, display:"flex", alignItems:"center", justifyContent:"center", color:"#fff", fontSize:13, fontWeight:700, flexShrink:0 }}>
+              {(user?.name||"U")[0].toUpperCase()}
+            </div>
+            <div style={{ overflow:"hidden", flex:1 }}>
+              <div style={{ color:P.text, fontSize:13, fontWeight:700, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{user?.name||"Merchant"}</div>
+              <div style={{ color:P.muted, fontSize:10, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{user?.email}</div>
+            </div>
+          </div>
+          <button onClick={logout} style={{ width:"100%", background:`${P.rose}12`, border:`1.5px solid ${P.rose}25`, color:P.rose, borderRadius:10, padding:"9px 0", cursor:"pointer", fontSize:13, fontWeight:700 }}>Sign Out</button>
+        </div>
+      </aside>
+    </>
+  );
+}
+
+// ── Greeting banner ───────────────────────────────
+function GreetingBanner({ user }) {
+  const hr = new Date().getHours();
+  const greet = hr < 12 ? "Günaydın" : hr < 17 ? "İyi öğleden sonralar" : "İyi akşamlar";
+  const emoji = hr < 12 ? "☀️" : hr < 17 ? "🌤️" : "🌙";
+  return (
+    <div style={{ background:`linear-gradient(135deg,${P.purple} 0%,${P.pink} 100%)`, borderRadius:20, padding:"24px 28px", marginBottom:24, position:"relative", overflow:"hidden", boxShadow:`0 8px 32px ${P.purple}30` }}>
+      <div style={{ position:"absolute", top:-20, right:60, width:120, height:120, borderRadius:"50%", background:"rgba(255,255,255,0.1)", pointerEvents:"none" }} />
+      <div style={{ position:"absolute", bottom:-30, right:20, width:80, height:80, borderRadius:"50%", background:"rgba(255,255,255,0.08)", pointerEvents:"none" }} />
+      <div style={{ position:"relative" }}>
+        <div style={{ color:"rgba(255,255,255,0.85)", fontSize:14, marginBottom:4 }}>{emoji} {greet}!</div>
+        <h1 style={{ color:"#fff", fontSize:26, fontWeight:800, margin:"0 0 6px", textShadow:"0 2px 8px rgba(0,0,0,0.15)" }}>{user?.name||"Hoş geldiniz"} 👋</h1>
+        <div style={{ color:"rgba(255,255,255,0.7)", fontSize:13 }}>{new Date().toLocaleDateString("tr-TR",{weekday:"long",month:"long",day:"numeric",year:"numeric"})}</div>
+      </div>
+    </div>
+  );
+}
+
+// ── Main ──────────────────────────────────────────
 export default function CustomerDashboard() {
   const { user, logout } = useAuth();
   const [page, setPage] = useState("overview");
+  const [showNotifs, setShowNotifs] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
+
+  useEffect(() => {
+    apiFetch("/api/notifications").then(r => setUnreadCount(r?.data?.unreadCount||0)).catch(()=>{});
+  }, []);
 
   const { data: sd } = useApi(() => apiFetch("/api/dashboard/stats").then(r => r?.data));
   const { data: cd } = useApi(() => apiFetch("/api/customers").then(r => r?.data));
@@ -420,257 +557,177 @@ export default function CustomerDashboard() {
   const deals     = Array.isArray(dd) ? dd : dd?.deals     || dd?.items || [];
   const invoices  = Array.isArray(id) ? id : id?.invoices  || id?.items || [];
 
-  const revBars   = [{ label: "Last Mo", value: kpis?.revenueLastMonth || 0 }, { label: "This Mo", value: kpis?.revenueThisMonth || 0 }];
-  const dealStages = deals.reduce((a, d) => { a[d.stage] = (a[d.stage]||0)+1; return a; }, {});
-  const dealBars  = Object.entries(dealStages).map(([l,v]) => ({ label: l.slice(0,5), value: v }));
-  const invStatus = invoices.reduce((a,inv) => { a[inv.status]=(a[inv.status]||0)+1; return a; }, {});
-  const invBars   = Object.entries(invStatus).map(([l,v]) => ({ label: l.slice(0,4), value: v }));
-  const custMonths = customers.reduce((a,c) => { const m=new Date(c.createdAt).toLocaleString("en-US",{month:"short"}); a[m]=(a[m]||0)+1; return a; }, {});
-  const custBars  = Object.entries(custMonths).map(([l,v]) => ({ label: l, value: v }));
+  const revBars   = [{ label:"Last Mo", value:kpis?.revenueLastMonth||0 }, { label:"This Mo", value:kpis?.revenueThisMonth||0 }];
+  const dealStages = deals.reduce((a,d)=>{ a[d.stage]=(a[d.stage]||0)+1; return a; }, {});
+  const dealBars  = Object.entries(dealStages).map(([l,v])=>({ label:l.slice(0,5), value:v }));
+  const invStatus = invoices.reduce((a,inv)=>{ a[inv.status]=(a[inv.status]||0)+1; return a; }, {});
+  const invBars   = Object.entries(invStatus).map(([l,v])=>({ label:l.slice(0,4), value:v }));
+  const custMonths = customers.reduce((a,c)=>{ const m=new Date(c.createdAt).toLocaleString("en-US",{month:"short"}); a[m]=(a[m]||0)+1; return a; }, {});
+  const custBars  = Object.entries(custMonths).map(([l,v])=>({ label:l, value:v }));
 
-  const dealPivot = deals.map(d => ({ stage: d.stage||"N/A", month: new Date(d.createdAt).toLocaleString("en-US",{month:"short"}), count: 1 }));
-  const invPivot  = invoices.map(inv => ({ status: inv.status||"N/A", month: new Date(inv.createdAt).toLocaleString("en-US",{month:"short"}), amount: Number(inv.total)||0 }));
+  const dealPivot = deals.map(d=>({ stage:d.stage||"N/A", month:new Date(d.createdAt).toLocaleString("en-US",{month:"short"}), count:1 }));
+  const invPivot  = invoices.map(inv=>({ status:inv.status||"N/A", month:new Date(inv.createdAt).toLocaleString("en-US",{month:"short"}), amount:Number(inv.total)||0 }));
   const dpRows = [...new Set(dealPivot.map(d=>d.stage))];
   const dpCols = [...new Set(dealPivot.map(d=>d.month))].slice(0,5);
   const ipRows = [...new Set(invPivot.map(d=>d.status))];
   const ipCols = [...new Set(invPivot.map(d=>d.month))].slice(0,5);
 
   const badge = (val, color) => (
-    <span style={{ background: `${color}15`, color, border: `1px solid ${color}25`, borderRadius: 20, padding: "2px 10px", fontSize: 11, fontWeight: 700 }}>{val}</span>
+    <span style={{ background:`${color}15`, color, border:`1px solid ${color}25`, borderRadius:20, padding:"2px 10px", fontSize:11, fontWeight:700 }}>{val}</span>
   );
+
+  if (showSettings) {
+    const SettingsPage = React.lazy(() => import("./SettingsPage"));
+    return (
+      <React.Suspense fallback={<div style={{display:"flex",alignItems:"center",justifyContent:"center",height:"100vh",background:P.bg}}><div style={{width:40,height:40,border:`3px solid ${P.border}`,borderTopColor:P.purple,borderRadius:"50%",animation:"spin 0.7s linear infinite"}}/></div>}>
+        <SettingsPage onClose={() => setShowSettings(false)} />
+      </React.Suspense>
+    );
+  }
 
   return (
     <>
-      <style>{`
-        @keyframes spin{to{transform:rotate(360deg)}}
-        @keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-        *{box-sizing:border-box}
-        body{margin:0;background:${P.bg}}
-        ::-webkit-scrollbar{width:5px;height:5px}
-        ::-webkit-scrollbar-track{background:${P.bg}}
-        ::-webkit-scrollbar-thumb{background:${P.border};border-radius:3px}
-        ::-webkit-scrollbar-thumb:hover{background:${P.purple}}
-        input::placeholder{color:${P.muted}}
-        select option{background:#fff;color:${P.text}}
-      `}</style>
+      <style>{`@keyframes spin{to{transform:rotate(360deg)}}@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}*{box-sizing:border-box}body{margin:0;background:${P.bg}}::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:${P.bg}}::-webkit-scrollbar-thumb{background:${P.border};border-radius:3px}::-webkit-scrollbar-thumb:hover{background:${P.purple}}input::placeholder{color:${P.muted}}select option{background:#fff;color:${P.text}}@media(max-width:768px){.dash-sidebar{display:none!important}.dash-mobile-btn{display:flex!important}}`}</style>
 
-      <div style={{ display: "flex", minHeight: "100vh", background: P.bg, fontFamily: "'DM Sans','Segoe UI',system-ui,sans-serif" }}>
-        <Sidebar page={page} setPage={setPage} user={user} logout={logout} />
+      {showNotifs && <NotificationsPanel onClose={() => setShowNotifs(false)} />}
 
-        <main style={{ flex: 1, padding: "28px 32px", overflow: "auto", animation: "fadeIn 0.35s ease" }}>
+      <div style={{ display:"flex", minHeight:"100vh", background:P.bg, fontFamily:"'DM Sans','Segoe UI',system-ui,sans-serif" }}>
+        <Sidebar page={page} setPage={setPage} user={user} logout={logout}
+          unreadCount={unreadCount}
+          onNotifClick={() => setShowNotifs(v=>!v)}
+          onSettingsClick={() => setShowSettings(true)}
+          mobileOpen={mobileOpen}
+          onMobileClose={() => setMobileOpen(false)} />
+
+        {/* Spacer for fixed sidebar on desktop */}
+        <div style={{ width:230, flexShrink:0 }} className="dash-sidebar" />
+
+        <main style={{ flex:1, padding:"28px 32px", overflow:"auto", animation:"fadeIn 0.35s ease" }}>
+          {/* Mobile header */}
+          <div className="dash-mobile-btn" style={{ display:"none", alignItems:"center", justifyContent:"space-between", marginBottom:20, background:P.card, borderRadius:14, padding:"12px 16px", border:`1.5px solid ${P.border}` }}>
+            <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+              <div style={{ width:30, height:30, borderRadius:8, background:`linear-gradient(135deg,${P.purple},${P.pink})`, display:"flex", alignItems:"center", justifyContent:"center" }}>
+                <span style={{ color:"#fff", fontWeight:900, fontSize:13 }}>Z</span>
+              </div>
+              <span style={{ color:P.text, fontWeight:800, fontSize:15 }}>Zyrix FinSuite</span>
+            </div>
+            <button onClick={() => setMobileOpen(true)} style={{ background:P.light, border:`1.5px solid ${P.border}`, borderRadius:8, padding:"7px 12px", cursor:"pointer", color:P.text, fontSize:16 }}>☰</button>
+          </div>
 
           {/* OVERVIEW */}
           {page === "overview" && (
             <div>
               <GreetingBanner user={user} />
-
-              {/* Revenue Section */}
-              <div style={{ marginBottom: 24 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
-                  <span style={{ color: P.emerald, fontSize: 18 }}>💰</span>
-                  <span style={{ color: P.text, fontSize: 16, fontWeight: 700 }}>Revenue & Finance</span>
+              <div style={{ marginBottom:24 }}>
+                <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:14 }}><span style={{ color:P.emerald, fontSize:18 }}>💰</span><span style={{ color:P.text, fontSize:15, fontWeight:700 }}>Gelir & Finans</span></div>
+                <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(200px,1fr))", gap:16, marginBottom:16 }}>
+                  <KPI label="Bu Ay Gelir" value={kpis?.revenueThisMonth||0} prefix="$" color={P.emerald} icon="💵" change={kpis?.revenueGrowth} sparkData={[kpis?.revenueLastMonth||0, kpis?.revenueThisMonth||0]} />
+                  <KPI label="Pipeline Değeri" value={kpis?.pipelineValue||0} prefix="$" color={P.cyan} icon="📊" />
+                  <KPI label="Vadesi Geçen Fatura" value={kpis?.overdueInvoices||0} color={P.rose} icon="⚠️" />
                 </div>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 16, marginBottom: 16 }}>
-                  <KPI label="Revenue This Month" value={kpis?.revenueThisMonth||0} prefix="$" color={P.emerald} icon="💵" change={kpis?.revenueGrowth} sparkData={[kpis?.revenueLastMonth||0, kpis?.revenueThisMonth||0]} />
-                  <KPI label="Pipeline Value"     value={kpis?.pipelineValue||0}    prefix="$" color={P.cyan}    icon="📊" />
-                  <KPI label="Overdue Invoices"   value={kpis?.overdueInvoices||0}               color={P.rose}   icon="⚠️" />
-                </div>
-                <ChartCard title="Revenue Trend" color={P.emerald} icon="📈">
+                <ChartCard title="Gelir Trendi" color={P.emerald} icon="📈">
                   <BarChart bars={revBars.map((b,i)=>({...b,color:COLORS[i]}))} height={110} />
                   <AIInsight kpis={kpis} color={P.emerald} />
                 </ChartCard>
               </div>
-
-              {/* Customers Section */}
-              <div style={{ marginBottom: 24 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
-                  <span style={{ fontSize: 18 }}>👥</span>
-                  <span style={{ color: P.text, fontSize: 16, fontWeight: 700 }}>Customers</span>
+              <div style={{ marginBottom:24 }}>
+                <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:14 }}><span style={{ fontSize:18 }}>👥</span><span style={{ color:P.text, fontSize:15, fontWeight:700 }}>Müşteriler</span></div>
+                <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(200px,1fr))", gap:16, marginBottom:16 }}>
+                  <KPI label="Toplam Müşteri" value={kpis?.totalCustomers||0} color={P.purple} icon="👤" />
+                  <KPI label="Bu Ay Yeni" value={kpis?.newCustomersThisMonth||0} color={P.pink} icon="✨" />
                 </div>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
-                  <KPI label="Total Customers"  value={kpis?.totalCustomers||0}        color={P.purple} icon="👤" />
-                  <KPI label="New This Month"   value={kpis?.newCustomersThisMonth||0} color={P.pink}   icon="✨" />
-                </div>
-                {custBars.length > 0 && (
-                  <ChartCard title="Monthly Growth" color={P.purple} icon="🚀">
-                    <BarChart bars={custBars.map((b,i)=>({...b,color:COLORS[i%COLORS.length]}))} height={100} />
-                    <AIInsight kpis={{...kpis, totalCustomers: customers.length}} color={P.purple} />
-                  </ChartCard>
-                )}
+                {custBars.length > 0 && <ChartCard title="Aylık Büyüme" color={P.purple} icon="🚀"><BarChart bars={custBars.map((b,i)=>({...b,color:COLORS[i%COLORS.length]}))} height={100} /><AIInsight kpis={{...kpis,totalCustomers:customers.length}} color={P.purple} /></ChartCard>}
               </div>
-
-              {/* Deals Section */}
-              <div style={{ marginBottom: 24 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
-                  <span style={{ fontSize: 18 }}>🤝</span>
-                  <span style={{ color: P.text, fontSize: 16, fontWeight: 700 }}>Deals & Pipeline</span>
+              <div style={{ marginBottom:24 }}>
+                <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:14 }}><span style={{ fontSize:18 }}>🤝</span><span style={{ color:P.text, fontSize:15, fontWeight:700 }}>Anlaşmalar</span></div>
+                <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(200px,1fr))", gap:16, marginBottom:16 }}>
+                  <KPI label="Toplam Anlaşma" value={kpis?.totalDeals||0} color={P.amber} icon="🎯" />
+                  <KPI label="Bu Ay Kazanılan" value={kpis?.wonDealsThisMonth||0} color={P.lime} icon="🏆" />
                 </div>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16, marginBottom: 16 }}>
-                  <KPI label="Total Deals"     value={kpis?.totalDeals||0}        color={P.amber} icon="🎯" />
-                  <KPI label="Won This Month"  value={kpis?.wonDealsThisMonth||0} color={P.lime}  icon="🏆" />
-                </div>
-                {dealBars.length > 0 && (
-                  <ChartCard title="Deal Stages" color={P.amber} icon="🎪">
-                    <div style={{ display: "flex", gap: 20, alignItems: "center" }}>
-                      <Donut segs={dealBars.map((b,i)=>({value:b.value,color:COLORS[i%COLORS.length]}))} size={120} />
-                      <div style={{ flex: 1 }}>
-                        {dealBars.map((b,i)=>(
-                          <div key={i} style={{ display:"flex", alignItems:"center", gap:8, marginBottom:8 }}>
-                            <div style={{ width:10, height:10, borderRadius:"50%", background:COLORS[i%COLORS.length], flexShrink:0 }}/>
-                            <span style={{ color:P.sub, fontSize:12, flex:1 }}>{b.label}</span>
-                            <span style={{ color:COLORS[i%COLORS.length], fontWeight:700, fontSize:13 }}>{b.value}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                    {dpRows.length > 0 && <Pivot rows={dpRows} cols={dpCols} data={dealPivot} rk="stage" ck="month" vk="count" color={P.amber} />}
-                    <AIInsight kpis={{...kpis, totalDeals:deals.length}} color={P.amber} />
-                  </ChartCard>
-                )}
+                {dealBars.length > 0 && <ChartCard title="Aşama Dağılımı" color={P.amber} icon="🎪">
+                  <div style={{ display:"flex", gap:20, alignItems:"center" }}>
+                    <Donut segs={dealBars.map((b,i)=>({value:b.value,color:COLORS[i%COLORS.length]}))} size={120} />
+                    <div>{dealBars.map((b,i)=>(<div key={i} style={{ display:"flex", alignItems:"center", gap:8, marginBottom:7 }}><div style={{ width:8, height:8, borderRadius:"50%", background:COLORS[i%COLORS.length] }}/><span style={{ color:P.sub, fontSize:12, flex:1 }}>{b.label}</span><span style={{ color:COLORS[i%COLORS.length], fontWeight:700, fontSize:12 }}>{b.value}</span></div>))}</div>
+                  </div>
+                  {dpRows.length>0 && <Pivot rows={dpRows} cols={dpCols} data={dealPivot} rk="stage" ck="month" vk="count" color={P.amber} />}
+                  <AIInsight kpis={{...kpis,totalDeals:deals.length}} color={P.amber} />
+                </ChartCard>}
               </div>
-
-              {/* Tasks Section */}
-              <div style={{ marginBottom: 24 }}>
-                <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 14 }}>
-                  <span style={{ fontSize: 18 }}>✅</span>
-                  <span style={{ color: P.text, fontSize: 16, fontWeight: 700 }}>Tasks & Operations</span>
+              <div style={{ marginBottom:24 }}>
+                <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:14 }}><span style={{ fontSize:18 }}>✅</span><span style={{ color:P.text, fontSize:15, fontWeight:700 }}>Görevler</span></div>
+                <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(180px,1fr))", gap:16, marginBottom:16 }}>
+                  <KPI label="Bekleyen Görev" value={kpis?.pendingTasks||0} color={P.sky} icon="📋" />
+                  <KPI label="Toplam Fatura" value={kpis?.totalInvoices||0} color={P.orange} icon="🧾" />
+                  <KPI label="Bu Ay Ödenen" value={kpis?.paidInvoicesThisMonth||0} color={P.emerald} icon="✅" />
                 </div>
-                <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 16, marginBottom: 16 }}>
-                  <KPI label="Pending Tasks"   value={kpis?.pendingTasks||0}          color={P.sky}    icon="📋" />
-                  <KPI label="Total Invoices"  value={kpis?.totalInvoices||0}         color={P.orange} icon="🧾" />
-                  <KPI label="Paid This Month" value={kpis?.paidInvoicesThisMonth||0} color={P.emerald} icon="✅" />
-                </div>
-                {invBars.length > 0 && (
-                  <ChartCard title="Invoice Status" color={P.sky} icon="📊">
-                    <BarChart bars={invBars.map((b,i)=>({...b,color:COLORS[i%COLORS.length]}))} height={100} />
-                    {ipRows.length > 0 && <Pivot rows={ipRows} cols={ipCols} data={invPivot} rk="status" ck="month" vk="amount" color={P.sky} />}
-                    <AIInsight kpis={kpis} color={P.sky} />
-                  </ChartCard>
-                )}
+                {invBars.length>0 && <ChartCard title="Fatura Durumu" color={P.sky} icon="📊"><BarChart bars={invBars.map((b,i)=>({...b,color:COLORS[i%COLORS.length]}))} height={100} />{ipRows.length>0 && <Pivot rows={ipRows} cols={ipCols} data={invPivot} rk="status" ck="month" vk="amount" color={P.sky} />}<AIInsight kpis={kpis} color={P.sky} /></ChartCard>}
               </div>
             </div>
           )}
 
-          {/* CUSTOMERS */}
           {page === "customers" && (
-            <div style={{ animation: "fadeIn 0.3s ease" }}>
-              <h1 style={{ color: P.text, fontSize: 24, fontWeight: 800, margin: "0 0 20px" }}>Customers</h1>
-              <Table color={P.purple} rows={customers} emptyMsg="No customers yet — add your first customer!"
-                cols={[
-                  { key:"name", label:"Name", render:(c,i)=>(
-                    <div style={{display:"flex",alignItems:"center",gap:10}}>
-                      <div style={{width:32,height:32,borderRadius:"50%",background:`${COLORS[i%COLORS.length]}20`,display:"flex",alignItems:"center",justifyContent:"center",color:COLORS[i%COLORS.length],fontSize:12,fontWeight:700,flexShrink:0}}>{(c.name||"?")[0].toUpperCase()}</div>
-                      <span style={{color:P.text,fontSize:13,fontWeight:600}}>{c.name}</span>
-                    </div>
-                  )},
-                  { key:"email",         label:"Email",   render:c=><span style={{color:P.sub,fontSize:12}}>{c.email||"—"}</span> },
-                  { key:"phone",         label:"Phone",   render:c=><span style={{color:P.sub,fontSize:12}}>{c.phone||"—"}</span> },
-                  { key:"loyaltyPoints", label:"Loyalty", render:c=><span style={{color:P.amber,fontWeight:700,fontSize:13}}>{c.loyaltyPoints||0} pts ⭐</span> },
-                  { key:"createdAt",     label:"Joined",  render:c=><span style={{color:P.muted,fontSize:12}}>{c.createdAt?new Date(c.createdAt).toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"}):"—"}</span> },
-                ]} />
-              {custBars.length > 0 && (
-                <div style={{ marginTop: 20 }}>
-                  <ChartCard title="Customer Growth" color={P.purple} icon="📈">
-                    <BarChart bars={custBars.map((b,i)=>({...b,color:COLORS[i%COLORS.length]}))} height={100} />
-                    <AIInsight kpis={{...kpis,totalCustomers:customers.length}} color={P.purple} />
-                  </ChartCard>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* DEALS */}
-          {page === "deals" && (
-            <div style={{ animation: "fadeIn 0.3s ease" }}>
-              <h1 style={{ color: P.text, fontSize: 24, fontWeight: 800, margin: "0 0 20px" }}>Deals Pipeline</h1>
-              <Table color={P.amber} rows={deals} emptyMsg="No deals yet — start building your pipeline!"
-                cols={[
-                  { key:"title", label:"Title", render:d=><span style={{color:P.text,fontSize:13,fontWeight:600}}>{d.title}</span> },
-                  { key:"value", label:"Value",  render:d=><span style={{color:P.emerald,fontWeight:700,fontSize:13,fontFamily:"monospace"}}>${Number(d.value||0).toLocaleString()}</span> },
-                  { key:"stage", label:"Stage",  render:d=>{
-                    const c={WON:P.emerald,LOST:P.rose,PROPOSAL:P.amber,NEGOTIATION:P.orange,QUALIFIED:P.cyan}[d.stage]||P.muted;
-                    return badge(d.stage, c);
-                  }},
-                  { key:"probability", label:"Probability", render:d=>(
-                    <div style={{display:"flex",alignItems:"center",gap:8}}>
-                      <div style={{width:60,height:5,background:P.border,borderRadius:3,overflow:"hidden"}}>
-                        <div style={{width:`${d.probability||0}%`,height:"100%",background:P.amber,borderRadius:3}}/>
-                      </div>
-                      <span style={{color:P.sub,fontSize:11}}>{d.probability||0}%</span>
-                    </div>
-                  )},
-                  { key:"createdAt", label:"Date", render:d=><span style={{color:P.muted,fontSize:12}}>{d.createdAt?new Date(d.createdAt).toLocaleDateString("en-US",{month:"short",day:"numeric"}):"—"}</span> },
-                ]} />
-              {dealBars.length > 0 && (
-                <div style={{ marginTop: 20 }}>
-                  <ChartCard title="Stage Distribution" color={P.amber} icon="🎯">
-                    <div style={{display:"flex",gap:20,alignItems:"center"}}>
-                      <Donut segs={dealBars.map((b,i)=>({value:b.value,color:COLORS[i%COLORS.length]}))} size={110} />
-                      <div>{dealBars.map((b,i)=>(
-                        <div key={i} style={{display:"flex",alignItems:"center",gap:8,marginBottom:7}}>
-                          <div style={{width:8,height:8,borderRadius:"50%",background:COLORS[i%COLORS.length]}}/>
-                          <span style={{color:P.sub,fontSize:12,flex:1}}>{b.label}</span>
-                          <span style={{color:COLORS[i%COLORS.length],fontWeight:700,fontSize:12}}>{b.value}</span>
-                        </div>
-                      ))}</div>
-                    </div>
-                    {dpRows.length > 0 && <Pivot rows={dpRows} cols={dpCols} data={dealPivot} rk="stage" ck="month" vk="count" color={P.amber} />}
-                    <AIInsight kpis={{...kpis,totalDeals:deals.length}} color={P.amber} />
-                  </ChartCard>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* INVOICES */}
-          {page === "invoices" && (
-            <div style={{ animation: "fadeIn 0.3s ease" }}>
-              <h1 style={{ color: P.text, fontSize: 24, fontWeight: 800, margin: "0 0 20px" }}>Invoices</h1>
-              <Table color={P.cyan} rows={invoices} emptyMsg="No invoices yet — create your first invoice!"
-                cols={[
-                  { key:"invoiceNumber", label:"Invoice #", render:inv=><span style={{color:P.cyan,fontFamily:"monospace",fontWeight:700,fontSize:13}}>{inv.invoiceNumber||inv.id?.slice(0,8)}</span> },
-                  { key:"customerName",  label:"Customer",  render:inv=><span style={{color:P.text,fontSize:13,fontWeight:500}}>{inv.customerName||"—"}</span> },
-                  { key:"total",         label:"Amount",    render:inv=><span style={{color:P.emerald,fontWeight:700,fontSize:13,fontFamily:"monospace"}}>${Number(inv.total||0).toLocaleString()}</span> },
-                  { key:"status",        label:"Status",    render:inv=>{
-                    const c={PAID:P.emerald,PENDING:P.amber,OVERDUE:P.rose,DRAFT:P.muted,CANCELLED:P.muted}[inv.status]||P.muted;
-                    return badge(inv.status, c);
-                  }},
-                  { key:"createdAt", label:"Date", render:inv=><span style={{color:P.muted,fontSize:12}}>{inv.createdAt?new Date(inv.createdAt).toLocaleDateString("en-US",{month:"short",day:"numeric"}):"—"}</span> },
-                ]} />
-              {invBars.length > 0 && (
-                <div style={{ marginTop: 20 }}>
-                  <ChartCard title="Invoice Breakdown" color={P.cyan} icon="📋">
-                    <BarChart bars={invBars.map((b,i)=>({...b,color:COLORS[i%COLORS.length]}))} height={100} />
-                    {ipRows.length > 0 && <Pivot rows={ipRows} cols={ipCols} data={invPivot} rk="status" ck="month" vk="amount" color={P.cyan} />}
-                    <AIInsight kpis={{...kpis,overdueInvoices:invoices.filter(i=>i.status==="OVERDUE").length}} color={P.cyan} />
-                  </ChartCard>
-                </div>
-              )}
-            </div>
-          )}
-
-          {/* TASKS */}
-          {page === "tasks" && (
-            <div style={{ animation: "fadeIn 0.3s ease" }}>
-              <h1 style={{ color: P.text, fontSize: 24, fontWeight: 800, margin: "0 0 20px" }}>Tasks</h1>
-              <Table color={P.sky} rows={recent?.tasks||[]} emptyMsg="🎉 No pending tasks — you're all caught up!"
-                cols={[
-                  { key:"title",    label:"Task",     render:t=><span style={{color:P.text,fontSize:13,fontWeight:600}}>{t.title}</span> },
-                  { key:"priority", label:"Priority", render:t=>badge(t.priority,{HIGH:P.rose,MEDIUM:P.amber,LOW:P.emerald}[t.priority]||P.muted) },
-                  { key:"status",   label:"Status",   render:t=>badge(t.status,  {IN_PROGRESS:P.sky,TODO:P.muted,DONE:P.emerald}[t.status]||P.muted) },
-                  { key:"dueDate",  label:"Due",      render:t=>{
-                    const overdue = t.dueDate && new Date(t.dueDate) < new Date();
-                    return <span style={{color:overdue?P.rose:P.muted,fontSize:12,fontWeight:overdue?700:400}}>{t.dueDate?new Date(t.dueDate).toLocaleDateString("en-US",{month:"short",day:"numeric"}):"—"}{overdue?" ⚡":""}</span>;
-                  }},
-                ]} />
-              <div style={{ marginTop: 20 }}>
-                <ChartCard title="AI Business Insight" color={P.sky} icon="🤖">
-                  <AIInsight kpis={kpis} color={P.sky} />
-                </ChartCard>
+            <div style={{ animation:"fadeIn 0.3s ease" }}>
+              <h1 style={{ color:P.text, fontSize:24, fontWeight:800, margin:"0 0 20px" }}>Müşteriler</h1>
+              <div style={{ overflowX:"auto" }}>
+                <Table color={P.purple} rows={customers} emptyMsg="Henüz müşteri yok — ilk müşterinizi ekleyin!"
+                  cols={[
+                    { key:"name", label:"İsim", render:(c,i)=>(<div style={{ display:"flex", alignItems:"center", gap:10 }}><div style={{ width:32, height:32, borderRadius:"50%", background:`${COLORS[i%COLORS.length]}20`, display:"flex", alignItems:"center", justifyContent:"center", color:COLORS[i%COLORS.length], fontSize:12, fontWeight:700, flexShrink:0 }}>{(c.name||"?")[0].toUpperCase()}</div><span style={{ color:P.text, fontSize:13, fontWeight:600 }}>{c.name}</span></div>) },
+                    { key:"email", label:"E-posta", render:c=><span style={{ color:P.sub, fontSize:12 }}>{c.email||"—"}</span> },
+                    { key:"phone", label:"Telefon", render:c=><span style={{ color:P.sub, fontSize:12 }}>{c.phone||"—"}</span> },
+                    { key:"loyaltyPoints", label:"Sadakat", render:c=><span style={{ color:P.amber, fontWeight:700, fontSize:13 }}>{c.loyaltyPoints||0} pts ⭐</span> },
+                    { key:"createdAt", label:"Katılım", render:c=><span style={{ color:P.muted, fontSize:12 }}>{c.createdAt?new Date(c.createdAt).toLocaleDateString("tr-TR"):"—"}</span> },
+                  ]} />
               </div>
             </div>
           )}
 
+          {page === "deals" && (
+            <div style={{ animation:"fadeIn 0.3s ease" }}>
+              <h1 style={{ color:P.text, fontSize:24, fontWeight:800, margin:"0 0 20px" }}>Anlaşmalar</h1>
+              <div style={{ overflowX:"auto" }}>
+                <Table color={P.amber} rows={deals} emptyMsg="Henüz anlaşma yok!"
+                  cols={[
+                    { key:"title", label:"Başlık", render:d=><span style={{ color:P.text, fontSize:13, fontWeight:600 }}>{d.title}</span> },
+                    { key:"value", label:"Değer", render:d=><span style={{ color:P.emerald, fontWeight:700, fontSize:13, fontFamily:"monospace" }}>₺{Number(d.value||0).toLocaleString()}</span> },
+                    { key:"stage", label:"Aşama", render:d=>{ const c={WON:P.emerald,LOST:P.rose,PROPOSAL:P.amber,NEGOTIATION:P.orange,QUALIFIED:P.cyan}[d.stage]||P.muted; return badge(d.stage,c); }},
+                    { key:"probability", label:"Olasılık", render:d=>(<div style={{ display:"flex", alignItems:"center", gap:8 }}><div style={{ width:60, height:5, background:P.border, borderRadius:3, overflow:"hidden" }}><div style={{ width:`${d.probability||0}%`, height:"100%", background:P.amber, borderRadius:3 }}/></div><span style={{ color:P.sub, fontSize:11 }}>{d.probability||0}%</span></div>) },
+                    { key:"createdAt", label:"Tarih", render:d=><span style={{ color:P.muted, fontSize:12 }}>{d.createdAt?new Date(d.createdAt).toLocaleDateString("tr-TR"):"—"}</span> },
+                  ]} />
+              </div>
+            </div>
+          )}
+
+          {page === "invoices" && (
+            <div style={{ animation:"fadeIn 0.3s ease" }}>
+              <h1 style={{ color:P.text, fontSize:24, fontWeight:800, margin:"0 0 20px" }}>Faturalar</h1>
+              <div style={{ overflowX:"auto" }}>
+                <Table color={P.cyan} rows={invoices} emptyMsg="Henüz fatura yok!"
+                  cols={[
+                    { key:"invoiceNumber", label:"Fatura #", render:inv=><span style={{ color:P.cyan, fontFamily:"monospace", fontWeight:700, fontSize:13 }}>{inv.invoiceNumber||inv.id?.slice(0,8)}</span> },
+                    { key:"customerName", label:"Müşteri", render:inv=><span style={{ color:P.text, fontSize:13, fontWeight:500 }}>{inv.customerName||"—"}</span> },
+                    { key:"total", label:"Tutar", render:inv=><span style={{ color:P.emerald, fontWeight:700, fontSize:13, fontFamily:"monospace" }}>₺{Number(inv.total||0).toLocaleString()}</span> },
+                    { key:"status", label:"Durum", render:inv=>{ const c={PAID:P.emerald,PENDING:P.amber,OVERDUE:P.rose,DRAFT:P.muted}[inv.status]||P.muted; return badge(inv.status,c); }},
+                    { key:"createdAt", label:"Tarih", render:inv=><span style={{ color:P.muted, fontSize:12 }}>{inv.createdAt?new Date(inv.createdAt).toLocaleDateString("tr-TR"):"—"}</span> },
+                  ]} />
+              </div>
+            </div>
+          )}
+
+          {page === "tasks" && (
+            <div style={{ animation:"fadeIn 0.3s ease" }}>
+              <h1 style={{ color:P.text, fontSize:24, fontWeight:800, margin:"0 0 20px" }}>Görevler</h1>
+              <div style={{ overflowX:"auto" }}>
+                <Table color={P.sky} rows={recent?.tasks||[]} emptyMsg="🎉 Bekleyen görev yok!"
+                  cols={[
+                    { key:"title", label:"Görev", render:t=><span style={{ color:P.text, fontSize:13, fontWeight:600 }}>{t.title}</span> },
+                    { key:"priority", label:"Öncelik", render:t=>badge(t.priority,{HIGH:P.rose,MEDIUM:P.amber,LOW:P.emerald}[t.priority]||P.muted) },
+                    { key:"status", label:"Durum", render:t=>badge(t.status,{IN_PROGRESS:P.sky,TODO:P.muted,DONE:P.emerald}[t.status]||P.muted) },
+                    { key:"dueDate", label:"Son Tarih", render:t=>{ const ov=t.dueDate&&new Date(t.dueDate)<new Date(); return <span style={{ color:ov?P.rose:P.muted, fontSize:12, fontWeight:ov?700:400 }}>{t.dueDate?new Date(t.dueDate).toLocaleDateString("tr-TR"):"—"}{ov?" ⚡":""}</span>; }},
+                  ]} />
+              </div>
+              <div style={{ marginTop:20 }}><ChartCard title="AI İş Analizi" color={P.sky} icon="🤖"><AIInsight kpis={kpis} color={P.sky} /></ChartCard></div>
+            </div>
+          )}
         </main>
       </div>
     </>
