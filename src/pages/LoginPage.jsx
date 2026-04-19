@@ -123,7 +123,12 @@ export default function LoginPage() {
               <a href="#" style={{ color:P.muted, fontSize:12, textDecoration:"none" }}>Şifremi unuttum</a>
             </div>
 
-            <div style={{ marginTop:32, paddingTop:20, borderTop:`1px solid ${P.border}`, textAlign:"center", color:P.muted, fontSize:11 }}>
+            <div style={{ textAlign:"center", marginTop:16 }}>
+              <a href="/login/otp" style={{ color:P.purple, fontWeight:700, fontSize:13, textDecoration:"none", background:`${P.purple}10`, border:`1px solid ${P.purple}20`, borderRadius:20, padding:"8px 22px", display:"inline-block" }}>
+                🔐 Şifresiz Giriş — OTP ile
+              </a>
+            </div>
+            <div style={{ marginTop:20, paddingTop:20, borderTop:`1px solid ${P.border}`, textAlign:"center", color:P.muted, fontSize:11 }}>
               Zyrix FinSuite © 2026 — 🇹🇷 Türkiye'de yapıldı
             </div>
           </div>

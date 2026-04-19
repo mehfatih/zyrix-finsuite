@@ -1623,6 +1623,9 @@ function Sidebar({ page, setPage, user, logout, unreadCount, onNotifClick, onSet
     { id:"marketplace", icon:"🛒", label:"Pazar Yeri" },
     { id:"taxcalendar", icon:"🗓️", label:"Vergi Takvimi" },
     { id:"benchmark",   icon:"📊", label:"Benchmark" },
+    // v4
+    { id:"team",        icon:"👥", label:"Ekip Yönetimi" },
+    { id:"campaigns",   icon:"📣", label:"Kampanyalar" },
   ];
   return (
     <>
@@ -1897,6 +1900,20 @@ export default function CustomerDashboard() {
                     { key:"total", label:"Tutar", render:inv=><span style={{ color:P.emerald, fontWeight:700, fontSize:13, fontFamily:"monospace" }}>₺{Number(inv.total||0).toLocaleString()}</span> },
                     { key:"status", label:"Durum", render:inv=>{ const c={PAID:P.emerald,PENDING:P.amber,OVERDUE:P.rose,DRAFT:P.muted}[inv.status]||P.muted; return badge(inv.status,c); }},
                     { key:"createdAt", label:"Tarih", render:inv=><span style={{ color:P.muted, fontSize:12 }}>{inv.createdAt?new Date(inv.createdAt).toLocaleDateString("tr-TR"):"—"}</span> },
+                    { key:"pdf", label:"", render:inv=>(
+                      <button onClick={async()=>{
+                        const token=localStorage.getItem("zyrix_token");
+                        const res=await fetch(`${API}/api/invoices/${inv.id}/pdf`,{headers:{Authorization:`Bearer ${token}`}});
+                        if(!res.ok){alert("PDF oluşturulamadı");return;}
+                        const blob=await res.blob();
+                        const url=URL.createObjectURL(blob);
+                        const a=document.createElement("a");
+                        a.href=url;a.download=`fatura-${inv.invoiceNumber||inv.id}.pdf`;a.click();
+                        URL.revokeObjectURL(url);
+                      }} style={{background:`${P.cyan}12`,border:`1px solid ${P.cyan}25`,color:P.cyan,borderRadius:8,padding:"3px 10px",cursor:"pointer",fontSize:11,fontWeight:700}}>
+                        📄 PDF
+                      </button>
+                    )},
                   ]} />
               </div>
             </div>
@@ -1932,6 +1949,10 @@ export default function CustomerDashboard() {
           {page === "marketplace" && <MarketplacePage />}
           {page === "taxcalendar" && <TaxCalendarPage />}
           {page === "benchmark"   && <BenchmarkPage />}
+
+          {/* ═══ v4 SAYFALAR ══════════════════════════════════ */}
+          {page === "team"       && (() => { const TeamPage = React.lazy(() => import("./TeamPage")); return <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:"#94a3b8"}}>Yükleniyor...</div>}><TeamPage /></React.Suspense>; })()}
+          {page === "campaigns"  && (() => { const CampaignsPage = React.lazy(() => import("./CampaignsPage")); return <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:"#94a3b8"}}>Yükleniyor...</div>}><CampaignsPage /></React.Suspense>; })()}
 
         </main>
       </div>
