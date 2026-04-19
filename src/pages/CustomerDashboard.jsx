@@ -1627,7 +1627,7 @@ function Sidebar({ page, setPage, user, logout, unreadCount, onNotifClick, onSet
   return (
     <>
       {mobileOpen && <div onClick={onMobileClose} style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.4)", zIndex:199 }} />}
-      <aside style={{ width:230, background:P.sidebar, borderRight:`1.5px solid ${P.border}`, display:"flex", flexDirection:"column", padding:"20px 12px", gap:3, position:"fixed", top:0, left:0, height:"100vh", zIndex:200, boxShadow:"4px 0 24px rgba(108,58,255,0.06)", transform:mobileOpen===false?"translateX(-100%)":"translateX(0)", transition:"transform 0.3s ease" }}>
+      <aside style={{ width:230, background:P.sidebar, borderRight:`1.5px solid ${P.border}`, display:"flex", flexDirection:"column", padding:"20px 12px", gap:3, position:"fixed", top:0, left:0, height:"100vh", zIndex:200, boxShadow:"4px 0 24px rgba(108,58,255,0.06)", transform:mobileOpen===false?"translateX(-100%)":"translateX(0)", transition:"transform 0.3s ease", overflowY:"auto", overflowX:"hidden" }}>
         <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:28, padding:"0 8px" }}>
           <div style={{ width:38, height:38, borderRadius:12, background:`linear-gradient(135deg,${P.purple},${P.pink})`, display:"flex", alignItems:"center", justifyContent:"center", boxShadow:`0 4px 16px ${P.purple}35` }}>
             <span style={{ color:"#fff", fontWeight:900, fontSize:17 }}>Z</span>
