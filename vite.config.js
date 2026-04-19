@@ -1,6 +1,6 @@
 // ================================================================
 // Zyrix FinSuite — vite.config.js
-// Optimized for production build + Railway/Vercel deploy
+// Optimized for production build + PWA + Railway/Vercel deploy
 // ================================================================
 
 import { defineConfig } from "vite";
@@ -12,18 +12,18 @@ export default defineConfig({
 
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./src"),
-      "@components": path.resolve(__dirname, "./src/components"),
-      "@pages":      path.resolve(__dirname, "./src/pages"),
-      "@services":   path.resolve(__dirname, "./src/services"),
-      "@hooks":      path.resolve(__dirname, "./src/hooks"),
-      "@context":    path.resolve(__dirname, "./src/context"),
+      "@":            path.resolve(__dirname, "./src"),
+      "@components":  path.resolve(__dirname, "./src/components"),
+      "@pages":       path.resolve(__dirname, "./src/pages"),
+      "@services":    path.resolve(__dirname, "./src/services"),
+      "@hooks":       path.resolve(__dirname, "./src/hooks"),
+      "@context":     path.resolve(__dirname, "./src/context"),
+      "@i18n":        path.resolve(__dirname, "./src/i18n"),
     },
   },
 
   server: {
     port: 5173,
-    // Proxy API calls to backend in dev — avoids CORS issues locally
     proxy: {
       "/api": {
         target: "https://finsuite-backend-production.up.railway.app",
@@ -36,20 +36,17 @@ export default defineConfig({
   build: {
     outDir: "dist",
     sourcemap: false,
-    // Split vendor chunks for better caching
     rollupOptions: {
       output: {
         manualChunks: {
-          react:  ["react", "react-dom"],
-          router: ["react-router-dom"],
+          react:    ["react", "react-dom"],
+          router:   ["react-router-dom"],
         },
       },
     },
-    // Warn if any chunk exceeds 500kb
-    chunkSizeWarningLimit: 500,
+    chunkSizeWarningLimit: 600,
   },
 
-  // Ensure env vars are available
   define: {
     __APP_VERSION__: JSON.stringify(process.env.npm_package_version),
   },
