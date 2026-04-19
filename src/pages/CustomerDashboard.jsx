@@ -1763,7 +1763,7 @@ export default function CustomerDashboard() {
 
   return (
     <>
-      <style>{`@keyframes spin{to{transform:rotate(360deg)}}@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}*{box-sizing:border-box}body{margin:0;background:${P.bg}}::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:${P.bg}}::-webkit-scrollbar-thumb{background:${P.border};border-radius:3px}::-webkit-scrollbar-thumb:hover{background:${P.purple}}input::placeholder{color:${P.muted}}textarea::placeholder{color:${P.muted}}select option{background:#fff;color:${P.text}}@media(max-width:768px){.dash-sidebar{display:none!important}.dash-mobile-btn{display:flex!important}}`}</style>
+      <style>{`@keyframes spin{to{transform:rotate(360deg)}}@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-6px)}}*{box-sizing:border-box}body{margin:0;background:${P.bg}}::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-track{background:${P.bg}}::-webkit-scrollbar-thumb{background:${P.border};border-radius:3px}::-webkit-scrollbar-thumb:hover{background:${P.purple}}input::placeholder{color:${P.muted}}textarea::placeholder{color:${P.muted}}select option{background:#fff;color:${P.text}}@media(max-width:480px){.dash-sidebar{display:none!important}.dash-mobile-btn{display:flex!important}}`}</style>
 
       {showNotifs && <NotificationsPanel onClose={() => setShowNotifs(false)} />}
       {showAI && <AIAssistantPanel onClose={() => setShowAI(false)} />}
