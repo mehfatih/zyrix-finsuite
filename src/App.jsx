@@ -8,6 +8,10 @@ import OnboardingPage    from "./pages/OnboardingPage";
 import CustomerDashboard from "./pages/CustomerDashboard";
 import AdminPanel        from "./pages/AdminPanel";
 import PaymentPage       from "./pages/PaymentPage";
+import TeamPage          from "./pages/TeamPage";
+import CampaignsPage     from "./pages/CampaignsPage";
+import OtpLogin          from "./pages/OtpLogin";
+import InviteAcceptPage  from "./pages/InviteAcceptPage";
 
 function HomeRedirect() {
   const { user, loading } = useAuth();
@@ -27,11 +31,15 @@ export default function App() {
         <Routes>
           <Route path="/"             element={<LandingPage />} />
           <Route path="/login"        element={<LoginPage />} />
+          <Route path="/login/otp"    element={<OtpLogin />} />
           <Route path="/register"     element={<RegisterPage />} />
           <Route path="/onboarding"   element={<RequireAuth><OnboardingPage /></RequireAuth>} />
           <Route path="/dashboard/*"  element={<RequireAuth><CustomerDashboard /></RequireAuth>} />
           <Route path="/payment"      element={<RequireAuth><PaymentPage /></RequireAuth>} />
           <Route path="/admin/*"      element={<RequireAuth role="admin"><AdminPanel /></RequireAuth>} />
+          <Route path="/team"         element={<RequireAuth><TeamPage /></RequireAuth>} />
+          <Route path="/campaigns"    element={<RequireAuth><CampaignsPage /></RequireAuth>} />
+          <Route path="/invite/:token" element={<InviteAcceptPage />} />
           <Route path="/home"         element={<HomeRedirect />} />
           <Route path="*"             element={<Navigate to="/" replace />} />
         </Routes>
