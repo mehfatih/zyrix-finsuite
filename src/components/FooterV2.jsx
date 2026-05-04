@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import { useI18n } from "../i18n/i18n.jsx";
 
 // ---------- Palettes (extracted from LandingPageV2Extended) ----------
@@ -90,19 +91,43 @@ export default function FooterV2() {
   ];
 
   const companyLinks = lang === "AR" ? [
-    "من نحن", "الوظائف", "الشركاء", "اتصل بنا", "الصحافة",
+    { label: "من نحن", href: "/about", route: true },
+    { label: "الوظائف", href: "#", route: false },
+    { label: "الشركاء", href: "#", route: false },
+    { label: "اتصل بنا", href: "/contact", route: true },
+    { label: "الصحافة", href: "#", route: false },
   ] : lang === "EN" ? [
-    "About Us", "Careers", "Partners", "Contact", "Press",
+    { label: "About Us", href: "/about", route: true },
+    { label: "Careers", href: "#", route: false },
+    { label: "Partners", href: "#", route: false },
+    { label: "Contact", href: "/contact", route: true },
+    { label: "Press", href: "#", route: false },
   ] : [
-    "Hakkımızda", "Kariyer", "İş Ortakları", "İletişim", "Basın",
+    { label: "Hakkımızda", href: "/about", route: true },
+    { label: "Kariyer", href: "#", route: false },
+    { label: "İş Ortakları", href: "#", route: false },
+    { label: "İletişim", href: "/contact", route: true },
+    { label: "Basın", href: "#", route: false },
   ];
 
   const legalLinks = lang === "AR" ? [
-    "شروط الاستخدام", "سياسة الخصوصية", "اتفاقية PDPL", "سياسة الكوكيز", "GDPR",
+    { label: "شروط الاستخدام", href: "/terms", route: true },
+    { label: "سياسة الخصوصية", href: "/privacy", route: true },
+    { label: "الأمان", href: "/security", route: true },
+    { label: "سياسة الكوكيز", href: "#", route: false },
+    { label: "GDPR", href: "#", route: false },
   ] : lang === "EN" ? [
-    "Terms of Use", "Privacy Policy", "KVKK Agreement", "Cookie Policy", "GDPR",
+    { label: "Terms of Use", href: "/terms", route: true },
+    { label: "Privacy Policy", href: "/privacy", route: true },
+    { label: "Security", href: "/security", route: true },
+    { label: "Cookie Policy", href: "#", route: false },
+    { label: "GDPR", href: "#", route: false },
   ] : [
-    "Kullanım Şartları", "Gizlilik Politikası", "KVKK Sözleşmesi", "Çerez Politikası", "GDPR",
+    { label: "Kullanım Şartları", href: "/terms", route: true },
+    { label: "Gizlilik Politikası", href: "/privacy", route: true },
+    { label: "Güvenlik", href: "/security", route: true },
+    { label: "Çerez Politikası", href: "#", route: false },
+    { label: "GDPR", href: "#", route: false },
   ];
 
   const socialLinks = [
@@ -185,7 +210,13 @@ export default function FooterV2() {
             <h4 style={{ fontFamily: "monospace", fontSize: 18, fontWeight: 700, letterSpacing: "0.18em", color: "white", marginBottom: 18, marginTop: 0 }}>{t("lv2.footer.company")}</h4>
             <ul style={{ listStyle: "none", padding: 0, display: "flex", flexDirection: "column", gap: 12 }}>
               {companyLinks.map((l, i) => (
-                <li key={i}><a href="#" style={{ color: "rgba(255, 255, 255, 0.6)", textDecoration: "none", fontSize: 13, transition: "color 0.2s" }} onMouseEnter={(e) => e.target.style.color = "white"} onMouseLeave={(e) => e.target.style.color = "rgba(255, 255, 255, 0.6)"}>{l}</a></li>
+                <li key={i}>
+                  {l.route ? (
+                    <Link to={l.href} style={{ color: "rgba(255, 255, 255, 0.6)", textDecoration: "none", fontSize: 13, transition: "color 0.2s" }} onMouseEnter={(e) => e.target.style.color = "white"} onMouseLeave={(e) => e.target.style.color = "rgba(255, 255, 255, 0.6)"}>{l.label}</Link>
+                  ) : (
+                    <a href={l.href} style={{ color: "rgba(255, 255, 255, 0.6)", textDecoration: "none", fontSize: 13, transition: "color 0.2s" }} onMouseEnter={(e) => e.target.style.color = "white"} onMouseLeave={(e) => e.target.style.color = "rgba(255, 255, 255, 0.6)"}>{l.label}</a>
+                  )}
+                </li>
               ))}
             </ul>
           </div>
@@ -194,7 +225,13 @@ export default function FooterV2() {
             <h4 style={{ fontFamily: "monospace", fontSize: 18, fontWeight: 700, letterSpacing: "0.18em", color: "white", marginBottom: 18, marginTop: 0 }}>{t("lv2.footer.legal")}</h4>
             <ul style={{ listStyle: "none", padding: 0, display: "flex", flexDirection: "column", gap: 12 }}>
               {legalLinks.map((l, i) => (
-                <li key={i}><a href="#" style={{ color: "rgba(255, 255, 255, 0.6)", textDecoration: "none", fontSize: 13, transition: "color 0.2s" }} onMouseEnter={(e) => e.target.style.color = "white"} onMouseLeave={(e) => e.target.style.color = "rgba(255, 255, 255, 0.6)"}>{l}</a></li>
+                <li key={i}>
+                  {l.route ? (
+                    <Link to={l.href} style={{ color: "rgba(255, 255, 255, 0.6)", textDecoration: "none", fontSize: 13, transition: "color 0.2s" }} onMouseEnter={(e) => e.target.style.color = "white"} onMouseLeave={(e) => e.target.style.color = "rgba(255, 255, 255, 0.6)"}>{l.label}</Link>
+                  ) : (
+                    <a href={l.href} style={{ color: "rgba(255, 255, 255, 0.6)", textDecoration: "none", fontSize: 13, transition: "color 0.2s" }} onMouseEnter={(e) => e.target.style.color = "white"} onMouseLeave={(e) => e.target.style.color = "rgba(255, 255, 255, 0.6)"}>{l.label}</a>
+                  )}
+                </li>
               ))}
             </ul>
           </div>
