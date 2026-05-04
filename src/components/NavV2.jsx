@@ -144,6 +144,7 @@ export default function NavV2() {
               color: "inherit",
               textDecoration: "none",
               transition: "color 0.2s",
+              whiteSpace: "nowrap",
             }}
               onMouseEnter={(e) => (e.target.style.color = "white")}
               onMouseLeave={(e) => (e.target.style.color = "rgba(255, 255, 255, 0.78)")}>
@@ -154,6 +155,7 @@ export default function NavV2() {
               color: "inherit",
               textDecoration: "none",
               transition: "color 0.2s",
+              whiteSpace: "nowrap",
             }}
               onMouseEnter={(e) => (e.target.style.color = "white")}
               onMouseLeave={(e) => (e.target.style.color = "rgba(255, 255, 255, 0.78)")}>
@@ -246,11 +248,13 @@ export default function NavV2() {
             padding: "10px 16px",
             textDecoration: "none",
             transition: "color 0.2s",
+            whiteSpace: "nowrap",
           }}>{t("lv2.nav.signin")}</a>
 
           <a href="/register" style={{
             display: "inline-flex",
             alignItems: "center",
+            whiteSpace: "nowrap",
             gap: 8,
             background: isSaudi
               ? `linear-gradient(135deg, ${SA.green} 0%, ${SA.greenDeep} 100%)`
