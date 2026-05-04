@@ -138,7 +138,7 @@ export default function NavV2() {
     { href: "/case-studies", label: t("lv2.nav.caseStudies"), isRoute: true },
     { href: "/integrations", label: t("lv2.nav.integrations"), isRoute: true },
     { href: "/sectors", label: t("lv2.nav.sectors"), isRoute: true },
-    { href: "/about", label: t("lv2.nav.about"), isRoute: true },
+    { href: "/contact", label: t("lv2.nav.contact"), isRoute: true },
           ].map((link, i) => link.isRoute ? (
             <Link key={i} to={link.href} style={{
               color: "inherit",
