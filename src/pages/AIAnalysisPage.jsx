@@ -20,7 +20,7 @@ const SA = {
 
 const TXT = {
   TR: {
-    badge: "CANLI AI ANALIZI",
+    badge: "AI NAKİT AKIŞI ANALİZİ",
     h1Pre: "Faturalarınızı sadece kesmeyin —",
     h1Highlight: "nakit akışınızı AI ile kontrol edin",
     sub: "Zyrix, fatura ve tahsilat davranışınızı analiz eder, riskleri önceden gösterir, fırsatları otomatik yakalar ve bugün hangi aksiyonu almanız gerektiğini netleştirir.",
@@ -110,7 +110,7 @@ const TXT = {
     ],
   },
   AR: {
-    badge: "تحليل الذكاء الاصطناعي المباشر",
+    badge: "تحليل AI للتدفّق النقدي",
     h1Pre: "لا تكتفِ بإصدار الفواتير —",
     h1Highlight: "تحكم في تدفقك النقدي بالذكاء الاصطناعي",
     sub: "Zyrix يحلل سلوك فواتيرك وتحصيلاتك، يكشف المخاطر مسبقاً، يلتقط الفرص تلقائياً، ويوضح لك الإجراء الذي يجب اتخاذه اليوم.",
@@ -200,7 +200,7 @@ const TXT = {
     ],
   },
   EN: {
-    badge: "LIVE AI ANALYSIS",
+    badge: "AI CASHFLOW ANALYSIS",
     h1Pre: "Don't just issue invoices —",
     h1Highlight: "control your cashflow with AI",
     sub: "Zyrix analyzes your invoice and collection behavior, surfaces risks early, captures opportunities automatically, and tells you exactly what to do today.",
@@ -373,7 +373,7 @@ export default function AIAnalysisPage() {
     return [cashflow, risk, priority, opportunity];
   };
 
-  const computeFallback = () => {
+  const computeAnalysis = () => {
     const volume = parseFloat(inputs[1]) || 0;
     const delay = parseFloat(inputs[2]) || 0;
     const ops = parseFloat(inputs[3]) || 0;
@@ -401,37 +401,13 @@ export default function AIAnalysisPage() {
       setStep((s) => Math.min(s + 1, t.msgs.length - 1));
     }, 600);
 
-    const API = import.meta.env.VITE_API_URL || "http://localhost:3000";
-    let targets = null;
-    let suggestion = null;
-
     const userVolume = parseFloat(inputs[1]) || 0;
     const userDelay = parseFloat(inputs[2]) || 0;
 
-    try {
-      const res = await fetch(API + "/api/public-ai-demo/analyze-invoices", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          businessType: inputs[0] || "",
-          invoiceVolume: userVolume,
-          delayRate: userDelay,
-          opsIntensity: parseFloat(inputs[3]) || 0,
-          lang,
-        }),
-      });
-      const json = await res.json();
-      if (json && json.success && json.data) {
-        targets = [json.data.cashflow, json.data.risk, json.data.priority, json.data.opportunity];
-        if (Array.isArray(json.data.suggestion) && json.data.suggestion.length === 2) {
-          suggestion = json.data.suggestion;
-        }
-      }
-    } catch (err) {
-      console.warn("[AIAnalysis] fallback to local", err);
-    }
-
-    if (!targets) targets = computeFallback();
+    // Direct deterministic analysis based on user inputs.
+    // No backend call -- the math is real and runs locally.
+    const targets = computeAnalysis();
+    const suggestion = null;
 
     setTimeout(() => {
       clearInterval(msgInterval);
@@ -447,10 +423,14 @@ export default function AIAnalysisPage() {
 
       // Save analysis to localStorage for personalized login experience.
       // LoginPage reads these keys to show "Welcome back" instead of default.
-      // We read `targets` (not `counts`) because `counts` is animating now.
+      // targets array meaning:
+      //   [0] = cashflow impact %    (e.g. +60, -10)
+      //   [1] = risk level %          (e.g. 22)
+      //   [2] = priority follow-ups   (e.g. 32)
+      //   [3] = opportunity (cash K)  (e.g. 87 means $87K)
       try {
         const sector = inputs[0] && inputs[0].trim() ? inputs[0] : "Business";
-        const recoverable = targets && targets[0] != null ? "$" + targets[0] : "$0";
+        const recoverable = targets && targets[3] != null ? fmtOpp(targets[3]) : "$0";
         const riskyInvoices = targets && targets[1] != null ? String(targets[1]) : "0";
         const followups = targets && targets[2] != null ? String(targets[2]) : "0";
         localStorage.setItem("zyrix_last_analysis", "AI Cashflow Analysis");
