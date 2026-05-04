@@ -438,13 +438,21 @@ export default function AIAnalysisPage() {
       setStep(t.msgs.length - 1);
       setLoading(false);
 
+      setAnalyzed(true);
+      // sync sliders to user inputs so they reflect what was analyzed
+      if (userVolume > 0) setSimVolume(userVolume);
+      if (userDelay > 0) setSimDelay(userDelay);
+      if (suggestion) setAiSuggestion(suggestion);
+      animateToTargets(targets);
+
       // Save analysis to localStorage for personalized login experience.
       // LoginPage reads these keys to show "Welcome back" instead of default.
+      // We read `targets` (not `counts`) because `counts` is animating now.
       try {
         const sector = inputs[0] && inputs[0].trim() ? inputs[0] : "Business";
-        const recoverable = counts && counts[0] != null ? "$" + counts[0] : "$0";
-        const riskyInvoices = counts && counts[1] != null ? String(counts[1]) : "0";
-        const followups = counts && counts[2] != null ? String(counts[2]) : "0";
+        const recoverable = targets && targets[0] != null ? "$" + targets[0] : "$0";
+        const riskyInvoices = targets && targets[1] != null ? String(targets[1]) : "0";
+        const followups = targets && targets[2] != null ? String(targets[2]) : "0";
         localStorage.setItem("zyrix_last_analysis", "AI Cashflow Analysis");
         localStorage.setItem("zyrix_last_sector", sector);
         localStorage.setItem("zyrix_last_plan", "Growth");
@@ -454,12 +462,6 @@ export default function AIAnalysisPage() {
       } catch (e) {
         // localStorage may be blocked in private mode; silently ignore
       }
-      setAnalyzed(true);
-      // sync sliders to user inputs so they reflect what was analyzed
-      if (userVolume > 0) setSimVolume(userVolume);
-      if (userDelay > 0) setSimDelay(userDelay);
-      if (suggestion) setAiSuggestion(suggestion);
-      animateToTargets(targets);
     }, t.msgs.length * 600);
   };
 
