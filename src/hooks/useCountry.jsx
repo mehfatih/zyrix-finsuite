@@ -2,7 +2,11 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import {
   getCountryProfile,
   SUPPORTED_COUNTRIES,
+  VISIBLE_COUNTRIES,
   DEFAULT_COUNTRY,
+  DEFAULT_BY_LANG,
+  isCountryVisible,
+  getDefaultForLang,
 } from "../utils/countryProfiles.js";
 
 // ================================================================
@@ -46,12 +50,20 @@ const CountryContext = createContext({
 
 export function CountryProvider({ children }) {
   // Step 1: synchronous initial state from localStorage (no flash)
+  // Soft launch: only restore if the stored country is currently visible.
+  // If user previously chose a now-hidden country, fall back to lang-default.
   const [country, setCountryState] = useState(() => {
     try {
       const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored && SUPPORTED_COUNTRIES.indexOf(stored.toUpperCase()) !== -1) {
+      if (stored && isCountryVisible(stored)) {
         return stored.toUpperCase();
       }
+      // Hidden or invalid -> use lang-aware default
+      const lang =
+        (typeof document !== "undefined" && document.documentElement.lang) ||
+        localStorage.getItem("zyrix_lang") ||
+        "TR";
+      return getDefaultForLang(lang.toUpperCase());
     } catch (e) {}
     return DEFAULT_COUNTRY;
   });
@@ -74,8 +86,8 @@ export function CountryProvider({ children }) {
       stored = localStorage.getItem(STORAGE_KEY);
     } catch (e) {}
 
-    // If user already chose a country, never override it.
-    if (stored && SUPPORTED_COUNTRIES.indexOf(stored.toUpperCase()) !== -1) {
+    // If user already chose a VISIBLE country, never override it.
+    if (stored && isCountryVisible(stored)) {
       return;
     }
 
@@ -91,18 +103,20 @@ export function CountryProvider({ children }) {
           return;
         }
         const detectedCode = (data.country_code || data.country || "").toUpperCase();
-        if (detectedCode && SUPPORTED_COUNTRIES.indexOf(detectedCode) !== -1) {
+        if (detectedCode && isCountryVisible(detectedCode)) {
+          // Detected country IS in our soft-launch visible list -> use it
           setCountryState(detectedCode);
           setSource("ip");
           try {
-            // Persist the detected country so we don't re-fetch every load.
-            // Source = "ip" means we still allow manual override later.
             localStorage.setItem(STORAGE_KEY, detectedCode);
             localStorage.setItem(SOURCE_KEY, "ip");
           } catch (e) {}
+        } else if (detectedCode && SUPPORTED_COUNTRIES.indexOf(detectedCode) !== -1) {
+          // Detected country has a profile but is hidden during soft launch
+          // -> stay on lang-default (already set in initial state). Don't persist.
+          console.info("[useCountry] detected hidden country:", detectedCode, "- keeping lang-default");
         } else if (detectedCode) {
-          // We detected a country we don't have a profile for.
-          // Fall through to default but log so we know to add it.
+          // No profile for this country at all
           console.info("[useCountry] detected unsupported country:", detectedCode);
         }
         setIsLoading(false);

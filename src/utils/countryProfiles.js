@@ -425,8 +425,47 @@ export const ARABIC_COUNTRIES = [
 // Countries we have full profiles for
 export const SUPPORTED_COUNTRIES = Object.keys(COUNTRY_PROFILES);
 
-// Default fallback
+// ================================================================
+// SOFT LAUNCH — Country visibility control
+// ================================================================
+//
+// VISIBLE_COUNTRIES controls which countries appear in user-facing
+// country selectors (NavV2 pill, Footer, Pricing, Onboarding).
+//
+// Hidden countries:
+//   - Still have full profile data (services keep working)
+//   - Won't appear in dropdowns/selectors
+//   - Auto-fallback to lang-appropriate default if a user has
+//     a hidden country saved in localStorage from a previous visit
+//
+// To re-enable a country: just add its code to VISIBLE_COUNTRIES.
+// No data migration needed. No code changes elsewhere.
+//
+// To go global again: VISIBLE_COUNTRIES = SUPPORTED_COUNTRIES;
+// ================================================================
+
+export const VISIBLE_COUNTRIES = ["TR", "SA", "AE"];
+
+// Smart default per language (used when a hidden country is detected/stored)
+export const DEFAULT_BY_LANG = {
+  AR: "SA",
+  TR: "TR",
+  EN: "TR",
+};
+
+// Default fallback (used when no language context available)
 export const DEFAULT_COUNTRY = "TR";
+
+// Helper: is this country code visible in selectors?
+export function isCountryVisible(code) {
+  if (!code) return false;
+  return VISIBLE_COUNTRIES.indexOf(code.toUpperCase()) !== -1;
+}
+
+// Helper: get the smart default country code for a given language
+export function getDefaultForLang(lang) {
+  return DEFAULT_BY_LANG[lang] || DEFAULT_COUNTRY;
+}
 
 // ================================================================
 // Helper functions

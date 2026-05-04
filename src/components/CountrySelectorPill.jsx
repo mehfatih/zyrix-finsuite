@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import { useI18n } from "../i18n/i18n.jsx";
 import { useCountry } from "../hooks/useCountry.jsx";
-import { COUNTRY_PROFILES, SUPPORTED_COUNTRIES } from "../utils/countryProfiles.js";
+import { COUNTRY_PROFILES, VISIBLE_COUNTRIES } from "../utils/countryProfiles.js";
 
 const C = {
   red: "#E30A17",
@@ -188,7 +188,7 @@ export default function CountrySelectorPill({ mode = "light", compact = false })
           overflowY: "auto",
         }}
       >
-        {SUPPORTED_COUNTRIES.map((code) => {
+        {VISIBLE_COUNTRIES.map((code) => {
           const cp = COUNTRY_PROFILES[code];
           const cName = (cp.name && cp.name[lang]) || (cp.name && cp.name.EN) || code;
           const isActive = code === country;

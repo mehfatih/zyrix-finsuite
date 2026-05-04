@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useI18n } from "../i18n/i18n.jsx";
 import { useCountry } from "../hooks/useCountry.jsx";
-import { COUNTRY_PROFILES, SUPPORTED_COUNTRIES } from "../utils/countryProfiles.js";
+import { COUNTRY_PROFILES, VISIBLE_COUNTRIES } from "../utils/countryProfiles.js";
 
 // ---------- Palettes (extracted from LandingPageV2Extended) ----------
 const C = {
@@ -331,7 +331,7 @@ export default function FooterV2() {
               backgroundPosition: "right 8px center",
             }}
           >
-            {SUPPORTED_COUNTRIES.map((code) => {
+            {VISIBLE_COUNTRIES.map((code) => {
               const cp = COUNTRY_PROFILES[code];
               const cName = (cp.name && cp.name[lang]) || (cp.name && cp.name.EN) || code;
               return (
