@@ -102,6 +102,23 @@ const TXT = {
     finalCta1: "Analizimi Calistir",
     finalCta2: "Fiyatlandirmayi gor",
 
+    // Compliance Trust Strip
+    trustEyebrow: "GUVEN ALTYAPISI",
+    trustTitle: "Duzenlenmis fatura operasyonlari icin tasarlandi.",
+    trustSub: "Zyrix kullanicinin pazar baglamina, diline ve is akisina uyum saglar; ekipleri jenerik finans surecine zorlamadan.",
+    trust1Title: "Yerellesmis uyumluluk motoru",
+    trust1Desc: "Fatura akislarini pazar baglamina gore uyarlar.",
+    trust2Title: "Guvenli fatura verisi",
+    trust2Desc: "Finansal kayitlari korumali ve yapili tutar.",
+    trust3Title: "Denetim hazir akislar",
+    trust3Desc: "Aksiyonlar ve fatura olaylari izlenebilir kalir.",
+    trust4Title: "Rol tabanli erisim",
+    trust4Desc: "Ekipler dogru seviyede dogru kontrol alir.",
+    trust5Title: "API hazir mimari",
+    trust5Desc: "Entegrasyonlar ve bagli sistemler icin tasarlanmis.",
+    trust6Title: "Kurumsal seviyede kontrol",
+    trust6Desc: "Guven ve gorunurluk gerektiren ekipler icin.",
+
     modules: {
       invoice: {
         name: "Fatura Zekasi",
@@ -243,6 +260,23 @@ const TXT = {
     finalCta1: "Run My Analysis",
     finalCta2: "See Pricing",
 
+    // Compliance Trust Strip
+    trustEyebrow: "COMPLIANCE TRUST LAYER",
+    trustTitle: "Built for regulated invoice operations.",
+    trustSub: "Zyrix adapts to the user's market context, language, and business workflow without forcing teams into generic finance processes.",
+    trust1Title: "Localized compliance engine",
+    trust1Desc: "Adapts invoice workflows to market context.",
+    trust2Title: "Secure invoice data",
+    trust2Desc: "Keeps financial records protected and structured.",
+    trust3Title: "Audit-ready workflows",
+    trust3Desc: "Actions and invoice events stay traceable.",
+    trust4Title: "Role-based access",
+    trust4Desc: "Teams get the right control at the right level.",
+    trust5Title: "API-ready architecture",
+    trust5Desc: "Designed for integrations and connected systems.",
+    trust6Title: "Enterprise-grade controls",
+    trust6Desc: "Built for teams that need trust and visibility.",
+
     modules: {
       invoice: {
         name: "Invoice Intelligence",
@@ -383,6 +417,23 @@ const TXT = {
     finalSub: "\u0634\u0648\u0641 \u0645\u0627\u0630\u0627 \u062A\u0642\u0648\u0644 \u0641\u0648\u0627\u062A\u064A\u0631\u0643\u060C \u0627\u0643\u062A\u0634\u0641 \u0627\u0644\u062E\u0637\u0631 \u0627\u0644\u062E\u0641\u064A\u060C \u0648\u0623\u0646\u0634\u0626 \u062E\u0637\u0629 \u0639\u0645\u0644\u0643 \u0627\u0644\u0623\u0648\u0644\u0649.",
     finalCta1: "\u0634\u063A\u0651\u0644 \u062A\u062D\u0644\u064A\u0644\u064A",
     finalCta2: "\u0634\u0627\u0647\u062F \u0627\u0644\u0623\u0633\u0639\u0627\u0631",
+
+    // Compliance Trust Strip
+    trustEyebrow: "طبقة الثقة والامتثال",
+    trustTitle: "مصمَّم لعمليات الفواتير الخاضعة للتنظيم.",
+    trustSub: "زيركس يتكيّف مع السياق السوقي للمستخدم ولغته وسير عمل أعماله، دون إجبار الفرق على عملية مالية عامة.",
+    trust1Title: "محرّك امتثال محلي",
+    trust1Desc: "يكيّف سير عمل الفواتير للسياق السوقي.",
+    trust2Title: "بيانات فواتير آمنة",
+    trust2Desc: "يحافظ على السجلات المالية محميّة ومنظّمة.",
+    trust3Title: "سير عمل جاهز للتدقيق",
+    trust3Desc: "تبقى الإجراءات وأحداث الفواتير قابلة للتتبّع.",
+    trust4Title: "وصول حسب الدور",
+    trust4Desc: "تحصل الفرق على الصلاحيات المناسبة في المستوى المناسب.",
+    trust5Title: "بنية جاهزة لـ API",
+    trust5Desc: "مصمَّمة للتكاملات والأنظمة المتصلة.",
+    trust6Title: "ضوابط بمستوى المؤسسات",
+    trust6Desc: "مصمَّم للفرق التي تحتاج إلى الثقة والوضوح.",
 
     modules: {
       invoice: {
@@ -1228,6 +1279,141 @@ export default function FeaturesPage() {
                 </div>
               </div>
             ))}
+          </div>
+
+          {/* COMPLIANCE TRUST STRIP */}
+          <div
+            style={{
+              borderRadius: 40,
+              padding: 42,
+              marginBottom: 78,
+              background: isArabic
+                ? "linear-gradient(135deg, rgba(244,251,247,.96), rgba(255,255,255,.92))"
+                : "linear-gradient(135deg, rgba(255,247,244,.96), rgba(255,255,255,.92))",
+              border: "1px solid " + T.hairline,
+              boxShadow: "0 28px 74px rgba(58,5,9,.10)",
+              backdropFilter: "blur(18px)",
+            }}
+          >
+            <div style={{ textAlign: "center", maxWidth: 820, margin: "0 auto 34px" }}>
+              <div
+                style={{
+                  color: themeColor,
+                  fontSize: 13,
+                  fontWeight: 950,
+                  letterSpacing: "1.5px",
+                  marginBottom: 10,
+                  textTransform: "uppercase",
+                }}
+              >
+                {t.trustEyebrow}
+              </div>
+
+              <h2
+                style={{
+                  margin: 0,
+                  fontSize: 42,
+                  fontWeight: 950,
+                  letterSpacing: "-0.05em",
+                  color: T.ink,
+                  lineHeight: 1.1,
+                }}
+              >
+                {t.trustTitle}
+              </h2>
+
+              <p
+                style={{
+                  margin: "14px auto 0",
+                  maxWidth: 720,
+                  color: T.muted,
+                  fontSize: 16,
+                  lineHeight: 1.75,
+                  fontWeight: 650,
+                }}
+              >
+                {t.trustSub}
+              </p>
+            </div>
+
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(3, 1fr)",
+                gap: 16,
+              }}
+            >
+              {[
+                [t.trust1Title, t.trust1Desc],
+                [t.trust2Title, t.trust2Desc],
+                [t.trust3Title, t.trust3Desc],
+                [t.trust4Title, t.trust4Desc],
+                [t.trust5Title, t.trust5Desc],
+                [t.trust6Title, t.trust6Desc],
+              ].map((row, i) => {
+                const isHighlighted = i === 0;
+                return (
+                  <div
+                    key={i}
+                    style={{
+                      borderRadius: 26,
+                      padding: 24,
+                      background: isHighlighted
+                        ? "linear-gradient(135deg, " + themeColor + ", " + themeDeep + ")"
+                        : "rgba(255,255,255,.88)",
+                      color: isHighlighted ? "#fff" : T.ink,
+                      border: "1px solid " + T.hairline,
+                      boxShadow: isHighlighted
+                        ? (isArabic ? "0 24px 64px rgba(0,108,53,.24)" : "0 24px 64px rgba(227,10,23,.24)")
+                        : "0 16px 40px rgba(58,5,9,.06)",
+                    }}
+                  >
+                    <div
+                      style={{
+                        width: 42,
+                        height: 42,
+                        borderRadius: 16,
+                        display: "grid",
+                        placeItems: "center",
+                        marginBottom: 16,
+                        background: isHighlighted
+                          ? "rgba(255,255,255,.18)"
+                          : (isArabic ? "rgba(0,108,53,.10)" : "rgba(227,10,23,.08)"),
+                        color: isHighlighted ? "#fff" : themeColor,
+                        fontSize: 18,
+                        fontWeight: 950,
+                      }}
+                    >
+                      ✓
+                    </div>
+
+                    <h3
+                      style={{
+                        margin: 0,
+                        fontSize: 20,
+                        fontWeight: 950,
+                        letterSpacing: "-0.035em",
+                        lineHeight: 1.25,
+                      }}
+                    >
+                      {row[0]}
+                    </h3>
+
+                    <p
+                      style={{
+                        margin: "10px 0 0",
+                        color: isHighlighted ? "rgba(255,255,255,.82)" : T.muted,
+                        fontSize: 14,
+                        lineHeight: 1.65,
+                        fontWeight: 650,
+                      }}
+                    >
+                      {row[1]}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
           </div>
 
           {/* FINAL CTA */}
