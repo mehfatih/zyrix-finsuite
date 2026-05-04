@@ -1,9 +1,12 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useI18n } from "../i18n/i18n.jsx";
+import { useCountry } from "../hooks/useCountry.jsx";
+import { COUNTRY_PROFILES } from "../utils/countryProfiles.js";
 
 import NavV2 from "../components/NavV2.jsx";
 import FooterV2 from "../components/FooterV2.jsx";
+import CountrySelectorPill from "../components/CountrySelectorPill.jsx";
 
 // ---------- Palettes ----------
 const C = {
@@ -337,6 +340,32 @@ export default function OnboardingPage() {
   const heavyShadow = isArabic
     ? "0 34px 90px rgba(0,77,38,.22)"
     : "0 34px 90px rgba(58,5,9,.24)";
+
+  // Country-aware market context
+  const { country, profile } = useCountry();
+  const activeProfile = COUNTRY_PROFILES[country] || profile;
+  const countryName = (activeProfile.name && activeProfile.name[lang])
+    || (activeProfile.name && activeProfile.name.EN)
+    || country;
+
+  const marketContextLabel =
+    lang === "AR" ? "السياق السوقي" :
+    lang === "TR" ? "Pazar Baglami" :
+    "Market Context";
+
+  const marketContextCopy =
+    lang === "AR"
+      ? "زيركس سيكيف اللغة وقواعد الفواتير وسير العمل تلقائيا حسب موقعك واعدادات مساحة عملك."
+      : lang === "TR"
+      ? "Zyrix dilini, fatura kurallarini ve is akislarini konumuna ve calisma alani ayarlarina gore otomatik uyarlayacak."
+      : "Zyrix will adapt language, invoice rules, and workflows based on your location and workspace settings.";
+
+  const marketAwareBadge =
+    lang === "AR"
+      ? "التحليل واعي للسوق نشط"
+      : lang === "TR"
+      ? "Pazar bilincli analiz aktif"
+      : "Market-aware analysis active";
 
   // Currency
   const currencySymbol = lang === "AR" ? " \u0631.\u0633" : lang === "EN" ? "$" : "\u20BA";
@@ -685,6 +714,70 @@ export default function OnboardingPage() {
                     </label>
                   </div>
 
+                  {/* MARKET CONTEXT CARD (country-aware) */}
+                  <div
+                    style={{
+                      borderRadius: 26,
+                      padding: 22,
+                      background: isArabic
+                        ? "linear-gradient(135deg, rgba(244,251,247,.96), rgba(255,255,255,.92))"
+                        : "linear-gradient(135deg, rgba(255,247,244,.96), rgba(255,255,255,.92))",
+                      border: "1px solid " + T.hairline,
+                      boxShadow: "0 16px 40px rgba(58,5,9,.06)",
+                      marginTop: 14,
+                      display: "grid",
+                      gap: 14,
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        gap: 16,
+                        flexWrap: "wrap",
+                      }}
+                    >
+                      <div>
+                        <div
+                          style={{
+                            color: themeColor,
+                            fontSize: 12,
+                            fontWeight: 950,
+                            letterSpacing: "1.4px",
+                            textTransform: "uppercase",
+                            marginBottom: 6,
+                          }}
+                        >
+                          {marketContextLabel}
+                        </div>
+                        <strong
+                          style={{
+                            fontSize: 20,
+                            fontWeight: 950,
+                            color: T.ink,
+                          }}
+                        >
+                          {countryName}
+                        </strong>
+                      </div>
+
+                      <CountrySelectorPill mode="light" compact={false} />
+                    </div>
+
+                    <p
+                      style={{
+                        margin: 0,
+                        color: T.muted,
+                        fontSize: 14,
+                        lineHeight: 1.65,
+                        fontWeight: 700,
+                      }}
+                    >
+                      {marketContextCopy}
+                    </p>
+                  </div>
+
                   <div style={{ marginTop: 30 }}>
                     <button
                       onClick={goNext}
@@ -815,6 +908,28 @@ export default function OnboardingPage() {
                   >
                     {t.s1Title}
                   </h2>
+                </div>
+
+                {/* MARKET-AWARE ANALYSIS BADGE */}
+                <div style={{ textAlign: "center", marginBottom: 24 }}>
+                  <div
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 10,
+                      padding: "10px 16px",
+                      borderRadius: 999,
+                      background: isArabic ? "rgba(0,108,53,.10)" : "rgba(227,10,23,.08)",
+                      border: "1px solid " + T.hairline,
+                      color: themeColor,
+                      fontSize: 13,
+                      fontWeight: 950,
+                      letterSpacing: ".8px",
+                    }}
+                  >
+                    <span style={{ fontSize: 8 }}>●</span>
+                    <span>{marketAwareBadge} · {countryName}</span>
+                  </div>
                 </div>
 
                 <div
