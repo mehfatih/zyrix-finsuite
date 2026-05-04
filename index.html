@@ -5,18 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 
     <!-- SEO -->
-    <meta name="description" content="Zyrix FinSuite — Türkiye'nin akıllı finansal yönetim platformu. E-Fatura, SGK, AI Asistan ve daha fazlası." />
-    <meta name="keywords" content="e-fatura, muhasebe, SGK, ERP, CRM, Türkiye, KDV" />
+    <meta name="description" content="Zyrix FinSuite — invoices, collections, and AI cashflow analytics for businesses in Turkey, Saudi Arabia, and the wider MENA region." />
+    <meta name="keywords" content="e-invoice, AI cashflow, CRM, ERP, Turkey, Saudi Arabia, KDV, ZATCA" />
     <meta name="author" content="Zyrix" />
 
-    <!-- PWA -->
-    <meta name="theme-color" content="#6C3AFF" />
-    <meta name="mobile-web-app-capable" content="yes" />
+    <!-- Theme -->
+    <meta name="theme-color" content="#E30A17" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="apple-mobile-web-app-title" content="ZyrixFin" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Zyrix FinSuite" />
     <meta name="application-name" content="Zyrix FinSuite" />
-    <meta name="msapplication-TileColor" content="#6C3AFF" />
 
     <!-- Icons -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
@@ -26,7 +24,7 @@
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Zyrix FinSuite" />
-    <meta property="og:description" content="Türkiye'nin akıllı finansal yönetim platformu" />
+    <meta property="og:description" content="Invoices, collections, and AI cashflow analytics for MENA businesses." />
     <meta property="og:url" content="https://finsuite.zyrix.co" />
     <meta property="og:image" content="https://finsuite.zyrix.co/og-image.png" />
 
@@ -35,54 +33,26 @@
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Manrope:wght@400;500;600;700;800;900&family=Inter+Tight:wght@600;700;800;900&display=swap" rel="stylesheet" />
 
     <style>
       *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-      body { background: #F0F4FF; font-family: 'Inter', system-ui, sans-serif; }
+      body {
+        background: #fff;
+        font-family: 'Plus Jakarta Sans', 'Manrope', system-ui, sans-serif;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
       #root { min-height: 100vh; }
-
-      /* PWA splash loading */
-      #pwa-splash {
-        position: fixed; inset: 0;
-        background: linear-gradient(135deg, #0f172a, #6C3AFF);
-        display: flex; align-items: center; justify-content: center;
-        flex-direction: column; gap: 16px; z-index: 9999;
-        transition: opacity 0.4s ease;
-      }
-      #pwa-splash.hidden { opacity: 0; pointer-events: none; }
-      #pwa-splash .logo {
-        width: 72px; height: 72px; border-radius: 20px;
-        background: rgba(255,255,255,0.15);
-        display: flex; align-items: center; justify-content: center;
-        font-size: 36px; font-weight: 900; color: #fff;
-      }
-      #pwa-splash .name {
-        color: #fff; font-size: 22px; font-weight: 800; letter-spacing: -0.5px;
-      }
-      #pwa-splash .sub {
-        color: rgba(255,255,255,0.6); font-size: 12px; letter-spacing: 2px; text-transform: uppercase;
-      }
     </style>
-     <link rel="preconnect" href="https://fonts.googleapis.com">
-     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   </head>
   <body>
-    <!-- PWA Splash Screen -->
-    <div id="pwa-splash">
-      <div class="logo">Z</div>
-      <div class="name">Zyrix FinSuite</div>
-      <div class="sub">Yükleniyor...</div>
-    </div>
-
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
 
-    <!-- Register Service Worker -->
+    <!-- Cleanup any stale service workers / caches from previous PWA build -->
     <script>
       if ('serviceWorker' in navigator) {
-        // DEV: unregister any existing SW to avoid stale cache
         window.addEventListener('load', () => {
           navigator.serviceWorker.getRegistrations().then(rs => {
             rs.forEach(r => r.unregister());
@@ -92,17 +62,6 @@
           }
         });
       }
-
-      // Hide splash after app loads
-      window.addEventListener('load', () => {
-        setTimeout(() => {
-          const splash = document.getElementById('pwa-splash');
-          if (splash) {
-            splash.classList.add('hidden');
-            setTimeout(() => splash.remove(), 400);
-          }
-        }, 800);
-      });
     </script>
   </body>
 </html>
