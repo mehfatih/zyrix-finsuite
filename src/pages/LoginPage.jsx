@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useI18n } from "../i18n/i18n.jsx";
 import { useAuth } from "../context/AuthContext";
@@ -36,16 +36,23 @@ const SA = {
 const TXT = {
   TR: {
     eyebrow: "DÖNÜŞ",
-    h1: "Nakit akışı sistemin seni bekliyor.",
+    h1Default: "Nakit akışı sistemin seni bekliyor.",
+    h1Personal: "Tekrar hoş geldin — nakit akışı eylemlerin seni bekliyor.",
     sub: "Analizin, risk sinyallerin ve sonraki eylemlerin zaten hazır.",
-    inside: [
-      "Riskli faturalar tespit edildi",
-      "Takipler hazır",
-      "Nakit akışı uyarıları",
-      "AI önerileri",
-    ],
-    smartTitle: "Son oturum içgörülerin korundu.",
-    smartText: "Kaldığın yerden devam et — sıfırdan başlamana gerek yok.",
+
+    cardRiskyLabel: "riskli fatura tespit edildi",
+    cardFollowupsLabel: "takip hazır",
+    cardRecoverableLabel: "geri kazanılabilir nakit",
+    cardSectorLabelDefault: "AI önerileri hazır",
+    cardSectorLabelPersonal: "son analiz edilen sektör",
+    cardAIDefault: "AI",
+
+    smartTitleDefault: "Son oturum içgörüleri korunacak.",
+    smartTitlePersonal: "Önceki analizin korundu.",
+    smartTextDefault: "Kaldığın yerden devam et — sıfırdan başlamana gerek yok.",
+    smartTextPersonalPrefix: "",
+    smartTextPersonalMid: " sektör analizinden devam et ve sonraki tavsiyelere göre hareket et.",
+
     formEyebrow: "GİRİŞ",
     formTitle: "Tekrar hoş geldin.",
     formSub: "Hesabına giriş yap ve çalışmaya devam et.",
@@ -56,6 +63,10 @@ const TXT = {
     submitBtn: "Devam",
     submitting: "Giriş yapılıyor...",
     forgot: "Şifremi unuttum",
+
+    ctaContinue: "Analizime devam et",
+    ctaRunFirst: "Önce AI analizini çalıştır",
+
     secondaryOtp: "OTP ile Devam Et",
     secondaryRegister: "Hesap Oluştur",
     trust: ["Güvenli giriş", "Özel çalışma alanı", "Anında erişim"],
@@ -64,16 +75,23 @@ const TXT = {
   },
   EN: {
     eyebrow: "RETURN",
-    h1: "Your cashflow system is waiting.",
+    h1Default: "Your cashflow system is waiting.",
+    h1Personal: "Welcome back — your cashflow actions are waiting.",
     sub: "Your analysis, risk signals, and next actions are already prepared.",
-    inside: [
-      "Risky invoices detected",
-      "Follow-ups ready",
-      "Cashflow alerts",
-      "AI recommendations",
-    ],
-    smartTitle: "Last session insights are preserved.",
-    smartText: "Continue from where you left off — no need to start again.",
+
+    cardRiskyLabel: "risky invoices detected",
+    cardFollowupsLabel: "follow-ups ready",
+    cardRecoverableLabel: "recoverable cash",
+    cardSectorLabelDefault: "AI recommendations ready",
+    cardSectorLabelPersonal: "last sector analyzed",
+    cardAIDefault: "AI",
+
+    smartTitleDefault: "Last session insights will be preserved.",
+    smartTitlePersonal: "Your previous analysis is preserved.",
+    smartTextDefault: "Continue from where you left off — no need to start again.",
+    smartTextPersonalPrefix: "Continue from your ",
+    smartTextPersonalMid: " cashflow analysis and act on the next recommendations.",
+
     formEyebrow: "LOG IN",
     formTitle: "Welcome back.",
     formSub: "Sign in to your workspace and keep moving.",
@@ -84,6 +102,10 @@ const TXT = {
     submitBtn: "Continue",
     submitting: "Signing in...",
     forgot: "Forgot password",
+
+    ctaContinue: "Continue my analysis",
+    ctaRunFirst: "Run AI analysis first",
+
     secondaryOtp: "Continue with OTP",
     secondaryRegister: "Create Account",
     trust: ["Secure login", "Private workspace", "Instant access"],
@@ -92,16 +114,23 @@ const TXT = {
   },
   AR: {
     eyebrow: "العودة",
-    h1: "نظام تدفّقك النقدي بانتظارك.",
+    h1Default: "نظام تدفّقك النقدي بانتظارك.",
+    h1Personal: "أهلاً بعودتك — إجراءات تدفّقك النقدي بانتظارك.",
     sub: "تحليلك، إشارات المخاطر، والخطوات التالية جاهزة بالفعل.",
-    inside: [
-      "فواتير عالية المخاطر مكتشفة",
-      "متابعات جاهزة",
-      "تنبيهات التدفّق النقدي",
-      "توصيات AI",
-    ],
-    smartTitle: "رؤى جلستك الأخيرة محفوظة.",
-    smartText: "تابع من حيث توقّفت — لا داعي للبدء من جديد.",
+
+    cardRiskyLabel: "فاتورة عالية المخاطر مكتشفة",
+    cardFollowupsLabel: "متابعة جاهزة",
+    cardRecoverableLabel: "نقد قابل للاسترداد",
+    cardSectorLabelDefault: "توصيات AI جاهزة",
+    cardSectorLabelPersonal: "آخر قطاع تم تحليله",
+    cardAIDefault: "AI",
+
+    smartTitleDefault: "ستُحفظ رؤى الجلسة الأخيرة.",
+    smartTitlePersonal: "تحليلك السابق محفوظ.",
+    smartTextDefault: "تابع من حيث توقّفت — لا داعي للبدء من جديد.",
+    smartTextPersonalPrefix: "تابع من تحليل قطاع ",
+    smartTextPersonalMid: " النقدي ونفّذ التوصيات التالية.",
+
     formEyebrow: "تسجيل الدخول",
     formTitle: "أهلاً بعودتك.",
     formSub: "سجّل دخولك إلى مساحة عملك واستمر بالتقدّم.",
@@ -112,6 +141,10 @@ const TXT = {
     submitBtn: "متابعة",
     submitting: "جارٍ تسجيل الدخول...",
     forgot: "نسيت كلمة السر",
+
+    ctaContinue: "متابعة تحليلي",
+    ctaRunFirst: "تشغيل تحليل AI أولاً",
+
     secondaryOtp: "المتابعة بـ OTP",
     secondaryRegister: "إنشاء حساب",
     trust: ["تسجيل دخول آمن", "مساحة عمل خاصّة", "وصول فوري"],
@@ -145,6 +178,35 @@ export default function LoginPage() {
   const [warning, setWarning] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPass, setShowPass] = useState(false);
+
+  // === User history personalization ===
+  const [history, setHistory] = useState(null);
+
+  useEffect(() => {
+    try {
+      const saved = {
+        analysis: localStorage.getItem("zyrix_last_analysis"),
+        sector: localStorage.getItem("zyrix_last_sector"),
+        plan: localStorage.getItem("zyrix_last_plan"),
+        recoverable: localStorage.getItem("zyrix_last_recoverable"),
+        riskyInvoices: localStorage.getItem("zyrix_last_risky_invoices"),
+        followups: localStorage.getItem("zyrix_last_followups"),
+      };
+      const hasHistory = Object.values(saved).some(Boolean);
+      if (hasHistory) {
+        setHistory({
+          analysis: saved.analysis || "AI Cashflow Analysis",
+          sector: saved.sector || "Business",
+          plan: saved.plan || "Growth",
+          recoverable: saved.recoverable || "$6,048",
+          riskyInvoices: saved.riskyInvoices || "99",
+          followups: saved.followups || "32",
+        });
+      }
+    } catch (e) {
+      // localStorage may be unavailable in some embedded contexts; ignore
+    }
+  }, []);
 
   const handleSubmit = async (e) => {
     if (e && e.preventDefault) e.preventDefault();
@@ -192,6 +254,35 @@ export default function LoginPage() {
     marginBottom: 8,
     letterSpacing: "1.1px",
   };
+
+  // Resolve dynamic content based on whether history exists
+  const headline = history ? t.h1Personal : t.h1Default;
+  const smartTitle = history ? t.smartTitlePersonal : t.smartTitleDefault;
+  const smartText = history
+    ? (t.smartTextPersonalPrefix + history.sector + t.smartTextPersonalMid)
+    : t.smartTextDefault;
+  const ctaLabel = history ? t.ctaContinue : t.ctaRunFirst;
+  const ctaHref = history ? "/onboarding" : "/ai-analysis";
+
+  // 4 stat cards: each is [value, label]
+  const cards = [
+    [
+      history ? history.riskyInvoices : "99",
+      t.cardRiskyLabel,
+    ],
+    [
+      history ? history.followups : "32",
+      t.cardFollowupsLabel,
+    ],
+    [
+      history ? history.recoverable : "$6,048",
+      t.cardRecoverableLabel,
+    ],
+    [
+      history ? history.sector : t.cardAIDefault,
+      history ? t.cardSectorLabelPersonal : t.cardSectorLabelDefault,
+    ],
+  ];
 
   return (
     <>
@@ -257,13 +348,13 @@ export default function LoginPage() {
                 <h1
                   style={{
                     margin: 0,
-                    fontSize: "clamp(36px,4.5vw,60px)",
+                    fontSize: "clamp(34px,4.4vw,58px)",
                     lineHeight: 1.04,
                     letterSpacing: "-0.05em",
                     fontWeight: 950,
                   }}
                 >
-                  {t.h1}
+                  {headline}
                 </h1>
 
                 <p
@@ -278,6 +369,7 @@ export default function LoginPage() {
                   {t.sub}
                 </p>
 
+                {/* 4 stat cards (2x2) */}
                 <div
                   style={{
                     marginTop: 26,
@@ -286,7 +378,7 @@ export default function LoginPage() {
                     gap: 12,
                   }}
                 >
-                  {t.inside.map((txt, i) => (
+                  {cards.map(([num, label], i) => (
                     <div
                       key={i}
                       style={{
@@ -295,18 +387,35 @@ export default function LoginPage() {
                         background: "rgba(255,255,255,.96)",
                         border: "1px solid " + T.hairline,
                         boxShadow: "0 16px 36px rgba(" + shadowRGB + ",.06)",
-                        fontWeight: 850,
-                        fontSize: 14,
-                        lineHeight: 1.45,
-                        color: T.ink,
                       }}
                     >
-                      <span style={{ color: themeColor, marginRight: isRTL ? 0 : 8, marginLeft: isRTL ? 8 : 0, fontWeight: 950 }}>✓</span>
-                      {txt}
+                      <div
+                        style={{
+                          color: themeColor,
+                          fontSize: 28,
+                          fontWeight: 950,
+                          letterSpacing: "-0.04em",
+                          fontVariantNumeric: "tabular-nums",
+                        }}
+                      >
+                        {num}
+                      </div>
+                      <div
+                        style={{
+                          marginTop: 4,
+                          color: T.muted,
+                          fontSize: 12.5,
+                          fontWeight: 850,
+                          lineHeight: 1.4,
+                        }}
+                      >
+                        {label}
+                      </div>
                     </div>
                   ))}
                 </div>
 
+                {/* Smart Reminder panel (dynamic) */}
                 <div
                   style={{
                     marginTop: 22,
@@ -318,13 +427,14 @@ export default function LoginPage() {
                   }}
                 >
                   <h3 style={{ margin: 0, fontSize: 22, lineHeight: 1.18, letterSpacing: "-0.04em", fontWeight: 950 }}>
-                    {t.smartTitle}
+                    {smartTitle}
                   </h3>
                   <p style={{ margin: "10px 0 0", opacity: 0.78, fontSize: 14, lineHeight: 1.65, fontWeight: 650 }}>
-                    {t.smartText}
+                    {smartText}
                   </p>
                 </div>
 
+                {/* Country compliance hint */}
                 <div
                   style={{
                     marginTop: 14,
@@ -461,6 +571,28 @@ export default function LoginPage() {
                   >
                     {loading ? t.submitting : (t.submitBtn + " " + arrow)}
                   </button>
+
+                  {/* Dynamic CTA: Continue analysis or Run AI first */}
+                  <Link
+                    to={ctaHref}
+                    style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      height: 52,
+                      borderRadius: 18,
+                      color: T.ink,
+                      background: history
+                        ? "rgba(" + themeGlowRGB + ",.06)"
+                        : "#fff",
+                      border: "1px solid " + (history ? "rgba(" + themeGlowRGB + ",.18)" : T.hairline),
+                      textDecoration: "none",
+                      fontSize: 14,
+                      fontWeight: 950,
+                    }}
+                  >
+                    {ctaLabel} {arrow}
+                  </Link>
 
                   <div style={{ textAlign: "center", marginTop: 4 }}>
                     <button
