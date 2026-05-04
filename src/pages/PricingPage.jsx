@@ -1,9 +1,33 @@
 import React, { useState, useMemo, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { useI18n } from "../i18n/i18n";
+import { useCountry } from "../hooks/useCountry.jsx";
+import { COUNTRY_PROFILES, SUPPORTED_COUNTRIES } from "../utils/countryProfiles.js";
 
 import NavV2 from "../components/NavV2.jsx";
 import FooterV2 from "../components/FooterV2.jsx";
+
+// ================================================================
+// Country-specific pricing (purchasing-power adjusted)
+// Not pure FX conversion - prices reflect local market expectations.
+// All values are MONTHLY. Yearly is roughly 80% of monthly (20% off).
+// ================================================================
+const COUNTRY_PRICING = {
+  TR: { starterMonthly: 199, starterYearly: 159, growthMonthly: 499, growthYearly: 399 },
+  SA: { starterMonthly: 69,  starterYearly: 55,  growthMonthly: 179, growthYearly: 143 },
+  AE: { starterMonthly: 69,  starterYearly: 55,  growthMonthly: 179, growthYearly: 143 },
+  EG: { starterMonthly: 299, starterYearly: 239, growthMonthly: 799, growthYearly: 639 },
+  KW: { starterMonthly: 5,   starterYearly: 4,   growthMonthly: 15,  growthYearly: 12  },
+  QA: { starterMonthly: 69,  starterYearly: 55,  growthMonthly: 179, growthYearly: 143 },
+  BH: { starterMonthly: 7,   starterYearly: 5,   growthMonthly: 18,  growthYearly: 14  },
+  OM: { starterMonthly: 7,   starterYearly: 5,   growthMonthly: 18,  growthYearly: 14  },
+  JO: { starterMonthly: 13,  starterYearly: 10,  growthMonthly: 35,  growthYearly: 28  },
+  US: { starterMonthly: 19,  starterYearly: 15,  growthMonthly: 49,  growthYearly: 39  },
+};
+
+function getPricingForCountry(code) {
+  return COUNTRY_PRICING[code] || COUNTRY_PRICING.US;
+}
 
 const C = {
   red: "#E30A17", redDeep: "#B30810", redBright: "#FF1A2A",
@@ -267,8 +291,39 @@ export default function PricingPage() {
   const themeBright = isArabic ? SA.greenBright : C.redBright;
   const themeNight = isArabic ? SA.green950 : C.wine950;
 
-  const currencySymbol = lang === "AR" ? " ر.س" : lang === "EN" ? "$" : "₺";
-  const currencyPos = lang === "AR" ? "suffix" : "prefix";
+  // Country-aware pricing: read user country (auto-detected or chosen)
+  const { country: detectedCountry, profile, setCountry } = useCountry();
+  const [pricingCountry, setPricingCountry] = useState(detectedCountry);
+
+  // Sync if user picks a country from the dropdown above pricing cards
+  const handleCountryChange = (code) => {
+    setPricingCountry(code);
+    setCountry(code);
+  };
+
+  // Active profile and pricing for the selected country
+  const activeProfile = COUNTRY_PROFILES[pricingCountry] || profile;
+  const countryPricing = getPricingForCountry(pricingCountry);
+  const currencySymbol = activeProfile.currencySymbol;
+  const currencyPos = activeProfile.code === "US" || activeProfile.code === "TR" ? "prefix" : "suffix";
+
+  // Build the actual plans by overriding prices from t.plans (translation
+  // copy) with country-specific numeric prices. The "Custom" plan has
+  // priceMonthly: null, so we leave it untouched.
+  const plans = useMemo(() => {
+    if (!t.plans || !Array.isArray(t.plans)) return [];
+    return plans.map((p, idx) => {
+      // Index 0 = Starter, 1 = Growth, 2 = Scale (Custom)
+      if (idx === 0) {
+        return { ...p, priceMonthly: countryPricing.starterMonthly, priceYearly: countryPricing.starterYearly };
+      }
+      if (idx === 1) {
+        return { ...p, priceMonthly: countryPricing.growthMonthly, priceYearly: countryPricing.growthYearly };
+      }
+      // Scale stays "Custom"
+      return p;
+    });
+  }, [t.plans, countryPricing]);
   const fmt = (n) => {
     const formatted = Math.round(n).toLocaleString("en-US");
     return currencyPos === "prefix" ? currencySymbol + formatted : formatted + currencySymbol;
@@ -439,6 +494,61 @@ export default function PricingPage() {
               {t.plansSub}
             </p>
 
+            {/* Country / region selector */}
+            <div
+              style={{
+                marginTop: 18,
+                display: "inline-flex",
+                alignItems: "center",
+                gap: 10,
+                padding: "8px 14px",
+                borderRadius: 999,
+                background: "rgba(0,0,0,.04)",
+                border: "1px solid " + T.hairline,
+              }}
+            >
+              <span
+                style={{
+                  fontSize: 11,
+                  fontWeight: 900,
+                  color: T.muted,
+                  letterSpacing: "1px",
+                  textTransform: "uppercase",
+                }}
+              >
+                {lang === "TR" ? "Bölge" : lang === "AR" ? "المنطقة" : "Region"}
+              </span>
+              <select
+                value={pricingCountry}
+                onChange={(e) => handleCountryChange(e.target.value)}
+                style={{
+                  border: "none",
+                  background: "transparent",
+                  fontSize: 14,
+                  fontWeight: 900,
+                  color: T.ink,
+                  cursor: "pointer",
+                  outline: "none",
+                  fontFamily: "inherit",
+                  appearance: "none",
+                  paddingRight: 22,
+                  backgroundImage: "url(\"data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 width%3D%2210%22 height%3D%226%22 viewBox%3D%220 0 10 6%22%3E%3Cpath fill%3D%22%23999%22 d%3D%22M5 6L0 0h10z%22%2F%3E%3C%2Fsvg%3E\")",
+                  backgroundRepeat: "no-repeat",
+                  backgroundPosition: "right center",
+                }}
+              >
+                {SUPPORTED_COUNTRIES.map((code) => {
+                  const cp = COUNTRY_PROFILES[code];
+                  const cName = (cp.name && cp.name[lang]) || cp.name.EN || code;
+                  return (
+                    <option key={code} value={code}>
+                      {cName} ({cp.currency})
+                    </option>
+                  );
+                })}
+              </select>
+            </div>
+
             {/* Billing toggle */}
             <div style={{ marginTop: 22, display: "inline-flex", alignItems: "center", gap: 6, padding: 5, borderRadius: 999, background: "rgba(255,255,255,.95)", border: "1px solid " + T.hairline, boxShadow: "0 14px 32px rgba(58,5,9,.06)" }}>
               <button onClick={() => setBillingYearly(false)} style={{ padding: "10px 20px", borderRadius: 999, border: 0, cursor: "pointer", fontSize: 13, fontWeight: 900, fontFamily: "inherit", background: !billingYearly ? ctaGradient : "transparent", color: !billingYearly ? "#fff" : T.muted, transition: "all .25s ease", boxShadow: !billingYearly ? ctaShadow : "none" }}>
@@ -455,7 +565,7 @@ export default function PricingPage() {
 
           {/* PRICING CARDS */}
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 22, alignItems: "stretch", paddingTop: 28 }}>
-            {t.plans.map((p, idx) => {
+            {plans.map((p, idx) => {
               const hot = idx === 1;
               const isCustom = p.priceMonthly == null;
               const priceNum = billingYearly ? p.priceYearly : p.priceMonthly;
