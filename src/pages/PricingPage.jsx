@@ -312,7 +312,7 @@ export default function PricingPage() {
   // priceMonthly: null, so we leave it untouched.
   const plans = useMemo(() => {
     if (!t.plans || !Array.isArray(t.plans)) return [];
-    return plans.map((p, idx) => {
+    return t.plans.map((p, idx) => {
       // Index 0 = Starter, 1 = Growth, 2 = Scale (Custom)
       if (idx === 0) {
         return { ...p, priceMonthly: countryPricing.starterMonthly, priceYearly: countryPricing.starterYearly };
