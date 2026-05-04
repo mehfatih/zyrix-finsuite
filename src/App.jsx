@@ -63,7 +63,6 @@ export default function App() {
           <Route path="/campaigns"    element={<RequireAuth><CampaignsPage /></RequireAuth>} />
           <Route path="/invite/:token" element={<InviteAcceptPage />} />
           <Route path="/home"         element={<HomeRedirect />} />
-          <Route path="*"             element={<Navigate to="/" replace />} />
         
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/privacy" element={<PrivacyPage />} />
