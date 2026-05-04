@@ -26,6 +26,7 @@ import PrivacyPage from "./pages/PrivacyPage.jsx";
 import TermsPage from "./pages/TermsPage.jsx";
 import SecurityPage from "./pages/SecurityPage.jsx";
 import NotFoundPage from "./pages/NotFoundPage.jsx";
+import ScrollToTop from "./components/ScrollToTop.jsx";
 function HomeRedirect() {
   const { user, loading } = useAuth();
   if (loading) return null;
@@ -41,6 +42,7 @@ export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
+        <ScrollToTop />
         <Routes>
           <Route path="/" element={<LandingPageV2Extended />} />
           <Route path="/ai-analysis" element={<AIAnalysisPage />} />
