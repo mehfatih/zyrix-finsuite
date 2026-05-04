@@ -72,6 +72,11 @@ export default function App() {
         <Route path="/security" element={<SecurityPage />} />
         <Route path="/v2-ext" element={<Navigate to="/" replace />} />
         <Route path="/v2-ext/*" element={<Navigate to="/" replace />} />
+          {/* Legacy V2 paths redirect to root (V2 is now the home page) */}
+          <Route path="/v2" element={<Navigate to="/" replace />} />
+          <Route path="/v2-ext" element={<Navigate to="/" replace />} />
+          <Route path="/v2-extended" element={<Navigate to="/" replace />} />
+          <Route path="/landing-v2" element={<Navigate to="/" replace />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
       </BrowserRouter>
