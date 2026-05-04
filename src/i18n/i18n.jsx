@@ -345,6 +345,14 @@ const translations = {
 
 // ── i18n Context ──────────────────────────────────────────────
 import { createContext, useContext, useState, useEffect } from 'react';
+import { landingV2Translations } from './landingV2.translations';
+
+// Merge Landing V2 translations into main translations
+Object.keys(landingV2Translations).forEach(lang => {
+  if (translations[lang]) {
+    Object.assign(translations[lang], landingV2Translations[lang]);
+  }
+});
 
 const I18nContext = createContext(null);
 

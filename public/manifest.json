@@ -8,7 +8,11 @@
   "theme_color": "#6C3AFF",
   "orientation": "portrait-primary",
   "lang": "tr",
-  "categories": ["finance", "business", "productivity"],
+  "categories": [
+    "finance",
+    "business",
+    "productivity"
+  ],
   "icons": [
     {
       "src": "/icons/icon-72.png",
@@ -65,30 +69,36 @@
       "short_name": "Faturalar",
       "description": "Fatura listesi",
       "url": "/dashboard?page=invoices",
-      "icons": [{ "src": "/icons/icon-96.png", "sizes": "96x96" }]
+      "icons": [
+        {
+          "src": "/icons/icon-96.png",
+          "sizes": "96x96"
+        }
+      ]
     },
     {
       "name": "Müşteriler",
       "short_name": "Müşteriler",
       "description": "Müşteri listesi",
       "url": "/dashboard?page=customers",
-      "icons": [{ "src": "/icons/icon-96.png", "sizes": "96x96" }]
+      "icons": [
+        {
+          "src": "/icons/icon-96.png",
+          "sizes": "96x96"
+        }
+      ]
     },
     {
       "name": "AI Asistan",
       "short_name": "AI",
       "description": "Vergi ve muhasebe asistanı",
       "url": "/dashboard?page=ai",
-      "icons": [{ "src": "/icons/icon-96.png", "sizes": "96x96" }]
-    }
-  ],
-  "screenshots": [
-    {
-      "src": "/screenshots/dashboard.png",
-      "sizes": "1280x720",
-      "type": "image/png",
-      "form_factor": "wide",
-      "label": "Zyrix FinSuite Dashboard"
+      "icons": [
+        {
+          "src": "/icons/icon-96.png",
+          "sizes": "96x96"
+        }
+      ]
     }
   ]
 }
