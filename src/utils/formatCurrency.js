@@ -45,11 +45,13 @@ export function formatCurrency(value, profile, lang) {
   }
 
   // Arabic: country-specific currency symbol (suffix style)
+  // For non-Arab countries (TR/US), fallback to ر.س to keep Arabic context
   if (lang === "AR") {
-    const symbol =
-      (profile && profile.currencySymbol) ||
-      (profile && profile.currencyCode) ||
-      "\u0631.\u0633"; // fallback: ر.س
+    const ARAB_COUNTRIES = ["SA", "AE", "EG", "QA", "KW", "BH", "OM", "JO", "MA", "LB", "TN", "DZ", "IQ", "SY", "YE", "LY", "PS", "SD"];
+    const isArabCountry = profile && profile.code && ARAB_COUNTRIES.indexOf(profile.code) !== -1;
+    const symbol = isArabCountry
+      ? (profile.currencySymbol || profile.currencyCode || "\u0631.\u0633")
+      : "\u0631.\u0633"; // ر.س default for non-Arab countries
     return v + " " + symbol;
   }
 
