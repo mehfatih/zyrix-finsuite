@@ -347,6 +347,7 @@ const translations = {
 import { createContext, useContext, useState, useEffect } from 'react';
 import { landingV2Translations } from './landingV2.translations';
 
+import { getLangForCountry } from "../utils/countryProfiles.js";
 // Merge Landing V2 translations into main translations
 Object.keys(landingV2Translations).forEach(lang => {
   if (translations[lang]) {
@@ -363,6 +364,12 @@ export function I18nProvider({ children }) {
     if (stored && translations[stored]) return stored;
     const user = JSON.parse(localStorage.getItem('zyrix_user') || '{}');
     if (user?.language && translations[user.language]) return user.language;
+    // NEW: country-driven default (from useCountry / IP detection)
+    const country = localStorage.getItem('zyrix_country');
+    if (country) {
+      const langFromCountry = getLangForCountry(country);
+      if (langFromCountry && translations[langFromCountry]) return langFromCountry;
+    }
     const browser = navigator.language?.slice(0, 2).toUpperCase();
     if (browser === 'AR') return 'AR';
     if (browser === 'EN') return 'EN';
