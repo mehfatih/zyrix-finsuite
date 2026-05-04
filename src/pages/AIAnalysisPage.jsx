@@ -437,6 +437,23 @@ export default function AIAnalysisPage() {
       clearInterval(msgInterval);
       setStep(t.msgs.length - 1);
       setLoading(false);
+
+      // Save analysis to localStorage for personalized login experience.
+      // LoginPage reads these keys to show "Welcome back" instead of default.
+      try {
+        const sector = inputs[0] && inputs[0].trim() ? inputs[0] : "Business";
+        const recoverable = counts && counts[0] != null ? "$" + counts[0] : "$0";
+        const riskyInvoices = counts && counts[1] != null ? String(counts[1]) : "0";
+        const followups = counts && counts[2] != null ? String(counts[2]) : "0";
+        localStorage.setItem("zyrix_last_analysis", "AI Cashflow Analysis");
+        localStorage.setItem("zyrix_last_sector", sector);
+        localStorage.setItem("zyrix_last_plan", "Growth");
+        localStorage.setItem("zyrix_last_recoverable", recoverable);
+        localStorage.setItem("zyrix_last_risky_invoices", riskyInvoices);
+        localStorage.setItem("zyrix_last_followups", followups);
+      } catch (e) {
+        // localStorage may be blocked in private mode; silently ignore
+      }
       setAnalyzed(true);
       // sync sliders to user inputs so they reflect what was analyzed
       if (userVolume > 0) setSimVolume(userVolume);
