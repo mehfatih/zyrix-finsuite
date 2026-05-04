@@ -429,7 +429,13 @@ export default function AIAnalysisPage() {
       //   [2] = priority follow-ups   (e.g. 32)
       //   [3] = opportunity (cash K)  (e.g. 87 means $87K)
       try {
-        const sector = inputs[0] && inputs[0].trim() ? inputs[0] : "Business";
+        const rawSector = (inputs[0] || "").trim();
+        // Require >=3 chars; otherwise fall back to "Business" so the
+        // smart panel doesn't say e.g. "Continue from your le analysis".
+        // Capitalize first letter so "trade" -> "Trade" in the UI.
+        const sector = rawSector.length >= 3
+          ? rawSector.charAt(0).toUpperCase() + rawSector.slice(1)
+          : "Business";
         const recoverable = targets && targets[3] != null ? fmtOpp(targets[3]) : "$0";
         const riskyInvoices = targets && targets[1] != null ? String(targets[1]) : "0";
         const followups = targets && targets[2] != null ? String(targets[2]) : "0";
