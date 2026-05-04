@@ -3,6 +3,17 @@ import { Link } from "react-router-dom";
 import { useI18n } from "../i18n/i18n";
 import { useCountry } from "../hooks/useCountry.jsx";
 import { COUNTRY_PROFILES, VISIBLE_COUNTRIES } from "../utils/countryProfiles.js";
+import {
+  PLAN_IDS,
+  getPlanPrice,
+  getPlanFeatures,
+  getPlanName,
+  getPlanTagline,
+  getPlanBadge,
+  getTierLabel,
+  getCtaLabel,
+  activatePlan,
+} from "../utils/planCatalog.js";
 
 import NavV2 from "../components/NavV2.jsx";
 import FooterV2 from "../components/FooterV2.jsx";
@@ -309,21 +320,31 @@ export default function PricingPage() {
 
   // Build the actual plans by overriding prices from t.plans (translation
   // copy) with country-specific numeric prices. The "Custom" plan has
-  // priceMonthly: null, so we leave it untouched.
+  // Map index to planCatalog ID
+  // 0 = e-Donusum (was Starter), 1 = On Muhasebe (was Growth), 2 = Pro (was Scale)
+  const planIdByIndex = [PLAN_IDS.E_DONUSUM, PLAN_IDS.ON_MUHASEBE, PLAN_IDS.PRO];
+
   const plans = useMemo(() => {
     if (!t.plans || !Array.isArray(t.plans)) return [];
     return t.plans.map((p, idx) => {
-      // Index 0 = Starter, 1 = Growth, 2 = Scale (Custom)
-      if (idx === 0) {
-        return { ...p, priceMonthly: countryPricing.starterMonthly, priceYearly: countryPricing.starterYearly };
-      }
-      if (idx === 1) {
-        return { ...p, priceMonthly: countryPricing.growthMonthly, priceYearly: countryPricing.growthYearly };
-      }
-      // Scale stays "Custom"
-      return p;
+      const planId = planIdByIndex[idx];
+      if (!planId) return p;
+      // Pull pricing from planCatalog (Logo competitive: 463/463/738 TR)
+      const monthlyPrice = getPlanPrice(planId, pricingCountry, "monthly");
+      const yearlyPrice = getPlanPrice(planId, pricingCountry, "yearly");
+      // Override the plan name and tagline from planCatalog (per current language)
+      const catalogName = getPlanName(planId, lang);
+      const catalogTagline = getPlanTagline(planId, lang);
+      return {
+        ...p,
+        planId: planId,
+        name: catalogName || p.name,
+        line: catalogTagline || p.line,
+        priceMonthly: monthlyPrice != null ? monthlyPrice : p.priceMonthly,
+        priceYearly: yearlyPrice != null ? yearlyPrice : p.priceYearly,
+      };
     });
-  }, [t.plans, countryPricing]);
+  }, [t.plans, pricingCountry, lang]);
   const fmt = (n) => {
     const formatted = Math.round(n).toLocaleString("en-US");
     return currencyPos === "prefix" ? currencySymbol + formatted : formatted + currencySymbol;
@@ -624,34 +645,111 @@ export default function PricingPage() {
                       </div>
                     </>
                   )}
-                  <div style={{ marginTop: 22, display: "flex", flexDirection: "column", gap: 11, flex: 1 }}>
-                    {p.items.map((x, i) => (
-                      <div key={i} style={{ display: "flex", gap: 9, alignItems: "flex-start", color: hot ? "#fff" : T.ink, fontSize: 13, fontWeight: 700, lineHeight: 1.45 }}>
-                        <span style={{ color: hot ? "#fff" : themeColor, fontSize: 14, fontWeight: 900, lineHeight: 1.3, flexShrink: 0 }}>{"\u2713"}</span>
-                        <span>{x}</span>
-                      </div>
-                    ))}
+                  <div style={{ marginTop: 22, display: "flex", flexDirection: "column", gap: 18, flex: 1 }}>
+                    {(() => {
+                      if (!p.planId) {
+                        return (
+                          <div style={{ display: "flex", flexDirection: "column", gap: 11 }}>
+                            {p.items && p.items.map((x, i) => (
+                              <div key={i} style={{ display: "flex", gap: 9, alignItems: "flex-start", color: hot ? "#fff" : T.ink, fontSize: 13, fontWeight: 700, lineHeight: 1.45 }}>
+                                <span style={{ color: hot ? "#fff" : themeColor, fontSize: 14, fontWeight: 900, lineHeight: 1.3, flexShrink: 0 }}>{"\u2713"}</span>
+                                <span>{x}</span>
+                              </div>
+                            ))}
+                          </div>
+                        );
+                      }
+                      const features = getPlanFeatures(p.planId, lang);
+                      const renderTier = (tierKey, items, tierColor, tierIcon) => {
+                        if (!items || items.length === 0) return null;
+                        const tierLabel = getTierLabel(tierKey, lang);
+                        return (
+                          <div key={tierKey}>
+                            <div style={{
+                              fontSize: 10,
+                              fontWeight: 900,
+                              letterSpacing: "1px",
+                              textTransform: "uppercase",
+                              color: hot ? "rgba(255,255,255,.85)" : tierColor,
+                              marginBottom: 8,
+                              paddingBottom: 6,
+                              borderBottom: hot ? "1px solid rgba(255,255,255,.18)" : "1px solid " + T.hairline,
+                            }}>
+                              {tierIcon} {tierLabel}
+                            </div>
+                            <div style={{ display: "flex", flexDirection: "column", gap: 7 }}>
+                              {items.map((x, i) => (
+                                <div key={i} style={{
+                                  display: "flex",
+                                  gap: 9,
+                                  alignItems: "flex-start",
+                                  color: hot ? "#fff" : T.ink,
+                                  fontSize: 12.5,
+                                  fontWeight: 600,
+                                  lineHeight: 1.5
+                                }}>
+                                  <span style={{
+                                    color: hot ? "#fff" : tierColor,
+                                    fontSize: 13,
+                                    fontWeight: 900,
+                                    lineHeight: 1.3,
+                                    flexShrink: 0,
+                                    minWidth: 14,
+                                  }}>{tierIcon}</span>
+                                  <span>{x}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        );
+                      };
+                      return (
+                        <>
+                          {renderTier("logoFeatures", features.logoFeatures, C.emerald, "\u2713")}
+                          {renderTier("zyrixExclusive", features.zyrixExclusive, themeColor, "\u2605")}
+                          {renderTier("comingSoon", features.comingSoon, C.amber, "\u2192")}
+                        </>
+                      );
+                    })()}
                   </div>
-                  <Link
-                    to={isCustom ? "/contact" : "/onboarding"}
+                  <button
+                    onClick={() => {
+                      if (p.planId) {
+                        activatePlan(p.planId, {
+                          billing: billingYearly ? "yearly" : "monthly",
+                          country: pricingCountry,
+                        });
+                      } else {
+                        window.location.href = "/onboarding";
+                      }
+                    }}
                     style={{
                       marginTop: 24,
                       display: "flex",
+                      flexDirection: "column",
                       justifyContent: "center",
                       alignItems: "center",
-                      height: 54,
+                      gap: 4,
+                      height: 64,
                       borderRadius: 16,
-                      textDecoration: "none",
+                      border: 0,
+                      cursor: "pointer",
                       fontSize: 14,
                       fontWeight: 900,
                       background: hot ? "#fff" : ctaGradient,
                       color: hot ? T.ink : "#fff",
                       boxShadow: hot ? "0 18px 44px rgba(0,0,0,.18)" : ctaShadow,
                       letterSpacing: "0.2px",
+                      fontFamily: "inherit",
                     }}
                   >
-                    {p.cta} {"\u2192"}
-                  </Link>
+                    <span style={{ fontSize: 14, fontWeight: 900 }}>
+                      {getCtaLabel("activate", lang)} {"\u2192"}
+                    </span>
+                    <span style={{ fontSize: 10, fontWeight: 700, opacity: 0.7, letterSpacing: "0.5px" }}>
+                      {getCtaLabel("freeTrial", lang)}
+                    </span>
+                  </button>
                 </div>
               );
             })}
