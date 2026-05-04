@@ -18,6 +18,9 @@ import BurjMamlakaWatermark from "../components/landing-v2/BurjMamlakaWatermark"
 import NavV2 from "../components/NavV2.jsx";
 import FooterV2 from "../components/FooterV2.jsx";
 
+import { useCountry } from "../hooks/useCountry.jsx";
+import { formatCurrency } from "../utils/formatCurrency.js";
+
 // ── Color palette ────────────────────────────────────────────
 const C = {
   // Wine
@@ -862,20 +865,20 @@ function Features() {
             {activeTab === "crm" && (
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                 {(lang === "AR" ? [
-                  { stage: "عميل محتمل", count: 42, val: "850ك ر.س", clr: "#94a3b8" },
-                  { stage: "محادثة", count: 18, val: "420ك ر.س", clr: C.amber },
-                  { stage: "عرض سعر", count: 9, val: "285ك ر.س", clr: C.redBright },
-                  { stage: "فاز بالصفقة", count: 24, val: "680ك ر.س", clr: C.emerald },
+                  { stage: "عميل محتمل",  count: 42, val: formatCurrency("850K", profile, lang), clr: "#94a3b8" },
+                  { stage: "محادثة",      count: 18, val: formatCurrency("420K", profile, lang), clr: C.amber },
+                  { stage: "عرض سعر",     count: 9,  val: formatCurrency("285K", profile, lang), clr: C.redBright },
+                  { stage: "فاز بالصفقة", count: 24, val: formatCurrency("680K", profile, lang), clr: C.emerald },
                 ] : (lang === "EN" ? [
-                  { stage: "Lead", count: 42, val: "$850K", clr: "#94a3b8" },
-                  { stage: "Conversation", count: 18, val: "$420K", clr: C.amber },
-                  { stage: "Proposal", count: 9, val: "$285K", clr: C.redBright },
-                  { stage: "Won", count: 24, val: "$680K", clr: C.emerald },
+                  { stage: "Lead",         count: 42, val: formatCurrency("850K", profile, lang), clr: "#94a3b8" },
+                  { stage: "Conversation", count: 18, val: formatCurrency("420K", profile, lang), clr: C.amber },
+                  { stage: "Proposal",     count: 9,  val: formatCurrency("285K", profile, lang), clr: C.redBright },
+                  { stage: "Won",          count: 24, val: formatCurrency("680K", profile, lang), clr: C.emerald },
                 ] : [
-                  { stage: "Lead", count: 42, val: "₺850K", clr: "#94a3b8" },
-                  { stage: "Görüşme", count: 18, val: "₺420K", clr: C.amber },
-                  { stage: "Teklif", count: 9, val: "₺285K", clr: C.redBright },
-                  { stage: "Kazanıldı", count: 24, val: "₺680K", clr: C.emerald },
+                  { stage: "Lead",       count: 42, val: formatCurrency("850K", profile, lang), clr: "#94a3b8" },
+                  { stage: "Görüşme",    count: 18, val: formatCurrency("420K", profile, lang), clr: C.amber },
+                  { stage: "Teklif",     count: 9,  val: formatCurrency("285K", profile, lang), clr: C.redBright },
+                  { stage: "Kazanıldı",  count: 24, val: formatCurrency("680K", profile, lang), clr: C.emerald },
                 ])).map((s, i) => (
                   <div key={i} style={{ background: C.bgTinted, padding: 14, borderRadius: 12, borderLeft: `3px solid ${s.clr}` }}>
                     <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
@@ -905,17 +908,17 @@ function Features() {
                   </svg>
                 </div>
                 {(lang === "AR" ? [
-                  { lbl: "مستحق اليوم", val: "48,500 ر.س", clr: C.emerald },
-                  { lbl: "تأخير 1-7 أيام", val: "23,200 ر.س", clr: C.amber },
-                  { lbl: "8-30 يوم", val: "15,800 ر.س", clr: C.redBright },
+                  { lbl: "مستحق اليوم",      val: formatCurrency("48,500", profile, lang), clr: C.emerald },
+                  { lbl: "تأخير 1-7 أيام",   val: formatCurrency("23,200", profile, lang), clr: C.amber },
+                  { lbl: "8-30 يوم",          val: formatCurrency("15,800", profile, lang), clr: C.redBright },
                 ] : (lang === "EN" ? [
-                  { lbl: "Due today", val: "$48,500", clr: C.emerald },
-                  { lbl: "1-7 days late", val: "$23,200", clr: C.amber },
-                  { lbl: "8-30 days", val: "$15,800", clr: C.redBright },
+                  { lbl: "Due today",     val: formatCurrency("48,500", profile, lang), clr: C.emerald },
+                  { lbl: "1-7 days late", val: formatCurrency("23,200", profile, lang), clr: C.amber },
+                  { lbl: "8-30 days",     val: formatCurrency("15,800", profile, lang), clr: C.redBright },
                 ] : [
-                  { lbl: "Bugün vadesi", val: "₺48.500", clr: C.emerald },
-                  { lbl: "1-7 gün gecikme", val: "₺23.200", clr: C.amber },
-                  { lbl: "8-30 gün", val: "₺15.800", clr: C.redBright },
+                  { lbl: "Bugün vadesi",     val: formatCurrency("48.500", profile, lang), clr: C.emerald },
+                  { lbl: "1-7 gün gecikme",  val: formatCurrency("23.200", profile, lang), clr: C.amber },
+                  { lbl: "8-30 gün",         val: formatCurrency("15.800", profile, lang), clr: C.redBright },
                 ])).map((r, i) => (
                   <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 16px", background: C.bgTinted, borderRadius: 10, borderLeft: `3px solid ${r.clr}` }}>
                     <span style={{ fontSize: 13, fontWeight: 600 }}>{r.lbl}</span>
@@ -958,11 +961,11 @@ function Features() {
                   <div style={{ background: lang === "AR" ? "rgba(0,108,53,0.25)" : "rgba(227,10,23,0.2)", padding: 10, borderRadius: 10, color: "white", fontSize: 11, fontWeight: 700, marginBottom: 8 }}>{lang === "AR" ? "مرحباً أحمد 👋" : (lang === "EN" ? "Hello, Ahmed 👋" : "Merhaba, Ahmet 👋")}</div>
                   <div style={{ background: "rgba(255,255,255,0.05)", padding: 10, borderRadius: 10, marginBottom: 6 }}>
                     <div style={{ fontSize: 9, color: "rgba(255,255,255,0.5)" }}>{lang === "AR" ? "الإيرادات" : (lang === "EN" ? "Revenue" : "Ciro")}</div>
-                    <div style={{ color: "white", fontWeight: 700, fontSize: 14 }}>{lang === "AR" ? "1,250,000 ر.س" : (lang === "EN" ? "$1,250,000" : "₺1.250.000")}</div>
+                    <div style={{ color: "white", fontWeight: 700, fontSize: 14 }}>{formatCurrency(lang === "TR" ? "1.250.000" : "1,250,000", profile, lang)}</div>
                   </div>
                   <div style={{ background: "rgba(255,255,255,0.05)", padding: 10, borderRadius: 10, marginBottom: 8 }}>
                     <div style={{ fontSize: 9, color: "rgba(255,255,255,0.5)" }}>{lang === "AR" ? "معلّق" : (lang === "EN" ? "Pending" : "Bekleyen")}</div>
-                    <div style={{ color: "white", fontWeight: 700, fontSize: 14 }}>{lang === "AR" ? "245,000 ر.س" : (lang === "EN" ? "$245,000" : "₺245.000")}</div>
+                    <div style={{ color: "white", fontWeight: 700, fontSize: 14 }}>{formatCurrency(lang === "TR" ? "245.000" : "245,000", profile, lang)}</div>
                   </div>
                   <div style={{ background: lang === "AR" ? `linear-gradient(135deg, ${SA.green}, ${SA.greenDeep})` : `linear-gradient(135deg, ${C.red}, ${C.redDeep})`, padding: 8, borderRadius: 8, color: "white", fontSize: 10, fontWeight: 700, textAlign: "center" }}>{lang === "AR" ? "+ فاتورة جديدة" : (lang === "EN" ? "+ New Invoice" : "+ Yeni Fatura")}</div>
                 </div>
@@ -1107,13 +1110,19 @@ function CashflowCTA() {
 // ── PRICING ───────────────────────────────────────────────────
 function Pricing() {
   const { t, lang, isRTL } = useI18n();
+  const { profile } = useCountry();
   const isSaudi = lang === "AR";
   const priceMap = {
-    AR: { starter: "99 ر.س", business: "199 ر.س", pro: "399 ر.س" },
-    EN: { starter: "$29",    business: "$59",     pro: "$119"     },
-    TR: { starter: "₺499",   business: "₺999",    pro: "₺1.999"   },
+    AR: { starter: "99",  business: "199", pro: "399"   },
+    EN: { starter: "29",  business: "59",  pro: "119"   },
+    TR: { starter: "499", business: "999", pro: "1.999" },
   };
-  const P = priceMap[lang] || priceMap.TR;
+  const P_raw = priceMap[lang] || priceMap.TR;
+  const P = {
+    starter:  formatCurrency(P_raw.starter,  profile, lang),
+    business: formatCurrency(P_raw.business, profile, lang),
+    pro:      formatCurrency(P_raw.pro,      profile, lang),
+  };
   const plans = [
     {
       name: "Starter", price: P.starter, popular: false,
@@ -1476,6 +1485,7 @@ function FinalCTA() {
 // -- Stats Strip (V2-ext) --
 function StatsStrip() {
   const { t, lang } = useI18n();
+  const { profile } = useCountry();
   const isRTL = lang === "AR";
   const isSaudi = lang === "AR";
 
@@ -1484,7 +1494,7 @@ function StatsStrip() {
     { num: "5+", key: "clients", icon: "\u25CF" },
     { num: "3", key: "languages", icon: "\u{1F310}" },
     { num: "81/110", key: "score", icon: "\u2197" },
-    { num: lang === "AR" ? "71 ر.س" : lang === "EN" ? "$19" : "₺499", key: "starting", icon: lang === "AR" ? "ر" : lang === "EN" ? "$" : "\u20BA" },
+    { num: formatCurrency(lang === "AR" ? "71" : lang === "EN" ? "19" : "499", profile, lang), key: "starting", icon: lang === "AR" ? "ر" : lang === "EN" ? "$" : "\u20BA" },
     { num: "14", key: "trial", icon: "\u2713" },
   ];
 
@@ -1620,6 +1630,7 @@ function StatsStrip() {
 
 function AIInvoiceDemoSection() {
   const { lang, isRTL } = useI18n();
+  const { profile } = useCountry();
   const isArabic = lang === "AR";
   const T = isArabic ? SA : C;
   const [loading, setLoading] = useState(false);
