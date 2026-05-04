@@ -20,7 +20,7 @@ export const landingV2Translations = {
     'lv2.nav.signin':     'Giriş',
     'lv2.cta.start':      'Ücretsiz Dene',
     'lv2.cta.startFree':  'Ücretsiz Dene',
-    'lv2.cta.watchDemo':  'Demo İzle',
+    'lv2.cta.watchDemo':  'AI Analizi Çalıştır',
 
     // Hero
     'lv2.hero.badge':       "Türkiye'ye Özel E-Fatura & CRM Platformu",
@@ -90,14 +90,14 @@ export const landingV2Translations = {
     'lv2.feat.tab5':    'Mobil',
 
     // Demo CTA
-    'lv2.demo.eyebrow': 'CANLI DEMO',
-    'lv2.demo.title':   "Zyrix FinSuite'i<br>canlı deneyin",
-    'lv2.demo.desc':    'Tüm özellikleri gerçek verilerle keşfedin. 2 dakikada hesabınızı oluşturun, hemen kullanmaya başlayın',
-    'lv2.demo.check1':  '14 gün ücretsiz tüm özellikler',
+    'lv2.demo.eyebrow': 'AI NAKİT AKIŞI',
+    'lv2.demo.title':   "AI nakit akışı analizini<br>hemen çalıştır",
+    'lv2.demo.desc':    'Fatura risklerini ve geri kazanılabilir nakdı saniyeler içinde gör. 2 dakikada hesap oluştur ve hemen başla',
+    'lv2.demo.check1':  'Tüm özellikler 14 gün ücretsiz',
     'lv2.demo.check2':  'Kredi kartı gerekmez',
-    'lv2.demo.check3':  'Türkçe canlı destek',
-    'lv2.demo.cta1':    'Demo Kullan',
-    'lv2.demo.cta2':    'Satışla Görüş',
+    'lv2.demo.check3':  'Türkçe destek',
+    'lv2.demo.cta1':    'AI Analizi Çalıştır',
+    'lv2.demo.cta2':    'Uzmanla Görüş',
 
     // Pricing
     'lv2.price.eyebrow':      'FİYATLAR',
@@ -182,7 +182,7 @@ export const landingV2Translations = {
     'lv2.nav.signin':     'تسجيل الدخول',
     'lv2.cta.start':      'ابدأ مجاناً',
     'lv2.cta.startFree':  'ابدأ مجاناً',
-    'lv2.cta.watchDemo':  'شاهد العرض',
+    'lv2.cta.watchDemo':  'شغّل تحليل AI',
 
     // Hero
     'lv2.hero.badge':       'منصة الفوترة الإلكترونية و CRM لكل الأعمال',
@@ -252,14 +252,14 @@ export const landingV2Translations = {
     'lv2.feat.tab5':    'تطبيق الجوال',
 
     // Demo CTA
-    'lv2.demo.eyebrow': 'تجربة مباشرة',
-    'lv2.demo.title':   'جرب زيركس فينسويت<br>مباشرة الآن',
-    'lv2.demo.desc':    'اكتشف جميع المميزات ببيانات حقيقية. أنشئ حسابك في دقيقتين وابدأ الاستخدام فوراً',
-    'lv2.demo.check1':  '14 يوم مجاناً، كل المميزات',
+    'lv2.demo.eyebrow': 'AI للتدفّق النقدي',
+    'lv2.demo.title':   'شغّل تحليل AI<br>للتدفّق النقدي الآن',
+    'lv2.demo.desc':    'اكتشف مخاطر الفواتير والنقد القابل للاسترداد في ثوانٍ. أنشئ حسابك في دقيقتين وابدأ فوراً',
+    'lv2.demo.check1':  'كل المميزات 14 يوم مجاناً',
     'lv2.demo.check2':  'بدون بطاقة ائتمان',
-    'lv2.demo.check3':  'دعم مباشر بالعربية',
-    'lv2.demo.cta1':    'جرب الآن',
-    'lv2.demo.cta2':    'تواصل مع المبيعات',
+    'lv2.demo.check3':  'دعم بالعربية',
+    'lv2.demo.cta1':    'شغّل تحليل AI',
+    'lv2.demo.cta2':    'تواصل مع خبير',
 
     // Pricing
     'lv2.price.eyebrow':      'الأسعار',
@@ -344,7 +344,7 @@ export const landingV2Translations = {
     'lv2.nav.signin':     'Sign In',
     'lv2.cta.start':      'Start Free',
     'lv2.cta.startFree':  'Start Free',
-    'lv2.cta.watchDemo':  'Watch Demo',
+    'lv2.cta.watchDemo':  'Run AI Analysis',
 
     // Hero
     'lv2.hero.badge':       'Modern E-Invoice, CRM & AI Platform',
@@ -414,14 +414,14 @@ export const landingV2Translations = {
     'lv2.feat.tab5':    'Mobile App',
 
     // Demo CTA
-    'lv2.demo.eyebrow': 'LIVE DEMO',
-    'lv2.demo.title':   'Try Zyrix FinSuite<br>live now',
-    'lv2.demo.desc':    'Discover all features with real data. Create your account in 2 minutes and start using right away',
-    'lv2.demo.check1':  '14 days free, all features',
+    'lv2.demo.eyebrow': 'AI CASHFLOW',
+    'lv2.demo.title':   'Run your AI cashflow<br>analysis now',
+    'lv2.demo.desc':    'See invoice risks and recoverable cash in seconds. Create your account in 2 minutes and start right away',
+    'lv2.demo.check1':  'All features free for 14 days',
     'lv2.demo.check2':  'No credit card required',
-    'lv2.demo.check3':  '24/7 live support',
-    'lv2.demo.cta1':    'Try Demo',
-    'lv2.demo.cta2':    'Talk to Sales',
+    'lv2.demo.check3':  '24/7 support',
+    'lv2.demo.cta1':    'Run AI Analysis',
+    'lv2.demo.cta2':    'Talk to an Expert',
 
     // Pricing
     'lv2.price.eyebrow':      'PRICING',

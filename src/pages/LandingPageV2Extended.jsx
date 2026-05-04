@@ -265,7 +265,7 @@ function Hero() {
                 <span>{t("lv2.cta.startFree")}</span>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transform: isRTL ? "scaleX(-1)" : "none" }}><path d="M5 12h14M12 5l7 7-7 7"/></svg>
               </a>
-              <a href="#demo" style={{
+              <a href="#cashflow" style={{
                 display: "inline-flex",
                 alignItems: "center",
                 gap: 10,
@@ -990,11 +990,11 @@ function Features() {
 }
 
 // ── DEMO CTA ──────────────────────────────────────────────────
-function DemoCTA() {
+function CashflowCTA() {
   const { t, lang, isRTL } = useI18n();
   const isSaudi = lang === "AR";
   return (
-    <section id="demo" style={{ padding: "80px 32px 120px" }}>
+    <section id="cashflow" style={{ padding: "80px 32px 120px" }}>
       <div style={{ maxWidth: 1280, margin: "0 auto" }}>
         <div style={{
           background: isSaudi
@@ -1778,38 +1778,22 @@ function AIInvoiceDemoSection() {
 
     const API = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
-    try {
-      const res = await fetch(API + "/api/public-ai-demo/analyze-invoices", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          businessType: inputValues[0] || "",
-          invoiceVolume: parseFloat(inputValues[1]) || 0,
-          delayRate: parseFloat(inputValues[2]) || 0,
-          opsIntensity: parseFloat(inputValues[3]) || 0,
-          lang,
-        }),
-      });
-
-      const json = await res.json();
-      setLoading(false);
-      setAnalyzed(true);
-
-      if (json && json.success && json.data) {
-        const d = json.data;
-        if (Array.isArray(d.suggestion) && d.suggestion.length === 2) {
-          setAiSuggestion(d.suggestion);
-        }
-        animateToTargets([d.cashflow, d.risk, d.priority, d.opportunity]);
-      } else {
-        animateToTargets(computeTargetsFallback());
-      }
-    } catch (err) {
-      console.warn("[Zyrix AI] backend call failed, using local fallback", err);
-      setLoading(false);
-      setAnalyzed(true);
-      animateToTargets(computeTargetsFallback());
-    }
+    // Local deterministic analysis (no backend call).
+    // Math mirrors AIAnalysisPage.computeFromValues:
+    //   cashflow    = volume/50 - delay*0.6 + ops/20  bounded [-30, 60]
+    //   risk        = delay*1.2 + (volume<100 ? 8 : 0) bounded [0, 95]
+    //   priority    = volume/30 + delay/4              bounded [0, 99]
+    //   opportunity = volume*0.35 + ops*0.5 + bizLen*2 bounded [0, 999]
+    const _volume = parseFloat(inputValues[1]) || 0;
+    const _delay = parseFloat(inputValues[2]) || 0;
+    const _ops = parseFloat(inputValues[3]) || 0;
+    const _bizLen = (inputValues[0] || "").trim().length;
+    const _cashflow = Math.max(-30, Math.min(60, Math.round((_volume/50) - _delay*0.6 + (_ops/20))));
+    const _risk = Math.max(0, Math.min(95, Math.round(_delay*1.2 + (_volume < 100 ? 8 : 0))));
+    const _priority = Math.max(0, Math.min(99, Math.round((_volume/30) + (_delay/4))));
+    const _opportunity = Math.max(0, Math.min(999, Math.round((_volume*0.35) + (_ops*0.5) + _bizLen*2)));
+    const targets = [_cashflow, _risk, _priority, _opportunity];
+    const suggestion = null;
   };
 
   const chatMessages = [c.chat1, c.chat2, c.chat3];
@@ -2468,7 +2452,7 @@ export default function LandingPageV2Extended() {
         <AIInvoiceDemoSection />
         <ProblemSolution />
         <Features />
-        <DemoCTA />
+        <CashflowCTA />
         <Pricing />
         <Testimonials />
         <FinalCTA />
