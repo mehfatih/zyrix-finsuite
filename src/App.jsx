@@ -1,10 +1,14 @@
 import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, RequireAuth, useAuth } from "./context/AuthContext";
-import LandingPage       from "./pages/LandingPage";
 import LoginPage         from "./pages/LoginPage";
 import RegisterPage      from "./pages/RegisterPage";
 import OnboardingPage    from "./pages/OnboardingPage";
+import FeaturesPage from "./pages/FeaturesPage.jsx";
+import CaseStudiesPage from "./pages/CaseStudiesPage.jsx";
+import IntegrationsPage from "./pages/IntegrationsPage.jsx";
+import SectorsPage from "./pages/SectorsPage.jsx";
+import AboutPage from "./pages/AboutPage.jsx";
 import CustomerDashboard from "./pages/CustomerDashboard";
 import AdminPanel        from "./pages/AdminPanel";
 import PaymentPage       from "./pages/PaymentPage";
@@ -12,7 +16,16 @@ import TeamPage          from "./pages/TeamPage";
 import CampaignsPage     from "./pages/CampaignsPage";
 import OtpLogin          from "./pages/OtpLogin";
 import InviteAcceptPage  from "./pages/InviteAcceptPage";
+import LandingPageV2Extended from "./pages/LandingPageV2Extended";
+import AIAnalysisPage from "./pages/AIAnalysisPage";
+import HowItWorksPage from "./pages/HowItWorksPage";
+import PricingPage from "./pages/PricingPage";
 
+import ContactPage from "./pages/ContactPage.jsx";
+import PrivacyPage from "./pages/PrivacyPage.jsx";
+import TermsPage from "./pages/TermsPage.jsx";
+import SecurityPage from "./pages/SecurityPage.jsx";
+import NotFoundPage from "./pages/NotFoundPage.jsx";
 function HomeRedirect() {
   const { user, loading } = useAuth();
   if (loading) return null;
@@ -29,7 +42,16 @@ export default function App() {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/"             element={<LandingPage />} />
+          <Route path="/" element={<LandingPageV2Extended />} />
+          <Route path="/ai-analysis" element={<AIAnalysisPage />} />
+        <Route path="/how-it-works" element={<HowItWorksPage />} />
+        <Route path="/pricing" element={<PricingPage />} />
+        <Route path="/onboarding" element={<OnboardingPage />} />
+        <Route path="/features" element={<FeaturesPage />} />
+        <Route path="/case-studies" element={<CaseStudiesPage />} />
+        <Route path="/integrations" element={<IntegrationsPage />} />
+        <Route path="/sectors" element={<SectorsPage />} />
+        <Route path="/about" element={<AboutPage />} />
           <Route path="/login"        element={<LoginPage />} />
           <Route path="/login/otp"    element={<OtpLogin />} />
           <Route path="/register"     element={<RegisterPage />} />
@@ -42,7 +64,15 @@ export default function App() {
           <Route path="/invite/:token" element={<InviteAcceptPage />} />
           <Route path="/home"         element={<HomeRedirect />} />
           <Route path="*"             element={<Navigate to="/" replace />} />
-        </Routes>
+        
+        <Route path="/contact" element={<ContactPage />} />
+        <Route path="/privacy" element={<PrivacyPage />} />
+        <Route path="/terms" element={<TermsPage />} />
+        <Route path="/security" element={<SecurityPage />} />
+        <Route path="/v2-ext" element={<Navigate to="/" replace />} />
+        <Route path="/v2-ext/*" element={<Navigate to="/" replace />} />
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
       </BrowserRouter>
     </AuthProvider>
   );

@@ -1,4 +1,35 @@
+# Dependencies
 node_modules
+
+# Vercel
 .vercel
+
+# Environment files (NEVER commit secrets)
+.env
+.env.local
+.env.*.local
 .env*.local
+
+# Build output
+dist
 .next
+build
+
+# Python work scripts (not part of the app)
+*.py
+__pycache__
+
+# Debug + temp files
+debug-output.txt
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode
+.idea
+
+# Backups
+*.backup-*
