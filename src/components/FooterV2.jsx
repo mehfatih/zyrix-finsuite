@@ -1,6 +1,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useI18n } from "../i18n/i18n.jsx";
+import { useCountry } from "../hooks/useCountry.jsx";
+import { COUNTRY_PROFILES, SUPPORTED_COUNTRIES } from "../utils/countryProfiles.js";
 
 // ---------- Palettes (extracted from LandingPageV2Extended) ----------
 const C = {
@@ -66,7 +68,18 @@ const getLogo = (lang, dark) => {
 // ---------- FooterV2 component ----------
 export default function FooterV2() {
   const { t, lang } = useI18n();
+  const { country, profile, setCountry } = useCountry();
   const isSaudi = lang === "AR";
+
+  // Build compliance string dynamically from country profile
+  // Example results:
+  //   TR: "GİB Onaylı · KVKK Uyumlu · KDV %20"
+  //   SA: "معتمد ZATCA · متوافق PDPL · ضريبة القيمة المضافة 15%"
+  //   AE: "FTA Approved · Personal Data Law · VAT 5%"
+  const eInvoice = (profile.compliance && profile.compliance.eInvoice) || "e-Invoice";
+  const dataProtection = (profile.compliance && profile.compliance.dataProtection) || "GDPR";
+  const taxName = (profile.tax && profile.tax.name) || "VAT";
+  const taxRate = (profile.tax && profile.tax.rate) || 20;
 
   const productLinks = lang === "AR" ? [
     "الفاتورة الإلكترونية", "إدارة CRM", "التحصيل الذكي", "مساعد AI",
@@ -245,11 +258,11 @@ export default function FooterV2() {
           <div style={{ display: "flex", gap: 24, flexWrap: "wrap", alignItems: "center", fontSize: 12, color: "rgba(255, 255, 255, 0.55)" }}>
             <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={C.emerald} strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-              {lang === "AR" ? "معتمد ZATCA" : (lang === "EN" ? "ZATCA Approved" : "GİB Onaylı")}
+              {eInvoice}
             </span>
             <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={C.emerald} strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-              {lang === "AR" ? "متوافق PDPL" : (lang === "EN" ? "PDPL Compliant" : "KVKK Uyumlu")}
+              {dataProtection}
             </span>
             <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={C.emerald} strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
@@ -279,6 +292,62 @@ export default function FooterV2() {
             <span style={{ color: isSaudi ? SA.green : C.red }}>♥</span>
             <span>{t("lv2.footer.with")}</span>
           </div>
+        </div>
+      </div>
+    
+      {/* COUNTRY / REGION SELECTOR (dynamic compliance) */}
+      <div style={{
+        borderTop: "1px solid " + (isSaudi ? SA.hairline : C.hairline),
+        padding: "20px 0",
+        display: "flex",
+        flexWrap: "wrap",
+        gap: 16,
+        alignItems: "center",
+        justifyContent: "space-between",
+        fontSize: 12,
+        color: isSaudi ? SA.muted : C.muted,
+      }}>
+        <div style={{ display: "inline-flex", alignItems: "center", gap: 10 }}>
+          <span style={{ fontWeight: 800, letterSpacing: ".5px", textTransform: "uppercase", fontSize: 11 }}>
+            {lang === "AR" ? "المنطقة" : lang === "EN" ? "Region" : "Bölge"}
+          </span>
+          <select
+            value={country}
+            onChange={(e) => setCountry(e.target.value)}
+            style={{
+              border: "1px solid " + (isSaudi ? SA.hairline : C.hairline),
+              borderRadius: 8,
+              background: "#fff",
+              padding: "6px 28px 6px 10px",
+              fontSize: 12,
+              fontWeight: 800,
+              color: isSaudi ? SA.ink : C.ink,
+              cursor: "pointer",
+              outline: "none",
+              fontFamily: "inherit",
+              appearance: "none",
+              backgroundImage: "url(\"data:image/svg+xml;charset=US-ASCII,%3Csvg xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22 width%3D%2210%22 height%3D%226%22 viewBox%3D%220 0 10 6%22%3E%3Cpath fill%3D%22%23999%22 d%3D%22M5 6L0 0h10z%22%2F%3E%3C%2Fsvg%3E\")",
+              backgroundRepeat: "no-repeat",
+              backgroundPosition: "right 8px center",
+            }}
+          >
+            {SUPPORTED_COUNTRIES.map((code) => {
+              const cp = COUNTRY_PROFILES[code];
+              const cName = (cp.name && cp.name[lang]) || (cp.name && cp.name.EN) || code;
+              return (
+                <option key={code} value={code}>
+                  {cName} · {cp.currency}
+                </option>
+              );
+            })}
+          </select>
+        </div>
+        <div style={{ display: "inline-flex", alignItems: "center", gap: 10, fontSize: 11, fontWeight: 700, opacity: .85 }}>
+          <span>✓ {eInvoice}</span>
+          <span>·</span>
+          <span>✓ {dataProtection}</span>
+          <span>·</span>
+          <span>✓ {taxName} {taxRate}%</span>
         </div>
       </div>
     </footer>
