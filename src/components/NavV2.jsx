@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useI18n, SUPPORTED_LANGS } from "../i18n/i18n.jsx";
+import CountrySelectorPill from "./CountrySelectorPill.jsx";
 
 // ---------- Palettes (extracted from LandingPageV2Extended) ----------
 const C = {
@@ -167,6 +168,10 @@ export default function NavV2() {
         {/* Actions */}
         <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
           {/* Lang circle */}
+          <div style={{ display: "inline-flex", marginRight: 4 }}>
+            <CountrySelectorPill mode="dark" compact={false} />
+          </div>
+
           <div ref={langRef} style={{ position: "relative" }}>
             <button
               onClick={(e) => { e.stopPropagation(); setLangOpen((v) => !v); }}
