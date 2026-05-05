@@ -11,6 +11,7 @@ const EIrsaliyePage   = React.lazy(() => import("./dashboard/EIrsaliyePage"));
 const ReceiptScanPage = React.lazy(() => import("./dashboard/ReceiptScanPage"));
 const WhatsAppPage    = React.lazy(() => import("./dashboard/WhatsAppPage"));
 const BanksPage       = React.lazy(() => import("./dashboard/BanksPage"));
+const AICfoPage       = React.lazy(() => import("./dashboard/AICfoPage"));
 
 // ── Light Palette ─────────────────────────────────
 const P = {
@@ -1637,6 +1638,7 @@ function Sidebar({ page, setPage, user, logout, unreadCount, onNotifClick, onSet
     { id:"receipts",    icon:"📷", label:"Fis Okuma" },
     { id:"whatsapp",    icon:"💬", label:"WhatsApp" },
     { id:"banks",       icon:"🏦", label:"Bankalar" },
+    { id:"aicfo",       icon:"💼", label:"AI CFO" },
   ];
   return (
     <>
@@ -1654,7 +1656,7 @@ function Sidebar({ page, setPage, user, logout, unreadCount, onNotifClick, onSet
 
         {NAV.map(item => {
           const active = page === item.id;
-          const isNew = ["efatura","factoring","eirsaliye","receipts","whatsapp","banks"].includes(item.id);
+          const isNew = ["efatura","factoring","eirsaliye","receipts","whatsapp","banks","aicfo"].includes(item.id);
           return (
             <button key={item.id} onClick={() => { setPage(item.id); onMobileClose?.(); }} style={{ background:active?`linear-gradient(90deg,${P.purple}15,${P.purple}06)`:"transparent", border:`1.5px solid ${active?P.purple+"30":"transparent"}`, borderRadius:12, color:active?P.purple:P.sub, padding:"10px 14px", cursor:"pointer", textAlign:"left", display:"flex", alignItems:"center", gap:10, fontSize:14, fontWeight:active?700:500, transition:"all 0.15s", position:"relative" }}
               onMouseEnter={e=>{ if(!active){e.currentTarget.style.background=`${P.purple}08`;e.currentTarget.style.color=P.purple;}}}
@@ -1825,6 +1827,11 @@ export default function CustomerDashboard() {
           {page === "banks" && (
             <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Yukleniyor...</div>}>
               <BanksPage />
+            </React.Suspense>
+          )}
+          {page === "aicfo" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Yukleniyor...</div>}>
+              <AICfoPage />
             </React.Suspense>
           )}
 

@@ -244,6 +244,21 @@ export const bankAPI = {
   },
 };
 
+
+// ──────────────────────────────────────────────
+// AI CFO VOICE (Sprint 2 - Track C)
+// ──────────────────────────────────────────────
+export const aiCfoAPI = {
+  ask: (question, conversationId) =>
+    apiFetch("/api/ai-cfo/ask", {
+      method: "POST",
+      body: JSON.stringify({ question, conversationId }),
+    }),
+  conversations: () => apiFetch("/api/ai-cfo/conversations"),
+  getConversation: (id) => apiFetch(`/api/ai-cfo/conversations/${id}`),
+  context: () => apiFetch("/api/ai-cfo/context"),
+};
+
 // ──────────────────────────────────────────────
 // Token Helpers
 // ──────────────────────────────────────────────
