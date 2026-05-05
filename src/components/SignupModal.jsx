@@ -17,6 +17,8 @@ const TXT = {
     email: "E-posta", emailPh: "ornek@sirket.com",
     phone: "Telefon", phonePh: "+90 555 555 55 55",
     password: "Sifre", passwordPh: "En az 8 karakter, harf + rakam",
+    passwordConfirm: "Sifre tekrari", passwordConfirmPh: "Sifrenizi tekrar girin",
+    errPwMismatch: "Sifreler uyusmuyor",
     business: "Sirket adi (opsiyonel)", businessPh: "Yilmaz Tekstil Ltd.",
     submit: "Aninda Aktif Et",
     submitting: "Olusturuluyor...",
@@ -45,6 +47,8 @@ const TXT = {
     email: "Email", emailPh: "you@company.com",
     phone: "Phone", phonePh: "+1 555 555 5555",
     password: "Password", passwordPh: "At least 8 chars, letter + digit",
+    passwordConfirm: "Confirm password", passwordConfirmPh: "Re-enter your password",
+    errPwMismatch: "Passwords do not match",
     business: "Business name (optional)", businessPh: "Acme Inc.",
     submit: "Activate Now",
     submitting: "Creating...",
@@ -73,6 +77,8 @@ const TXT = {
     email: "البريد الالكتروني", emailPh: "you@company.com",
     phone: "رقم الهاتف", phonePh: "+966 5x xxx xxxx",
     password: "كلمة المرور", passwordPh: "8 احرف على الاقل، حرف + رقم",
+    passwordConfirm: "تاكيد كلمة المرور", passwordConfirmPh: "اعد ادخال كلمة المرور",
+    errPwMismatch: "كلمتا المرور غير متطابقتين",
     business: "اسم الشركة (اختياري)", businessPh: "شركة المثال",
     submit: "فعل الان",
     submitting: "جاري الانشاء...",
@@ -107,6 +113,9 @@ function validate(values, t) {
   else if (!/[A-Z]/.test(pw)) errors.password = t.errPwUpper;
   else if (!/[a-z]/.test(pw)) errors.password = t.errPwLower;
   else if (!/[0-9]/.test(pw)) errors.password = t.errPwDigit;
+  if (!errors.password && values.passwordConfirm !== pw) {
+    errors.passwordConfirm = t.errPwMismatch;
+  }
   return errors;
 }
 
@@ -127,7 +136,7 @@ export default function SignupModal({
   const t = TXT[lang] || TXT.TR;
 
   const [values, setValues] = useState({
-    name: "", email: "", phone: "", password: "", businessName: "",
+    name: "", email: "", phone: "", password: "", passwordConfirm: "", businessName: "",
   });
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
@@ -135,7 +144,7 @@ export default function SignupModal({
 
   useEffect(() => {
     if (!open) {
-      setValues({ name: "", email: "", phone: "", password: "", businessName: "" });
+      setValues({ name: "", email: "", phone: "", password: "", passwordConfirm: "", businessName: "" });
       setErrors({});
       setSubmitting(false);
     } else if (view === "form" && firstFieldRef.current) {
@@ -399,6 +408,14 @@ export default function SignupModal({
               onChange={(e) => update("password", e.target.value)}
               disabled={submitting} style={inputStyle("password")} />
             {errors.password && <div style={errorTextStyle}>{errors.password}</div>}
+          </div>
+          <div style={{ marginBottom: 14 }}>
+            <label style={labelStyle}>{t.passwordConfirm}</label>
+            <input type="password" autoComplete="new-password"
+              placeholder={t.passwordConfirmPh} value={values.passwordConfirm}
+              onChange={(e) => update("passwordConfirm", e.target.value)}
+              disabled={submitting} style={inputStyle("passwordConfirm")} />
+            {errors.passwordConfirm && <div style={errorTextStyle}>{errors.passwordConfirm}</div>}
           </div>
           <div style={{ marginBottom: 18 }}>
             <label style={labelStyle}>{t.business}</label>
