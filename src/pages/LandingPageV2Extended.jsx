@@ -1132,6 +1132,7 @@ function CashflowCTA() {
 function Pricing() {
   const { t, lang, isRTL } = useI18n();
   const { profile } = useCountry();
+  const isMobile = useIsMobile();
   const isSaudi = lang === "AR";
   const priceMap = {
     AR: { starter: "99",  business: "199", pro: "399"   },
@@ -1167,15 +1168,15 @@ function Pricing() {
 
 
   return (
-    <section id="pricing" style={{ background: "white", padding: "120px 32px" }}>
+    <section id="pricing" style={{ background: "white", padding: isMobile ? "64px 16px" : "120px 32px" }}>
       <div style={{ maxWidth: 1280, margin: "0 auto" }}>
-        <div style={{ textAlign: "center", maxWidth: 700, margin: "0 auto 64px" }}>
+        <div style={{ textAlign: "center", maxWidth: 700, margin: isMobile ? "0 auto 36px" : "0 auto 64px" }}>
           <span style={{
             display: "inline-flex", alignItems: "center", gap: 8,
-            fontFamily: "monospace", fontSize: 18, fontWeight: 700,
-            letterSpacing: "0.18em", textTransform: "uppercase", color: isSaudi ? SA.green : C.red,
+            fontFamily: "monospace", fontSize: isMobile ? 13 : 18, fontWeight: 700,
+            letterSpacing: isMobile ? "0.12em" : "0.18em", textTransform: "uppercase", color: isSaudi ? SA.green : C.red,
           }}>
-            <span style={{ width: 24, height: 1, background: isSaudi ? SA.green : C.red }} />
+            <span style={{ width: isMobile ? 18 : 24, height: 1, background: isSaudi ? SA.green : C.red }} />
             {t("lv2.price.eyebrow")}
           </span>
           <h2 style={{
@@ -1193,12 +1194,12 @@ function Pricing() {
               WebkitTextFillColor: "transparent",
             }}>{t("lv2.price.title2")}</span>
           </h2>
-          <p style={{ fontSize: 17, color: C.muted, lineHeight: 1.6 }}>{t("lv2.price.sub")}</p>
+          <p style={{ fontSize: isMobile ? 14 : 17, color: C.muted, lineHeight: 1.6 }}>{t("lv2.price.sub")}</p>
         </div>
 
         <div style={{
-          display: "grid", gridTemplateColumns: "repeat(3, 1fr)",
-          gap: 24, maxWidth: 1180, margin: "0 auto", alignItems: "stretch",
+          display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)",
+          gap: isMobile ? 16 : 24, maxWidth: 1180, margin: "0 auto", alignItems: "stretch",
         }}>
           {plans.map((plan, i) => (
             <div key={i} style={{
@@ -1207,14 +1208,16 @@ function Pricing() {
                 : "white",
               color: plan.popular ? "white" : C.ink,
               border: plan.popular ? "none" : `1px solid ${isSaudi ? SA.hairline : C.hairline}`,
-              borderRadius: 28,
-              padding: "36px 32px",
+              borderRadius: isMobile ? 20 : 28,
+              padding: isMobile ? "28px 22px" : "36px 32px",
               display: "flex",
               flexDirection: "column",
               position: "relative",
-              transform: plan.popular ? "scale(1.04)" : "none",
+              transform: plan.popular && !isMobile ? "scale(1.04)" : "none",
               boxShadow: plan.popular
-                ? (isSaudi ? "0 24px 60px rgba(0, 25, 12, 0.45)" : "0 24px 60px rgba(42, 3, 6, 0.45)")
+                ? (isMobile
+                    ? (isSaudi ? "0 14px 32px rgba(0, 25, 12, 0.40)" : "0 14px 32px rgba(42, 3, 6, 0.40)")
+                    : (isSaudi ? "0 24px 60px rgba(0, 25, 12, 0.45)" : "0 24px 60px rgba(42, 3, 6, 0.45)"))
                 : "none",
               transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
               overflow: "visible",
@@ -1222,12 +1225,12 @@ function Pricing() {
               {plan.popular && (
                 <>
                   <div style={{
-                    position: "absolute", inset: 0, borderRadius: 28,
+                    position: "absolute", inset: 0, borderRadius: isMobile ? 20 : 28,
                     overflow: "hidden", pointerEvents: "none",
                   }}>
                     <div style={{
-                      position: "absolute", top: -50, right: -50,
-                      width: 240, height: 240,
+                      position: "absolute", top: isMobile ? -30 : -50, right: isMobile ? -30 : -50,
+                      width: isMobile ? 160 : 240, height: isMobile ? 160 : 240,
                       background: isSaudi
                         ? "radial-gradient(circle, rgba(0, 140, 70, 0.45), transparent 70%)"
                         : "radial-gradient(circle, rgba(227, 10, 23, 0.45), transparent 70%)",
@@ -1252,28 +1255,28 @@ function Pricing() {
 
               <div style={{ position: "relative" }}>
                 <div style={{
+                  fontSize: isMobile ? 16 : 18, fontWeight: 800, letterSpacing: "-0.02em",
                   fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-                  fontSize: 18, fontWeight: 800, letterSpacing: "-0.02em",
                   marginBottom: 6, color: plan.popular ? "white" : C.ink,
                 }}>{plan.name}</div>
 
                 <div style={{
-                  fontSize: 13, marginBottom: 28,
+                  fontSize: isMobile ? 12.5 : 13, marginBottom: isMobile ? 20 : 28,
                   color: plan.popular ? "rgba(255, 255, 255, 0.65)" : C.muted,
                 }}>{plan.desc}</div>
 
-                <div style={{ display: "flex", alignItems: "baseline", gap: 4, marginBottom: 28 }}>
+                <div style={{ display: "flex", alignItems: "baseline", gap: 4, marginBottom: isMobile ? 20 : 28 }}>
                   <strong style={{
                     fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-                    fontSize: 48, fontWeight: 800, letterSpacing: "-0.04em", lineHeight: 1,
+                    fontSize: isMobile ? 36 : 48, fontWeight: 800, letterSpacing: "-0.04em", lineHeight: 1,
                   }}>{plan.price}</strong>
                   <span style={{
-                    fontSize: 14, fontWeight: 500,
+                    fontSize: isMobile ? 13 : 14, fontWeight: 500,
                     color: plan.popular ? "rgba(255,255,255,0.65)" : C.muted,
                   }}>{t("lv2.price.month")}</span>
                 </div>
 
-                <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: 12, marginBottom: 32, padding: 0, flexGrow: 1 }}>
+                <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: isMobile ? 10 : 12, marginBottom: isMobile ? 22 : 32, padding: 0, flexGrow: 1 }}>
                   {plan.features.map((f, j) => (
                     <li key={j} style={{
                       display: "flex", alignItems: "flex-start", gap: 10,
@@ -1290,8 +1293,8 @@ function Pricing() {
 
                 <a href="/register" style={{
                   display: "inline-flex", justifyContent: "center", alignItems: "center", gap: 8,
-                  width: "100%", padding: "14px 20px",
-                  fontSize: 14, fontWeight: 700,
+                  width: "100%", padding: isMobile ? "12px 16px" : "14px 20px",
+                  fontSize: isMobile ? 13 : 14, fontWeight: 700,
                   borderRadius: 14, textDecoration: "none",
                   background: plan.popular
                     ? (isSaudi ? `linear-gradient(135deg, ${SA.green}, ${SA.greenDeep})` : `linear-gradient(135deg, ${C.red}, ${C.redDeep})`)
