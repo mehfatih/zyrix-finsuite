@@ -1013,33 +1013,34 @@ function Features() {
 // ── DEMO CTA ──────────────────────────────────────────────────
 function CashflowCTA() {
   const { t, lang, isRTL } = useI18n();
+  const isMobile = useIsMobile();
   const isSaudi = lang === "AR";
   return (
-    <section id="cashflow" style={{ padding: "80px 32px 120px" }}>
+    <section id="cashflow" style={{ padding: isMobile ? "48px 16px 64px" : "80px 32px 120px" }}>
       <div style={{ maxWidth: 1280, margin: "0 auto" }}>
         <div style={{
           background: isSaudi
             ? `linear-gradient(135deg, ${SA.green700} 0%, ${SA.green900} 50%, ${SA.green950} 100%)`
             : `linear-gradient(135deg, ${C.wine700} 0%, ${C.wine900} 50%, ${C.wine950} 100%)`,
-          borderRadius: 36,
-          padding: 64,
+          borderRadius: isMobile ? 22 : 36,
+          padding: isMobile ? 28 : 64,
           color: "white",
           display: "grid",
-          gridTemplateColumns: "1.3fr 1fr",
-          gap: 56,
+          gridTemplateColumns: isMobile ? "1fr" : "1.3fr 1fr",
+          gap: isMobile ? 28 : 56,
           alignItems: "center",
           position: "relative",
           overflow: "hidden",
-          boxShadow: isSaudi
-            ? "0 24px 60px rgba(0, 25, 12, 0.45)"
-            : "0 24px 60px rgba(42, 3, 6, 0.45)",
+          boxShadow: isMobile
+            ? (isSaudi ? "0 14px 32px rgba(0, 25, 12, 0.40)" : "0 14px 32px rgba(42, 3, 6, 0.40)")
+            : (isSaudi ? "0 24px 60px rgba(0, 25, 12, 0.45)" : "0 24px 60px rgba(42, 3, 6, 0.45)"),
         }}>
           <div style={{
             position: "absolute",
-            top: -100,
-            right: -100,
-            width: 400,
-            height: 400,
+            top: isMobile ? -60 : -100,
+            right: isMobile ? -60 : -100,
+            width: isMobile ? 220 : 400,
+            height: isMobile ? 220 : 400,
             background: isSaudi
               ? "radial-gradient(circle, rgba(0, 140, 70, 0.5), transparent 70%)"
               : "radial-gradient(circle, rgba(227, 10, 23, 0.5), transparent 70%)",
@@ -1048,21 +1049,21 @@ function CashflowCTA() {
 
           <div style={{ position: "relative", zIndex: 1 }}>
             <div style={{
-              fontFamily: "monospace", fontSize: 18, fontWeight: 700,
-              letterSpacing: "0.18em", textTransform: "uppercase",
-              color: isSaudi ? SA.greenSoft : C.redSoft, marginBottom: 16,
+              fontFamily: "monospace", fontSize: isMobile ? 12 : 18, fontWeight: 700,
+              letterSpacing: isMobile ? "0.12em" : "0.18em", textTransform: "uppercase",
+              color: isSaudi ? SA.greenSoft : C.redSoft, marginBottom: isMobile ? 10 : 16,
             }}>{t("lv2.demo.eyebrow")}</div>
             <h2 style={{
               fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-              fontSize: 42, fontWeight: 800, lineHeight: 1.1,
-              letterSpacing: "-0.025em", marginBottom: 20,
+              fontSize: isMobile ? 26 : 42, fontWeight: 800, lineHeight: 1.15,
+              letterSpacing: "-0.025em", marginBottom: isMobile ? 14 : 20,
             }} dangerouslySetInnerHTML={{ __html: t("lv2.demo.title") }} />
             <p style={{
-              fontSize: 16, color: "rgba(255, 235, 235, 0.78)",
-              lineHeight: 1.6, marginBottom: 28, maxWidth: 460,
+              fontSize: isMobile ? 14 : 16, color: "rgba(255, 235, 235, 0.78)",
+              lineHeight: 1.6, marginBottom: isMobile ? 20 : 28, maxWidth: 460,
             }}>{t("lv2.demo.desc")}</p>
 
-            <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: 12, marginBottom: 32, padding: 0 }}>
+            <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: isMobile ? 10 : 12, marginBottom: isMobile ? 22 : 32, padding: 0 }}>
               {[t("lv2.demo.check1"), t("lv2.demo.check2"), t("lv2.demo.check3")].map((c, i) => (
                 <li key={i} style={{ display: "flex", alignItems: "center", gap: 10, fontSize: 14, color: "rgba(255, 255, 255, 0.92)" }}>
                   <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={C.emerald} strokeWidth="2.5" style={{ flexShrink: 0 }}>
@@ -1079,8 +1080,8 @@ function CashflowCTA() {
                 background: isSaudi
                   ? `linear-gradient(135deg, ${SA.green} 0%, ${SA.greenDeep} 100%)`
                   : `linear-gradient(135deg, ${C.red} 0%, ${C.redDeep} 100%)`,
-                color: "white", fontSize: 15, fontWeight: 700,
-                padding: "16px 28px", borderRadius: 14,
+                color: "white", fontSize: isMobile ? 14 : 15, fontWeight: 700,
+                padding: isMobile ? "13px 22px" : "16px 28px", borderRadius: 14,
                 textDecoration: "none",
                 boxShadow: isSaudi
                   ? "0 16px 36px rgba(0, 108, 53, 0.45)"
@@ -1094,7 +1095,7 @@ function CashflowCTA() {
               <a href="#" style={{
                 display: "inline-flex", alignItems: "center", gap: 10,
                 background: "rgba(255, 255, 255, 0.08)", color: "white",
-                fontSize: 15, fontWeight: 600, padding: "16px 26px",
+                fontSize: isMobile ? 14 : 15, fontWeight: 600, padding: isMobile ? "13px 20px" : "16px 26px",
                 borderRadius: 14, border: "1px solid rgba(255, 255, 255, 0.18)",
                 textDecoration: "none",
               }}>{t("lv2.demo.cta2")}</a>
@@ -1106,15 +1107,17 @@ function CashflowCTA() {
             aspectRatio: "4/3",
             background: "linear-gradient(135deg, rgba(0,0,0,0.4), rgba(0,0,0,0.2))",
             border: "1px solid rgba(255, 255, 255, 0.12)",
-            borderRadius: 28, display: "grid", placeItems: "center",
+            borderRadius: isMobile ? 18 : 28, display: "grid", placeItems: "center",
             cursor: "pointer", overflow: "hidden",
           }}>
             <div style={{
-              position: "relative", width: 84, height: 84, borderRadius: "50%",
+              position: "relative", width: isMobile ? 60 : 84, height: isMobile ? 60 : 84, borderRadius: "50%",
               background: "white", display: "grid", placeItems: "center",
-              boxShadow: "0 16px 40px rgba(0,0,0,0.4), 0 0 0 12px rgba(255, 255, 255, 0.1), 0 0 0 24px rgba(255, 255, 255, 0.05)",
+              boxShadow: isMobile
+                ? "0 10px 24px rgba(0,0,0,0.4), 0 0 0 8px rgba(255, 255, 255, 0.1), 0 0 0 16px rgba(255, 255, 255, 0.05)"
+                : "0 16px 40px rgba(0,0,0,0.4), 0 0 0 12px rgba(255, 255, 255, 0.1), 0 0 0 24px rgba(255, 255, 255, 0.05)",
             }}>
-              <svg width="32" height="32" viewBox="0 0 24 24" fill={isSaudi ? SA.green : C.red}>
+              <svg width={isMobile ? 24 : 32} height={isMobile ? 24 : 32} viewBox="0 0 24 24" fill={isSaudi ? SA.green : C.red}>
                 <polygon points="5,3 19,12 5,21" />
               </svg>
             </div>
