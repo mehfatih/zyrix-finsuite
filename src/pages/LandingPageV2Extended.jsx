@@ -1504,6 +1504,7 @@ function FinalCTA() {
 function StatsStrip() {
   const { t, lang } = useI18n();
   const { profile } = useCountry();
+  const isMobile = useIsMobile();
   const isRTL = lang === "AR";
   const isSaudi = lang === "AR";
 
@@ -1521,8 +1522,8 @@ function StatsStrip() {
       style={{
         position: "relative",
         zIndex: 25,
-        marginTop: "-52px",
-        padding: "0 32px 84px",
+        marginTop: isMobile ? "-28px" : "-52px",
+        padding: isMobile ? "0 16px 56px" : "0 32px 84px",
         direction: isRTL ? "rtl" : "ltr",
       }}
     >
@@ -1530,12 +1531,12 @@ function StatsStrip() {
         <div
           style={{
             position: "absolute",
-            inset: "-24px 60px auto",
-            height: 110,
+            inset: isMobile ? "-12px 20px auto" : "-24px 60px auto",
+            height: isMobile ? 60 : 110,
             background: isSaudi
               ? "radial-gradient(circle at 50% 50%, rgba(0,108,53,.24), transparent 68%)"
               : "radial-gradient(circle at 50% 50%, rgba(227,10,23,.24), transparent 68%)",
-            filter: "blur(28px)",
+            filter: isMobile ? "blur(20px)" : "blur(28px)",
             pointerEvents: "none",
           }}
         />
@@ -1544,13 +1545,13 @@ function StatsStrip() {
           style={{
             position: "relative",
             display: "grid",
-            gridTemplateColumns: "repeat(6, minmax(0, 1fr))",
+            gridTemplateColumns: isMobile ? "repeat(2, minmax(0, 1fr))" : "repeat(6, minmax(0, 1fr))",
             background: "rgba(255,255,255,.94)",
             border: "1px solid " + (isSaudi ? SA.hairline : C.hairline),
-            borderRadius: 30,
-            boxShadow: isSaudi
-              ? "0 30px 90px rgba(0,25,12,.18), 0 8px 28px rgba(0,108,53,.10)"
-              : "0 30px 90px rgba(58,5,9,.18), 0 8px 28px rgba(227,10,23,.10)",
+            borderRadius: isMobile ? 18 : 30,
+            boxShadow: isMobile
+              ? (isSaudi ? "0 14px 40px rgba(0,25,12,.14), 0 4px 14px rgba(0,108,53,.08)" : "0 14px 40px rgba(58,5,9,.14), 0 4px 14px rgba(227,10,23,.08)")
+              : (isSaudi ? "0 30px 90px rgba(0,25,12,.18), 0 8px 28px rgba(0,108,53,.10)" : "0 30px 90px rgba(58,5,9,.18), 0 8px 28px rgba(227,10,23,.10)"),
             overflow: "hidden",
             backdropFilter: "blur(18px)",
             WebkitBackdropFilter: "blur(18px)",
@@ -1561,9 +1562,9 @@ function StatsStrip() {
               key={s.key}
               style={{
                 position: "relative",
-                padding: "24px 16px",
+                padding: isMobile ? "16px 10px" : "24px 16px",
                 textAlign: "center",
-                minHeight: 120,
+                minHeight: isMobile ? 92 : 120,
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
@@ -1575,19 +1576,23 @@ function StatsStrip() {
                       : "linear-gradient(180deg,#FFFFFF 0%,#FFF4F4 100%)"
                     : "#FFFFFF",
                 borderInlineEnd:
-                  i < STATS.length - 1
+                  isMobile
+                    ? (i % 2 === 0 ? "1px solid " + (isSaudi ? SA.hairline : C.hairline) : "none")
+                    : (i < STATS.length - 1 ? "1px solid " + (isSaudi ? SA.hairline : C.hairline) : "none"),
+                borderBottom:
+                  isMobile && i < 4
                     ? "1px solid " + (isSaudi ? SA.hairline : C.hairline)
                     : "none",
               }}
             >
               <div
                 style={{
-                  width: 40,
-                  height: 40,
-                  borderRadius: 15,
+                  width: isMobile ? 30 : 40,
+                  height: isMobile ? 30 : 40,
+                  borderRadius: isMobile ? 11 : 15,
                   display: "grid",
                   placeItems: "center",
-                  marginBottom: 11,
+                  marginBottom: isMobile ? 7 : 11,
                   color: isSaudi ? SA.green : C.red,
                   background: isSaudi
                     ? "linear-gradient(135deg, rgba(0,108,53,.12), rgba(14,165,113,.06))"
@@ -1596,7 +1601,7 @@ function StatsStrip() {
                     ? "0 10px 26px rgba(0,108,53,.14)"
                     : "0 10px 26px rgba(227,10,23,.14)",
                   fontWeight: 900,
-                  fontSize: 15,
+                  fontSize: isMobile ? 12 : 15,
                 }}
               >
                 {s.icon}
@@ -1605,7 +1610,7 @@ function StatsStrip() {
               <div
                 style={{
                   fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-                  fontSize: 34,
+                  fontSize: isMobile ? 24 : 34,
                   fontWeight: 900,
                   letterSpacing: "-0.045em",
                   lineHeight: 1,
@@ -1627,11 +1632,11 @@ function StatsStrip() {
 
               <div
                 style={{
-                  marginTop: 9,
-                  fontSize: 13,
+                  marginTop: isMobile ? 6 : 9,
+                  fontSize: isMobile ? 11 : 13,
                   color: isSaudi ? SA.muted : C.muted,
                   fontWeight: 800,
-                  lineHeight: 1.35,
+                  lineHeight: 1.3,
                 }}
               >
                 {t("lv2.strip." + s.key)}
