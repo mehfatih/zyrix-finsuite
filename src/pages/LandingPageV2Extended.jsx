@@ -1323,6 +1323,7 @@ function Pricing() {
 // ── TESTIMONIALS (Static 3x2 grid — no slider) ──
 function Testimonials() {
   const { t, lang } = useI18n();
+  const isMobile = useIsMobile();
   const isSaudi = lang === "AR";
 
   const colorPairs = isSaudi ? [
@@ -1360,15 +1361,15 @@ function Testimonials() {
   });
 
   return (
-    <section id="testimonials" style={{ background: isSaudi ? SA.bgTinted : C.bgTinted, padding: "120px 32px" }}>
+    <section id="testimonials" style={{ background: isSaudi ? SA.bgTinted : C.bgTinted, padding: isMobile ? "64px 16px" : "120px 32px" }}>
       <div style={{ maxWidth: 1280, margin: "0 auto" }}>
-        <div style={{ textAlign: "center", maxWidth: 700, margin: "0 auto 64px" }}>
+        <div style={{ textAlign: "center", maxWidth: 700, margin: isMobile ? "0 auto 36px" : "0 auto 64px" }}>
           <span style={{
             display: "inline-flex", alignItems: "center", gap: 8,
-            fontFamily: "monospace", fontSize: 18, fontWeight: 700,
-            letterSpacing: "0.18em", textTransform: "uppercase", color: isSaudi ? SA.green : C.red,
+            fontFamily: "monospace", fontSize: isMobile ? 13 : 18, fontWeight: 700,
+            letterSpacing: isMobile ? "0.12em" : "0.18em", textTransform: "uppercase", color: isSaudi ? SA.green : C.red,
           }}>
-            <span style={{ width: 24, height: 1, background: isSaudi ? SA.green : C.red }} />
+            <span style={{ width: isMobile ? 18 : 24, height: 1, background: isSaudi ? SA.green : C.red }} />
             {t("lv2.tm.eyebrow")}
           </span>
           <h2 style={{
@@ -1390,36 +1391,36 @@ function Testimonials() {
 
         <div style={{
           display: "grid",
-          gridTemplateColumns: "repeat(3, 1fr)",
-          gap: 24,
+          gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)",
+          gap: isMobile ? 14 : 24,
         }}>
           {items.map((item, i) => (
             <div key={i} style={{
-              background: "white", borderRadius: 24, padding: 32,
+              background: "white", borderRadius: isMobile ? 18 : 24, padding: isMobile ? 22 : 32,
               border: `1px solid ${C.hairline}`,
-              boxShadow: "0 8px 24px rgba(42, 3, 6, 0.06)",
+              boxShadow: isMobile ? "0 4px 14px rgba(42, 3, 6, 0.05)" : "0 8px 24px rgba(42, 3, 6, 0.06)",
               display: "flex", flexDirection: "column",
               transition: "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
             }}
               onMouseEnter={(e) => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 16px 40px rgba(42, 3, 6, 0.12)"; }}
               onMouseLeave={(e) => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 8px 24px rgba(42, 3, 6, 0.06)"; }}
             >
-              <div style={{ marginBottom: 20, color: C.amber, fontSize: 18, letterSpacing: 2 }}>★★★★★</div>
+              <div style={{ marginBottom: isMobile ? 14 : 20, color: C.amber, fontSize: isMobile ? 15 : 18, letterSpacing: 2 }}>★★★★★</div>
               <p style={{
-                fontSize: 15, lineHeight: 1.7, color: C.inkSoft,
-                marginBottom: 24, flexGrow: 1, minHeight: 130,
+                fontSize: isMobile ? 13.5 : 15, lineHeight: 1.65, color: C.inkSoft,
+                marginBottom: isMobile ? 18 : 24, flexGrow: 1, minHeight: isMobile ? "auto" : 130,
               }}>"{item.q}"</p>
-              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: isMobile ? 10 : 12 }}>
                 <div style={{
-                  width: 48, height: 48, flexShrink: 0, borderRadius: "50%",
+                  width: isMobile ? 40 : 48, height: isMobile ? 40 : 48, flexShrink: 0, borderRadius: "50%",
                   background: `linear-gradient(135deg, ${item.clr1}, ${item.clr2})`,
                   display: "grid", placeItems: "center",
-                  color: "white", fontSize: 15, fontWeight: 700,
+                  color: "white", fontSize: isMobile ? 13 : 15, fontWeight: 700,
                   boxShadow: `0 4px 12px ${item.clr1}40`,
                 }}>{item.avatar}</div>
                 <div style={{ minWidth: 0 }}>
-                  <div style={{ fontSize: 14, fontWeight: 700, color: C.ink, marginBottom: 2 }}>{item.n}</div>
-                  <div style={{ fontSize: 12, color: C.muted, lineHeight: 1.4 }}>{item.r}</div>
+                  <div style={{ fontSize: isMobile ? 13 : 14, fontWeight: 700, color: C.ink, marginBottom: 2 }}>{item.n}</div>
+                  <div style={{ fontSize: isMobile ? 11.5 : 12, color: C.muted, lineHeight: 1.4 }}>{item.r}</div>
                 </div>
               </div>
             </div>
