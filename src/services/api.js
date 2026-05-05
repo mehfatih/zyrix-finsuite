@@ -167,6 +167,83 @@ export const adminAPI = {
   },
 };
 
+
+// ──────────────────────────────────────────────
+// e-IRSALIYE (Sprint 1 - Phase 1A)
+// ──────────────────────────────────────────────
+export const eIrsaliyeAPI = {
+  list: (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    return apiFetch(`/api/eirsaliye${qs ? `?${qs}` : ""}`);
+  },
+  get: (id) => apiFetch(`/api/eirsaliye/${id}`),
+  create: (payload) =>
+    apiFetch("/api/eirsaliye", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
+  update: (id, payload) =>
+    apiFetch(`/api/eirsaliye/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(payload),
+    }),
+  queue: (id) =>
+    apiFetch(`/api/eirsaliye/${id}/queue`, { method: "POST" }),
+};
+
+// ──────────────────────────────────────────────
+// RECEIPT SCAN (Sprint 1 - Phase 1A)
+// ──────────────────────────────────────────────
+export const receiptScanAPI = {
+  list: (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    return apiFetch(`/api/receipts${qs ? `?${qs}` : ""}`);
+  },
+  get: (id) => apiFetch(`/api/receipts/${id}`),
+  scan: (imageBase64, mimeType, autoCreateExpense = true) =>
+    apiFetch("/api/receipts/scan", {
+      method: "POST",
+      body: JSON.stringify({ imageBase64, mimeType, autoCreateExpense }),
+    }),
+  delete: (id) =>
+    apiFetch(`/api/receipts/${id}`, { method: "DELETE" }),
+};
+
+// ──────────────────────────────────────────────
+// WHATSAPP (Sprint 1 - Phase 1B)
+// ──────────────────────────────────────────────
+export const whatsappAPI = {
+  sendInvoice: (invoiceId, recipientPhone, customMessage) =>
+    apiFetch(`/api/whatsapp/send-invoice/${invoiceId}`, {
+      method: "POST",
+      body: JSON.stringify({ recipientPhone, customMessage }),
+    }),
+  list: (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    return apiFetch(`/api/whatsapp${qs ? `?${qs}` : ""}`);
+  },
+  get: (id) => apiFetch(`/api/whatsapp/${id}`),
+};
+
+// ──────────────────────────────────────────────
+// BANKS (Sprint 1 - Phase 1B)
+// ──────────────────────────────────────────────
+export const bankAPI = {
+  providers: () => apiFetch("/api/banks/providers"),
+  connections: () => apiFetch("/api/banks/connections"),
+  connect: (payload) =>
+    apiFetch("/api/banks/connect", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
+  sync: (connectionId) =>
+    apiFetch(`/api/banks/connections/${connectionId}/sync`, { method: "POST" }),
+  transactions: (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    return apiFetch(`/api/banks/transactions${qs ? `?${qs}` : ""}`);
+  },
+};
+
 // ──────────────────────────────────────────────
 // Token Helpers
 // ──────────────────────────────────────────────

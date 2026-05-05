@@ -589,9 +589,9 @@ export async function activatePlan(planId, options) {
   // 3. Persist JWT + merchant snapshot for the dashboard
   if (typeof window !== "undefined") {
     try {
-      window.localStorage.setItem("finsuite_token", data.data.token);
+      window.localStorage.setItem("zyrix_token", data.data.token);
       window.localStorage.setItem(
-        "finsuite_user",
+        "zyrix_user",
         JSON.stringify(data.data.merchant)
       );
     } catch (e) {

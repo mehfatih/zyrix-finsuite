@@ -6,6 +6,12 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useAuth } from "../context/AuthContext";
 
+// Sprint 1 features (lazy-loaded)
+const EIrsaliyePage   = React.lazy(() => import("./dashboard/EIrsaliyePage"));
+const ReceiptScanPage = React.lazy(() => import("./dashboard/ReceiptScanPage"));
+const WhatsAppPage    = React.lazy(() => import("./dashboard/WhatsAppPage"));
+const BanksPage       = React.lazy(() => import("./dashboard/BanksPage"));
+
 // ── Light Palette ─────────────────────────────────
 const P = {
   bg:       "#F0F4FF",
@@ -1626,6 +1632,11 @@ function Sidebar({ page, setPage, user, logout, unreadCount, onNotifClick, onSet
     // v4
     { id:"team",        icon:"👥", label:"Ekip Yönetimi" },
     { id:"campaigns",   icon:"📣", label:"Kampanyalar" },
+    // v5 - Sprint 1
+    { id:"eirsaliye",   icon:"📦", label:"e-Irsaliye" },
+    { id:"receipts",    icon:"📷", label:"Fis Okuma" },
+    { id:"whatsapp",    icon:"💬", label:"WhatsApp" },
+    { id:"banks",       icon:"🏦", label:"Bankalar" },
   ];
   return (
     <>
@@ -1643,7 +1654,7 @@ function Sidebar({ page, setPage, user, logout, unreadCount, onNotifClick, onSet
 
         {NAV.map(item => {
           const active = page === item.id;
-          const isNew = ["efatura","factoring"].includes(item.id);
+          const isNew = ["efatura","factoring","eirsaliye","receipts","whatsapp","banks"].includes(item.id);
           return (
             <button key={item.id} onClick={() => { setPage(item.id); onMobileClose?.(); }} style={{ background:active?`linear-gradient(90deg,${P.purple}15,${P.purple}06)`:"transparent", border:`1.5px solid ${active?P.purple+"30":"transparent"}`, borderRadius:12, color:active?P.purple:P.sub, padding:"10px 14px", cursor:"pointer", textAlign:"left", display:"flex", alignItems:"center", gap:10, fontSize:14, fontWeight:active?700:500, transition:"all 0.15s", position:"relative" }}
               onMouseEnter={e=>{ if(!active){e.currentTarget.style.background=`${P.purple}08`;e.currentTarget.style.color=P.purple;}}}
@@ -1794,6 +1805,28 @@ export default function CustomerDashboard() {
             </div>
             <button onClick={() => setMobileOpen(true)} style={{ background:P.light, border:`1.5px solid ${P.border}`, borderRadius:8, padding:"7px 12px", cursor:"pointer", color:P.text, fontSize:16 }}>☰</button>
           </div>
+
+          {/* SPRINT 1 PAGES (lazy) */}
+          {page === "eirsaliye" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Yukleniyor...</div>}>
+              <EIrsaliyePage />
+            </React.Suspense>
+          )}
+          {page === "receipts" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Yukleniyor...</div>}>
+              <ReceiptScanPage />
+            </React.Suspense>
+          )}
+          {page === "whatsapp" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Yukleniyor...</div>}>
+              <WhatsAppPage />
+            </React.Suspense>
+          )}
+          {page === "banks" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Yukleniyor...</div>}>
+              <BanksPage />
+            </React.Suspense>
+          )}
 
           {/* OVERVIEW */}
           {page === "overview" && (
