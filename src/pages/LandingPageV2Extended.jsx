@@ -20,6 +20,7 @@ import FooterV2 from "../components/FooterV2.jsx";
 
 import { useCountry } from "../hooks/useCountry.jsx";
 import { formatCurrency } from "../utils/formatCurrency.js";
+import { useIsMobile } from "../hooks/useIsMobile";
 
 // ── Color palette ────────────────────────────────────────────
 const C = {
@@ -88,6 +89,7 @@ const getLogo = (lang, dark) => {
 function Hero() {
   const { t, lang, isRTL } = useI18n();
   const isSaudi = lang === "AR";
+  const isMobile = useIsMobile();
 
   return (
     <section style={{
@@ -95,8 +97,8 @@ function Hero() {
       background: isSaudi ? SA.green950 : C.wine950,
       color: "white",
       overflow: "hidden",
-      padding: "130px 0 0",
-      minHeight: "100vh",
+      padding: isMobile ? "70px 0 40px" : "130px 0 0",
+      minHeight: isMobile ? "auto" : "100vh",
     }}>
       {/* Mesh background */}
       <div style={{
@@ -151,7 +153,7 @@ function Hero() {
       <div style={{ position: "absolute", borderRadius: "50%", filter: "blur(100px)", pointerEvents: "none", right: "15%", bottom: "20%", width: 600, height: 600, background: isSaudi ? "rgba(0, 80, 40, 0.35)" : "rgba(184, 5, 15, 0.35)" }} />
 
       {/* Right-side cinematic streaks */}
-      <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: "60%", pointerEvents: "none", overflow: "hidden", zIndex: 2 }}>
+      <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: isMobile ? "0" : "60%", pointerEvents: "none", overflow: "hidden", zIndex: 2, display: isMobile ? "none" : "block" }}>
         <svg viewBox="0 0 600 800" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" style={{ position: "absolute", right: "-10%", top: 0, width: "110%", height: "100%", opacity: 0.6 }}>
           <defs>
             <linearGradient id="streak1V2" x1="0%" x2="100%" y1="0%" y2="0%">
@@ -180,12 +182,12 @@ function Hero() {
       </div>
 
       {/* Body */}
-      <div style={{ maxWidth: 1280, margin: "0 auto", padding: "0 32px" }}>
+      <div style={{ maxWidth: 1280, margin: "0 auto", padding: isMobile ? "0 16px" : "0 32px" }}>
         <div style={{
           position: "relative",
           zIndex: 10,
           display: "grid",
-          gridTemplateColumns: "1fr 1.1fr",
+          gridTemplateColumns: isMobile ? "1fr" : "1fr 1.1fr",
           gap: 56,
           padding: "24px 0 100px",
           alignItems: "start",
