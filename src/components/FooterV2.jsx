@@ -157,11 +157,12 @@ export default function FooterV2() {
     <footer style={{ background: isSaudi ? SA.green950 : C.wine950, color: "rgba(255, 255, 255, 0.7)", padding: isMobile ? "48px 16px 24px" : "80px 32px 32px" }}>
       <div style={{ maxWidth: 1280, margin: "0 auto" }}>
         <div style={{
-          display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1.4fr 1fr 1fr 1fr 1fr",
-          gap: isMobile ? 32 : 48, paddingBottom: isMobile ? 32 : 56,
+          display: "grid",
+          gridTemplateColumns: isMobile ? "1fr 1fr" : "1.4fr 1fr 1fr 1fr 1fr",
+          gap: isMobile ? "24px 16px" : 48, paddingBottom: isMobile ? 32 : 56,
           borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
         }}>
-          <div>
+          <div style={isMobile ? { gridColumn: "1 / -1" } : undefined}>
             <img src={getLogo(lang, true)} alt="Zyrix FinSuite"
               style={{ height: isMobile ? 36 : 44, width: "auto", marginBottom: isMobile ? 14 : 18 }} />
             <p style={{ fontSize: isMobile ? 13 : 14, lineHeight: 1.65, marginBottom: isMobile ? 18 : 24, maxWidth: 320 }}>
