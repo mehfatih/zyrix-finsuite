@@ -388,3 +388,157 @@ html, body, #root {
     font-size: 26px !important;
   }
 }
+
+
+/* ============================================================
+ * EXTRA AGGRESSIVE LANDING + FOOTER OVERRIDES
+ * Targets specific patterns found in LandingPageV2Extended + FooterV2
+ * ============================================================ */
+
+@media (max-width: 768px) {
+
+  /* ────────────────────────────────────────
+   * Stats grid: 6-column layout in landing
+   * (repeat(6, minmax(0, 1fr)) with overflow:hidden)
+   * Force to 3 columns x 2 rows
+   * ──────────────────────────────────────── */
+  [style*="repeat(6, minmax(0, 1fr))"],
+  [style*="repeat(6,minmax(0,1fr))"] {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  /* Stats card padding shrink + smaller text */
+  [style*="repeat(6, minmax(0, 1fr))"] > div,
+  [style*="repeat(6,minmax(0,1fr))"] > div {
+    padding: 12px 6px !important;
+  }
+
+  [style*="repeat(6, minmax(0, 1fr))"] > div [style*="fontSize"],
+  [style*="repeat(6,minmax(0,1fr))"] > div [style*="fontSize"] {
+    font-size: 13px !important;
+  }
+
+  /* The big number in each stat card */
+  [style*="repeat(6, minmax(0, 1fr))"] > div > div:first-child,
+  [style*="repeat(6,minmax(0,1fr))"] > div > div:first-child {
+    font-size: 18px !important;
+  }
+
+  /* ────────────────────────────────────────
+   * Section padding: marginTop: -52px on stats container
+   * Reset on mobile
+   * ──────────────────────────────────────── */
+  section[style*="marginTop: -52"],
+  section[style*="marginTop:-52"] {
+    margin-top: 24px !important;
+    padding: 0 12px 32px !important;
+  }
+
+  /* ────────────────────────────────────────
+   * FOOTER (FooterV2.jsx)
+   * Force everything into single column with proper alignment
+   * ──────────────────────────────────────── */
+  footer,
+  footer * {
+    text-align: left !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  footer [style*="display: grid"],
+  footer [style*="display:grid"] {
+    grid-template-columns: 1fr !important;
+    gap: 32px !important;
+    padding: 32px 16px !important;
+  }
+
+  footer [style*="display: flex"][style*="justify-content"],
+  footer [style*="display:flex"][style*="justifyContent"] {
+    flex-wrap: wrap !important;
+    gap: 12px !important;
+  }
+
+  /* Footer columns spread - shrink */
+  footer h3, footer h4,
+  footer [style*="fontSize: 13"],
+  footer [style*="fontSize: 14"] {
+    font-size: 13px !important;
+    margin-bottom: 8px !important;
+  }
+
+  footer a, footer li, footer p {
+    font-size: 13px !important;
+    line-height: 1.5 !important;
+  }
+
+  /* Footer logo + description block */
+  footer [style*="maxWidth"] {
+    max-width: 100% !important;
+  }
+
+  /* ────────────────────────────────────────
+   * General overflow fix - all sections
+   * ──────────────────────────────────────── */
+  section, footer, header, main, nav {
+    max-width: 100vw !important;
+    overflow-x: hidden !important;
+  }
+
+  /* Container with maxWidth 1180 (stats wrapper) */
+  [style*="maxWidth: 1180"],
+  [style*="maxWidth:1180"] {
+    max-width: 100% !important;
+    padding: 0 12px !important;
+  }
+
+  /* ────────────────────────────────────────
+   * Decorative phone/tablet mockups - hide all absolute decorative items
+   * Beyond what we already hid
+   * ──────────────────────────────────────── */
+  /* Tablet/phone mockups by class or component name */
+  [class*="TabletMockup"],
+  [class*="tablet-mockup"],
+  [class*="phone-mock"],
+  svg[viewBox="0 0 600 800"] {
+    display: none !important;
+  }
+
+  /* Decorative absolute SVGs (flag watermarks, skylines) */
+  svg[style*="position: absolute"],
+  svg[style*="position:absolute"] {
+    opacity: 0.06 !important;
+  }
+
+  /* Absolute elements with negative top/left (decorative bleed) */
+  [style*="position: absolute"][style*="top: -"],
+  [style*="position:absolute"][style*="top:-"],
+  [style*="position: absolute"][style*="left: -"],
+  [style*="position:absolute"][style*="left:-"] {
+    display: none !important;
+  }
+
+  /* ────────────────────────────────────────
+   * Center content that's wrapped in absolute hero containers
+   * ──────────────────────────────────────── */
+  [style*="position: absolute"][style*="inset:"][style*="60px"],
+  [style*="position:absolute"][style*="inset:"][style*="60px"] {
+    position: static !important;
+    inset: auto !important;
+  }
+}
+
+/* ────────────────────────────────────────
+ * Very small screens
+ * ──────────────────────────────────────── */
+@media (max-width: 480px) {
+  /* Stats grid: 2 columns x 3 rows on tiny screens */
+  [style*="repeat(6, minmax(0, 1fr))"],
+  [style*="repeat(6,minmax(0,1fr))"] {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  [style*="repeat(6, minmax(0, 1fr))"] > div > div:first-child,
+  [style*="repeat(6,minmax(0,1fr))"] > div > div:first-child {
+    font-size: 16px !important;
+  }
+}
