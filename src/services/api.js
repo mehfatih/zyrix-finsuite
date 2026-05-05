@@ -274,6 +274,25 @@ export const cashCrisisAPI = {
     apiFetch(`/api/cash-crisis/${id}/resolve`, { method: "POST" }),
 };
 
+
+// ──────────────────────────────────────────────
+// TRENDYOL AUTO-RECONCILIATION (Sprint 2 - Track C)
+// ──────────────────────────────────────────────
+export const trendyolAPI = {
+  connect: (data) =>
+    apiFetch("/api/trendyol/connect", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+  connection: () => apiFetch("/api/trendyol/connection"),
+  sync: () => apiFetch("/api/trendyol/sync", { method: "POST" }),
+  orders: (status) =>
+    apiFetch("/api/trendyol/orders" + (status ? "?status=" + status : "")),
+  settlements: () => apiFetch("/api/trendyol/settlements"),
+  disconnect: () =>
+    apiFetch("/api/trendyol/connection", { method: "DELETE" }),
+};
+
 // ──────────────────────────────────────────────
 // Token Helpers
 // ──────────────────────────────────────────────
