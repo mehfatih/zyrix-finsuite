@@ -668,6 +668,7 @@ function ProblemSolution() {
 // ── FEATURES (Interactive Tabs) ───────────────────────────────
 function Features() {
   const { t, lang, isRTL } = useI18n();
+  const isMobile = useIsMobile();
   const isSaudi = lang === "AR";
   const [activeTab, setActiveTab] = useState("invoice");
 
@@ -714,18 +715,18 @@ function Features() {
       background: isSaudi
         ? `linear-gradient(180deg, white 0%, ${SA.bgTinted} 100%)`
         : `linear-gradient(180deg, white 0%, ${C.bgTinted} 100%)`,
-      padding: "120px 32px",
+      padding: isMobile ? "64px 16px" : "120px 32px",
       position: "relative",
       overflow: "hidden",
     }}>
       <div style={{ maxWidth: 1280, margin: "0 auto" }}>
-        <div style={{ textAlign: "center", maxWidth: 700, margin: "0 auto 48px" }}>
+        <div style={{ textAlign: "center", maxWidth: 700, margin: isMobile ? "0 auto 32px" : "0 auto 48px" }}>
           <span style={{
             display: "inline-flex", alignItems: "center", gap: 8,
-            fontFamily: "monospace", fontSize: 18, fontWeight: 700,
-            letterSpacing: "0.18em", textTransform: "uppercase", color: isSaudi ? SA.green : C.red,
+            fontFamily: "monospace", fontSize: isMobile ? 13 : 18, fontWeight: 700,
+            letterSpacing: isMobile ? "0.12em" : "0.18em", textTransform: "uppercase", color: isSaudi ? SA.green : C.red,
           }}>
-            <span style={{ width: 24, height: 1, background: isSaudi ? SA.green : C.red }} />
+            <span style={{ width: isMobile ? 18 : 24, height: 1, background: isSaudi ? SA.green : C.red }} />
             {t("lv2.feat.eyebrow")}
           </span>
           <h2 style={{
@@ -743,20 +744,21 @@ function Features() {
               WebkitTextFillColor: "transparent",
             }}>{t("lv2.feat.title2")}</span>
           </h2>
-          <p style={{ fontSize: 17, color: C.muted, lineHeight: 1.6 }}>{t("lv2.feat.sub")}</p>
+          <p style={{ fontSize: isMobile ? 14 : 17, color: C.muted, lineHeight: 1.6 }}>{t("lv2.feat.sub")}</p>
         </div>
 
         {/* Tabs */}
         <div style={{
-          display: "flex", justifyContent: "center", flexWrap: "wrap", gap: 8,
-          marginBottom: 48, background: "white", border: `1px solid ${isSaudi ? SA.hairline : C.hairline}`,
-          borderRadius: 100, padding: 6, width: "fit-content",
+          display: "flex", justifyContent: "center", flexWrap: "wrap", gap: isMobile ? 6 : 8,
+          marginBottom: isMobile ? 28 : 48, background: "white", border: `1px solid ${isSaudi ? SA.hairline : C.hairline}`,
+          borderRadius: isMobile ? 24 : 100, padding: isMobile ? 5 : 6, width: isMobile ? "100%" : "fit-content",
+          maxWidth: isMobile ? "100%" : "none",
           marginLeft: "auto", marginRight: "auto",
           boxShadow: isSaudi ? "0 1px 2px rgba(0, 25, 12, 0.04)" : "0 1px 2px rgba(42, 3, 6, 0.04)",
         }}>
           {tabs.map(tab => (
             <button key={tab.key} onClick={() => setActiveTab(tab.key)} style={{
-              padding: "11px 20px", fontSize: 13, fontWeight: 600,
+              padding: isMobile ? "8px 12px" : "11px 20px", fontSize: isMobile ? 12 : 13, fontWeight: 600,
               color: activeTab === tab.key ? "white" : C.muted,
               borderRadius: 100,
               display: "inline-flex", alignItems: "center", gap: 8,
@@ -769,7 +771,7 @@ function Features() {
                 ? (isSaudi ? "0 16px 40px rgba(0, 108, 53, 0.25)" : "0 16px 40px rgba(227, 10, 23, 0.25)")
                 : "none",
             }}>
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ width: 16, height: 16 }}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ width: isMobile ? 13 : 16, height: isMobile ? 13 : 16 }}>
                 {tab.icon}
               </svg>
               <span>{tab.label}</span>
@@ -779,23 +781,23 @@ function Features() {
 
         {/* Panel */}
         <div style={{
-          display: "grid", gridTemplateColumns: "1fr 1.2fr",
-          gap: 64, alignItems: "center",
-          maxWidth: 1180, margin: "0 auto", minHeight: 440,
+          display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1.2fr",
+          gap: isMobile ? 28 : 64, alignItems: "center",
+          maxWidth: 1180, margin: "0 auto", minHeight: isMobile ? "auto" : 440,
         }}>
           {/* Content */}
           <div>
             <div style={{
-              fontFamily: "monospace", fontSize: 18, fontWeight: 700,
-              letterSpacing: "0.18em", textTransform: "uppercase",
-              color: isSaudi ? SA.green : C.red, marginBottom: 16,
+              fontFamily: "monospace", fontSize: isMobile ? 12 : 18, fontWeight: 700,
+              letterSpacing: isMobile ? "0.12em" : "0.18em", textTransform: "uppercase",
+              color: isSaudi ? SA.green : C.red, marginBottom: isMobile ? 10 : 16,
             }}>Zyrix FinSuite • {activeTab.toUpperCase()}</div>
             <h3 style={{
               fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-              fontSize: 38, fontWeight: 800, letterSpacing: "-0.025em",
-              lineHeight: 1.1, marginBottom: 18, color: C.ink,
+              fontSize: isMobile ? 24 : 38, fontWeight: 800, letterSpacing: "-0.025em",
+              lineHeight: 1.15, marginBottom: isMobile ? 12 : 18, color: C.ink,
             }}>{data.title}</h3>
-            <p style={{ fontSize: 16, color: C.muted, lineHeight: 1.7, marginBottom: 28 }}>{data.desc}</p>
+            <p style={{ fontSize: isMobile ? 14 : 16, color: C.muted, lineHeight: 1.6, marginBottom: isMobile ? 18 : 28 }}>{data.desc}</p>
             <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: 14, marginBottom: 32, padding: 0 }}>
               {data.bullets.map((b, i) => (
                 <li key={i} style={{
@@ -822,18 +824,18 @@ function Features() {
 
           {/* Visual */}
           <div style={{
-            position: "relative", background: "white", borderRadius: 36,
-            padding: 28, border: `1px solid ${isSaudi ? SA.hairline : C.hairline}`,
-            boxShadow: isSaudi
-              ? "0 28px 60px rgba(0, 25, 12, 0.12), 0 0 0 8px " + SA.bgTinted
-              : "0 28px 60px rgba(42, 3, 6, 0.12), 0 0 0 8px " + C.bgTinted,
+            position: "relative", background: "white", borderRadius: isMobile ? 22 : 36,
+            padding: isMobile ? 16 : 28, border: `1px solid ${isSaudi ? SA.hairline : C.hairline}`,
+            boxShadow: isMobile
+              ? (isSaudi ? "0 12px 28px rgba(0, 25, 12, 0.10), 0 0 0 4px " + SA.bgTinted : "0 12px 28px rgba(42, 3, 6, 0.10), 0 0 0 4px " + C.bgTinted)
+              : (isSaudi ? "0 28px 60px rgba(0, 25, 12, 0.12), 0 0 0 8px " + SA.bgTinted : "0 28px 60px rgba(42, 3, 6, 0.12), 0 0 0 8px " + C.bgTinted),
           }}>
             <div style={{
               position: "absolute", top: -2, left: -2, right: -2, height: 4,
               background: isSaudi
                 ? `linear-gradient(90deg, ${SA.green}, ${SA.greenBright}, ${SA.green})`
                 : `linear-gradient(90deg, ${C.red}, ${C.redBright}, ${C.red})`,
-              borderRadius: "36px 36px 0 0",
+              borderRadius: isMobile ? "22px 22px 0 0" : "36px 36px 0 0",
             }} />
             <div style={{
               display: "flex", justifyContent: "space-between", alignItems: "center",
