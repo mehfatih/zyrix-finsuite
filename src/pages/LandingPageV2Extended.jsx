@@ -441,26 +441,27 @@ function TrustBar() {
 // ── PROBLEM / SOLUTION ────────────────────────────────────────
 function ProblemSolution() {
   const { t, lang } = useI18n();
+  const isMobile = useIsMobile();
   const isSaudi = lang === "AR";
   const problems = [t("lv2.ps.p1"), t("lv2.ps.p2"), t("lv2.ps.p3"), t("lv2.ps.p4")];
   const solutions = [t("lv2.ps.s1"), t("lv2.ps.s2"), t("lv2.ps.s3"), t("lv2.ps.s4")];
 
   return (
-    <section style={{ padding: "120px 32px", position: "relative" }}>
+    <section style={{ padding: isMobile ? "64px 16px" : "120px 32px", position: "relative" }}>
       <div style={{ maxWidth: 1280, margin: "0 auto" }}>
-        <div style={{ textAlign: "center", maxWidth: 700, margin: "0 auto 64px" }}>
+        <div style={{ textAlign: "center", maxWidth: 700, margin: isMobile ? "0 auto 36px" : "0 auto 64px" }}>
           <span style={{
             display: "inline-flex",
             alignItems: "center",
             gap: 8,
             fontFamily: "monospace",
-            fontSize: 18,
+            fontSize: isMobile ? 13 : 18,
             fontWeight: 700,
-            letterSpacing: "0.18em",
+            letterSpacing: isMobile ? "0.12em" : "0.18em",
             textTransform: "uppercase",
             color: isSaudi ? SA.green : C.red,
           }}>
-            <span style={{ width: 24, height: 1, background: isSaudi ? SA.green : C.red }} />
+            <span style={{ width: isMobile ? 18 : 24, height: 1, background: isSaudi ? SA.green : C.red }} />
             {t("lv2.ps.eyebrow")}
           </span>
           <h2 style={{
@@ -486,8 +487,8 @@ function ProblemSolution() {
 
         <div style={{
           display: "grid",
-          gridTemplateColumns: "1fr auto 1fr",
-          gap: 32,
+          gridTemplateColumns: isMobile ? "1fr" : "1fr auto 1fr",
+          gap: isMobile ? 20 : 32,
           alignItems: "center",
           maxWidth: 1100,
           margin: "0 auto",
@@ -495,8 +496,8 @@ function ProblemSolution() {
           {/* PROBLEM CARD */}
           <div style={{
             background: "white",
-            borderRadius: 28,
-            padding: 36,
+            borderRadius: isMobile ? 20 : 28,
+            padding: isMobile ? 22 : 36,
             border: `1px solid ${isSaudi ? SA.hairline : C.hairline}`,
             transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
           }}>
@@ -505,22 +506,22 @@ function ProblemSolution() {
               alignItems: "center",
               gap: 8,
               fontFamily: "monospace",
-              fontSize: 18,
+              fontSize: isMobile ? 13 : 18,
               fontWeight: 700,
               letterSpacing: "0.12em",
-              padding: "6px 14px",
+              padding: isMobile ? "5px 11px" : "6px 14px",
               borderRadius: 100,
-              marginBottom: 24,
+              marginBottom: isMobile ? 16 : 24,
               background: isSaudi ? SA.bgTinted : C.bgTinted,
               color: isSaudi ? SA.greenDeep : C.redDeep,
             }} dangerouslySetInnerHTML={{ __html: t("lv2.ps.problemTag") }} />
             <h3 style={{
               fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-              fontSize: 24,
+              fontSize: isMobile ? 19 : 24,
               fontWeight: 800,
               letterSpacing: "-0.02em",
               lineHeight: 1.2,
-              marginBottom: 22,
+              marginBottom: isMobile ? 16 : 22,
               color: C.ink,
             }} dangerouslySetInnerHTML={{ __html: t("lv2.ps.problemTitle") }} />
             <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: 14, padding: 0 }}>
@@ -553,15 +554,15 @@ function ProblemSolution() {
           </div>
 
 {/* ARROW Z — replaced with logo */}
-          <div style={{ position: "relative", width: 100, height: 100, display: "grid", placeItems: "center" }}>
+          <div style={{ position: "relative", width: isMobile ? 64 : 100, height: isMobile ? 64 : 100, display: "grid", placeItems: "center", margin: isMobile ? "0 auto" : 0 }}>
             <div style={{
-              width: 90,
-              height: 90,
+              width: isMobile ? 56 : 90,
+              height: isMobile ? 56 : 90,
               borderRadius: "50%",
               background: "white",
               display: "grid",
               placeItems: "center",
-              padding: 14,
+              padding: isMobile ? 9 : 14,
               boxShadow: isSaudi ? `
                 0 0 0 8px rgba(0, 108, 53, 0.1),
                 0 0 0 16px rgba(0, 108, 53, 0.05),
@@ -584,8 +585,8 @@ function ProblemSolution() {
               ? `linear-gradient(135deg, ${SA.green900} 0%, ${SA.green950} 100%)`
               : `linear-gradient(135deg, ${C.wine900} 0%, ${C.wine950} 100%)`,
             color: "white",
-            borderRadius: 28,
-            padding: 36,
+            borderRadius: isMobile ? 20 : 28,
+            padding: isMobile ? 22 : 36,
             border: `1px solid ${isSaudi ? SA.green700 : C.wine700}`,
             boxShadow: isSaudi
               ? "0 24px 60px rgba(0, 25, 12, 0.45)"
@@ -609,12 +610,12 @@ function ProblemSolution() {
               alignItems: "center",
               gap: 8,
               fontFamily: "monospace",
-              fontSize: 18,
+              fontSize: isMobile ? 13 : 18,
               fontWeight: 700,
               letterSpacing: "0.12em",
-              padding: "6px 14px",
+              padding: isMobile ? "5px 11px" : "6px 14px",
               borderRadius: 100,
-              marginBottom: 24,
+              marginBottom: isMobile ? 16 : 24,
               background: "rgba(16, 185, 129, 0.15)",
               color: C.emerald,
               border: "1px solid rgba(16, 185, 129, 0.3)",
@@ -622,11 +623,11 @@ function ProblemSolution() {
             }} dangerouslySetInnerHTML={{ __html: t("lv2.ps.solutionTag") }} />
             <h3 style={{
               fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-              fontSize: 24,
+              fontSize: isMobile ? 19 : 24,
               fontWeight: 800,
               letterSpacing: "-0.02em",
               lineHeight: 1.2,
-              marginBottom: 22,
+              marginBottom: isMobile ? 16 : 22,
               color: "white",
               position: "relative",
             }} dangerouslySetInnerHTML={{ __html: t("lv2.ps.solutionTitle") }} />
