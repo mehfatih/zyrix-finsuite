@@ -1,0 +1,159 @@
+/* ============================================================
+   MOBILE FIXES — Phase 1 (Bulk CSS)
+   Targets common broken patterns across all pages EXCEPT Landing
+   (which uses useIsMobile() ternaries for proper handling).
+   ============================================================ */
+
+@media (max-width: 768px) {
+
+  /* ─── 1. Force multi-column grids to single column ──────────
+     Targets: any element with inline grid-template-columns
+     containing repeat(2..)/repeat(3..)/repeat(4..)/repeat(5..)/repeat(6..)
+     EXCEPT inside .landing-page (Landing already handles this). */
+  body:not(.landing-page) [style*="repeat(2,"],
+  body:not(.landing-page) [style*="repeat(2 ,"],
+  body:not(.landing-page) [style*="repeat(3,"],
+  body:not(.landing-page) [style*="repeat(3 ,"],
+  body:not(.landing-page) [style*="repeat(4,"],
+  body:not(.landing-page) [style*="repeat(4 ,"],
+  body:not(.landing-page) [style*="repeat(5,"],
+  body:not(.landing-page) [style*="repeat(5 ,"],
+  body:not(.landing-page) [style*="repeat(6,"],
+  body:not(.landing-page) [style*="1fr 1fr"],
+  body:not(.landing-page) [style*="1fr 1.2fr"],
+  body:not(.landing-page) [style*="1.4fr 1fr"],
+  body:not(.landing-page) [style*="1.3fr 1fr"] {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  /* ─── 2. Reduce oversized section paddings ───────────────────
+     120px / 100px / 80px section paddings are landing-style and
+     don't make sense on mobile. */
+  body:not(.landing-page) section[style*="padding: 120px"],
+  body:not(.landing-page) section[style*="padding: 100px"],
+  body:not(.landing-page) section[style*="padding: 80px"],
+  body:not(.landing-page) [style*="padding: '120px"],
+  body:not(.landing-page) [style*="padding: '100px"],
+  body:not(.landing-page) [style*="padding: '80px"],
+  body:not(.landing-page) [style*='padding: "120px'],
+  body:not(.landing-page) [style*='padding: "100px'],
+  body:not(.landing-page) [style*='padding: "80px'] {
+    padding: 48px 16px !important;
+  }
+
+  /* ─── 3. Reduce other large paddings (cards, etc.) ──────────
+     Targets common 64px/48px/40px paddings that are too big on mobile. */
+  body:not(.landing-page) [style*="padding: 64px"],
+  body:not(.landing-page) [style*="padding: 48px"] {
+    padding: 24px !important;
+  }
+
+  body:not(.landing-page) [style*="padding: 40px"],
+  body:not(.landing-page) [style*="padding: 36px"],
+  body:not(.landing-page) [style*="padding: 32px"] {
+    padding: 20px !important;
+  }
+
+  /* ─── 4. Cap container max-widths ───────────────────────────
+     Containers should never exceed viewport on mobile. */
+  body:not(.landing-page) [style*="maxWidth: 1280"],
+  body:not(.landing-page) [style*="maxWidth: 1180"],
+  body:not(.landing-page) [style*="maxWidth: 1080"],
+  body:not(.landing-page) [style*="maxWidth: 1024"],
+  body:not(.landing-page) [style*="maxWidth: 900"] {
+    max-width: 100% !important;
+  }
+
+  /* ─── 5. Reduce oversized fonts ─────────────────────────────
+     fontSize 48+ becomes 28; 36-47 becomes 24; 30-35 becomes 22. */
+  body:not(.landing-page) [style*="fontSize: 56"],
+  body:not(.landing-page) [style*="fontSize: 52"],
+  body:not(.landing-page) [style*="fontSize: 50"],
+  body:not(.landing-page) [style*="fontSize: 48"] {
+    font-size: 28px !important;
+    line-height: 1.2 !important;
+    letter-spacing: -0.02em !important;
+  }
+
+  body:not(.landing-page) [style*="fontSize: 44"],
+  body:not(.landing-page) [style*="fontSize: 42"],
+  body:not(.landing-page) [style*="fontSize: 40"],
+  body:not(.landing-page) [style*="fontSize: 38"],
+  body:not(.landing-page) [style*="fontSize: 36"] {
+    font-size: 24px !important;
+    line-height: 1.25 !important;
+    letter-spacing: -0.02em !important;
+  }
+
+  body:not(.landing-page) [style*="fontSize: 34"],
+  body:not(.landing-page) [style*="fontSize: 32"],
+  body:not(.landing-page) [style*="fontSize: 30"] {
+    font-size: 22px !important;
+    line-height: 1.3 !important;
+  }
+
+  /* ─── 6. Hero/banner heights ─────────────────────────────────
+     Big aspectRatio or minHeight on hero sections. */
+  body:not(.landing-page) [style*="minHeight: 600"],
+  body:not(.landing-page) [style*="minHeight: 500"],
+  body:not(.landing-page) [style*="minHeight: 460"] {
+    min-height: auto !important;
+  }
+
+  /* ─── 7. Wide images / illustrations ─────────────────────────
+     Force images and SVGs in cards to fit width. */
+  body:not(.landing-page) img[style*="width: 400"],
+  body:not(.landing-page) img[style*="width: 500"],
+  body:not(.landing-page) img[style*="width: 600"],
+  body:not(.landing-page) img[style*="width: 700"],
+  body:not(.landing-page) img[style*="width: 800"] {
+    max-width: 100% !important;
+    width: auto !important;
+    height: auto !important;
+  }
+
+  /* ─── 8. Form inputs full-width on mobile ────────────────────
+     Anything inside an auth/onboarding container. */
+  body:not(.landing-page) input[type="text"],
+  body:not(.landing-page) input[type="email"],
+  body:not(.landing-page) input[type="password"],
+  body:not(.landing-page) input[type="tel"],
+  body:not(.landing-page) textarea,
+  body:not(.landing-page) select {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  /* ─── 9. Tables become scrollable instead of overflowing ─────
+     Wrap any table in horizontal scroll. */
+  body:not(.landing-page) table {
+    display: block !important;
+    overflow-x: auto !important;
+    white-space: nowrap !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  /* ─── 10. Body-level overflow safety net ─────────────────────
+     Prevent any rogue element from creating horizontal scroll on
+     the entire page. */
+  body:not(.landing-page) {
+    overflow-x: hidden !important;
+  }
+
+  /* ─── 11. Buttons keep readable size ─────────────────────────
+     Don't shrink CTA buttons below tap-target size. */
+  body:not(.landing-page) button,
+  body:not(.landing-page) a[role="button"],
+  body:not(.landing-page) [style*="display: inline-flex"][style*="padding"] {
+    min-height: 38px !important;
+  }
+
+  /* ─── 12. Flex rows that should wrap ─────────────────────────
+     justifyContent: space-between on small flex rows breaks at
+     mobile widths. Force wrap. */
+  body:not(.landing-page) [style*="space-between"][style*="display: flex"] {
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+  }
+}

@@ -2512,6 +2512,10 @@ function AIInvoiceDemoSection() {
 
 export default function LandingPageV2Extended() {
   const { lang } = useI18n();
+  React.useEffect(() => {
+    document.body.classList.add("landing-page");
+    return () => document.body.classList.remove("landing-page");
+  }, []);
   const arFont = "'IBM Plex Sans Arabic', 'Manrope', system-ui, sans-serif";
   const ltrFont = "'Manrope', system-ui, -apple-system, sans-serif";
   return (
