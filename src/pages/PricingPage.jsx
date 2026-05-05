@@ -17,6 +17,8 @@ import {
 
 import NavV2 from "../components/NavV2.jsx";
 import FooterV2 from "../components/FooterV2.jsx";
+import SignupModal from "../components/SignupModal.jsx";
+import { setSignupModalOpener } from "../utils/planCatalog.js";
 
 // ================================================================
 // Country-specific pricing (purchasing-power adjusted)
@@ -291,6 +293,39 @@ function useAnimatedNumber(value) {
 }
 
 export default function PricingPage() {
+  // ----- Stage 8 Phase B: signup modal state -----
+  const [signupModal, setSignupModal] = React.useState({
+    open: false,
+    resolver: null,
+    language: "TR",
+  });
+
+  React.useEffect(() => {
+    setSignupModalOpener((prefill) => {
+      return new Promise((resolve) => {
+        setSignupModal({
+          open: true,
+          resolver: resolve,
+          language: (prefill && prefill.language) || "TR",
+        });
+      });
+    });
+    return () => {
+      // Reset to default opener on unmount
+      setSignupModalOpener(undefined);
+    };
+  }, []);
+
+  function handleModalSubmit(values) {
+    if (signupModal.resolver) signupModal.resolver(values);
+    setSignupModal({ open: false, resolver: null, language: "TR" });
+  }
+
+  function handleModalClose() {
+    if (signupModal.resolver) signupModal.resolver(null);
+    setSignupModal({ open: false, resolver: null, language: "TR" });
+  }
+
   const { lang } = useI18n();
   const isArabic = lang === "AR";
   const isRTL = isArabic;
@@ -818,6 +853,12 @@ export default function PricingPage() {
       </section>
     </main>
       <FooterV2 />
+      <SignupModal
+        open={signupModal.open}
+        onClose={handleModalClose}
+        onSubmit={handleModalSubmit}
+        language={signupModal.language}
+      />
     </>
   );
 }

@@ -522,17 +522,119 @@ export function getCtaLabel(key, lang) {
  * To be wired to backend in Phase B.
  * For now, redirects to /onboarding with plan param.
  */
-export function activatePlan(planId, options) {
+// ============================================================
+// Backend API base URL for FinSuite auto-provisioning
+// Stage 8 Phase B
+// ============================================================
+const API_BASE =
+  (typeof import.meta !== "undefined" && import.meta.env && import.meta.env.VITE_FINSUITE_API_BASE) ||
+  "https://finsuite-backend-production.up.railway.app";
+
+/**
+ * Pluggable signup-modal opener.
+ * The default implementation does a window.prompt() fallback so the
+ * marketing site keeps working even before SignupModal.jsx is mounted.
+ * PricingPage will replace this at runtime via setSignupModalOpener().
+ */
+let _openSignupModal = async function defaultOpener(prefill) {
+  if (typeof window === "undefined") return null;
+  const name = window.prompt("Adiniz Soyadiniz / Full name");
+  if (!name) return null;
+  const email = window.prompt("E-posta / Email");
+  if (!email) return null;
+  const phone = window.prompt("Telefon (+905...) / Phone");
+  if (!phone) return null;
+  const password = window.prompt("Sifre (min 8, harf+rakam) / Password");
+  if (!password) return null;
+  const businessName = window.prompt("Sirket adi (optional)") || undefined;
+  return { name, email, phone, password, businessName };
+};
+
+export function setSignupModalOpener(fn) {
+  if (typeof fn === "function") _openSignupModal = fn;
+}
+
+/**
+ * Activate a plan: open signup modal, POST to backend, store JWT,
+ * redirect to dashboard. Returns { success, error? } so callers can
+ * show a toast on failure.
+ */
+export async function activatePlan(planId, options) {
   const opts = options || {};
-  // TODO: Phase B - call backend POST /api/plans/provision
-  // For now, redirect to onboarding with plan param
-  const url = "/onboarding?plan=" + encodeURIComponent(planId)
-    + (opts.billing ? "&billing=" + encodeURIComponent(opts.billing) : "")
-    + (opts.country ? "&country=" + encodeURIComponent(opts.country) : "");
-  if (typeof window !== "undefined") {
-    window.location.href = url;
+  const billing  = opts.billing  || "monthly";
+  const country  = opts.country  || "TR";
+  const language = opts.language || "TR";
+
+  // 1. Collect signup credentials
+  const credentials = await _openSignupModal({ planId, billing, country, language });
+  if (!credentials) {
+    return { success: false, cancelled: true };
   }
-  return { success: true, redirectTo: url };
+
+  // 2. POST to backend
+  let response;
+  try {
+    response = await fetch(API_BASE + "/api/plans/provision", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept-Language": language,
+      },
+      body: JSON.stringify({
+        planId,
+        billing,
+        country,
+        language,
+        name: credentials.name,
+        email: credentials.email,
+        phone: credentials.phone,
+        password: credentials.password,
+        businessName: credentials.businessName,
+      }),
+    });
+  } catch (err) {
+    return { success: false, error: "Network error. Please try again." };
+  }
+
+  let data;
+  try {
+    data = await response.json();
+  } catch (err) {
+    return { success: false, error: "Server error. Please try again." };
+  }
+
+  if (!response.ok || !data || !data.success) {
+    const message =
+      (data && data.error) ||
+      "Provisioning failed. Please try again.";
+    return { success: false, error: message, status: response.status };
+  }
+
+  // 3. Persist JWT + merchant snapshot for the dashboard
+  if (typeof window !== "undefined") {
+    try {
+      window.localStorage.setItem("finsuite_token", data.data.token);
+      window.localStorage.setItem(
+        "finsuite_user",
+        JSON.stringify(data.data.merchant)
+      );
+    } catch (e) {
+      // ignore storage failures (quota, private mode)
+    }
+  }
+
+  // 4. Redirect to dashboard
+  const redirectTo =
+    (data.data && data.data.redirectTo) || "/dashboard?welcome=1";
+  if (typeof window !== "undefined") {
+    window.location.href = redirectTo;
+  }
+
+  return {
+    success: true,
+    merchant: data.data.merchant,
+    redirectTo,
+  };
 }
 
 // Default export = all helpers
@@ -551,4 +653,5 @@ export default {
   getTierLabel,
   getCtaLabel,
   activatePlan,
+  setSignupModalOpener,
 };
