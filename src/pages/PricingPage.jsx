@@ -293,11 +293,15 @@ function useAnimatedNumber(value) {
 }
 
 export default function PricingPage() {
-  // ----- Stage 8 Phase B: signup modal state -----
+  // ----- Stage 8 Phase B: signup modal state machine -----
+  // view: "form" while collecting credentials, "success" / "error" after submit
   const [signupModal, setSignupModal] = React.useState({
     open: false,
+    view: "form",
     resolver: null,
     language: "TR",
+    result: null,
+    errorMessage: "",
   });
 
   React.useEffect(() => {
@@ -305,25 +309,68 @@ export default function PricingPage() {
       return new Promise((resolve) => {
         setSignupModal({
           open: true,
+          view: "form",
           resolver: resolve,
           language: (prefill && prefill.language) || "TR",
+          result: null,
+          errorMessage: "",
         });
       });
     });
     return () => {
-      // Reset to default opener on unmount
       setSignupModalOpener(undefined);
     };
   }, []);
 
-  function handleModalSubmit(values) {
-    if (signupModal.resolver) signupModal.resolver(values);
-    setSignupModal({ open: false, resolver: null, language: "TR" });
+  // Triggered when the user submits the form. Resolves the promise
+  // returned to activatePlan so it can call the backend, then awaits
+  // the outcome and flips the modal into success/error view.
+  async function handleModalSubmit(values) {
+    const resolver = signupModal.resolver;
+    if (!resolver) return;
+
+    // Hand the credentials to activatePlan() and listen for the outcome.
+    // We replace the resolver immediately so a stuck promise can't fire twice.
+    setSignupModal((prev) => ({ ...prev, resolver: null }));
+
+    // activatePlan() will call back via the result promise pattern below.
+    // Here we use a small internal promise to capture the outcome.
+    const outcomePromise = new Promise((res) => {
+      window.__zyrixActivationOutcome = res;
+    });
+
+    resolver(values);
+
+    let outcome;
+    try {
+      outcome = await outcomePromise;
+    } finally {
+      delete window.__zyrixActivationOutcome;
+    }
+
+    if (outcome && outcome.success) {
+      setSignupModal((prev) => ({
+        ...prev,
+        view: "success",
+        result: outcome,
+      }));
+    } else {
+      setSignupModal((prev) => ({
+        ...prev,
+        view: "error",
+        errorMessage:
+          (outcome && outcome.error) ||
+          "Hesap olusturulurken bir sorun olustu. Lutfen tekrar deneyiniz.",
+      }));
+    }
   }
 
   function handleModalClose() {
     if (signupModal.resolver) signupModal.resolver(null);
-    setSignupModal({ open: false, resolver: null, language: "TR" });
+    setSignupModal({
+      open: false, view: "form", resolver: null,
+      language: "TR", result: null, errorMessage: "",
+    });
   }
 
   const { lang } = useI18n();
@@ -858,6 +905,9 @@ export default function PricingPage() {
         onClose={handleModalClose}
         onSubmit={handleModalSubmit}
         language={signupModal.language}
+        view={signupModal.view}
+        result={signupModal.result}
+        errorMessage={signupModal.errorMessage}
       />
     </>
   );

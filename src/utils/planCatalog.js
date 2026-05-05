@@ -565,9 +565,20 @@ export async function activatePlan(planId, options) {
   const country  = opts.country  || "TR";
   const language = opts.language || "TR";
 
+  // Helper: publish the final outcome to whoever is awaiting it
+  // (PricingPage uses window.__zyrixActivationOutcome to flip modal view)
+  function publish(outcome) {
+    if (typeof window !== "undefined" && typeof window.__zyrixActivationOutcome === "function") {
+      try { window.__zyrixActivationOutcome(outcome); } catch (e) { /* ignore */ }
+    }
+    return outcome;
+  }
+
   // 1. Collect signup credentials
   const credentials = await _openSignupModal({ planId, billing, country, language });
   if (!credentials) {
+    // User cancelled BEFORE modal handed control to outcome promise -
+    // do NOT publish (would never be awaited).
     return { success: false, cancelled: true };
   }
 
@@ -593,21 +604,21 @@ export async function activatePlan(planId, options) {
       }),
     });
   } catch (err) {
-    return { success: false, error: "Network error. Please try again." };
+    return publish({ success: false, error: "Network error. Please try again." });
   }
 
   let data;
   try {
     data = await response.json();
   } catch (err) {
-    return { success: false, error: "Server error. Please try again." };
+    return publish({ success: false, error: "Server error. Please try again." });
   }
 
   if (!response.ok || !data || !data.success) {
     const message =
       (data && data.error) ||
       "Provisioning failed. Please try again.";
-    return { success: false, error: message, status: response.status };
+    return publish({ success: false, error: message, status: response.status });
   }
 
   // 3. Persist JWT + merchant snapshot for the dashboard
@@ -623,18 +634,20 @@ export async function activatePlan(planId, options) {
     }
   }
 
-  // 4. Redirect to dashboard
+  // 4. Return rich success object. The caller (modal) decides what to
+  //    show. Auto-redirect is intentionally disabled until the FinSuite
+  //    dashboard is live on a separate domain.
   const redirectTo =
     (data.data && data.data.redirectTo) || "/dashboard?welcome=1";
-  if (typeof window !== "undefined") {
-    window.location.href = redirectTo;
-  }
 
-  return {
+  return publish({
     success: true,
     merchant: data.data.merchant,
+    subscription: data.data.subscription,
+    featuresEnabled: data.data.featuresEnabled || [],
+    token: data.data.token,
     redirectTo,
-  };
+  });
 }
 
 // Default export = all helpers
