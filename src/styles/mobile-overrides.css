@@ -215,3 +215,176 @@ html, body, #root {
     display: none !important;
   }
 }
+
+
+/* ============================================================
+ * LANDING PAGE OVERRIDES (LandingPageV2Extended)
+ * ============================================================ */
+
+/* Section padding 120px 32px is huge on mobile - bring it down */
+@media (max-width: 768px) {
+  /* Sections with massive vertical padding */
+  [style*="padding: 120px 32px"],
+  [style*="padding:120px 32px"],
+  [style*="padding: 130px 0 0"],
+  [style*="padding:130px 0 0"],
+  [style*="padding: 100px 32px"],
+  [style*="padding:100px 32px"] {
+    padding: 50px 16px !important;
+  }
+
+  [style*="padding: 24px 0 100px"],
+  [style*="padding:24px 0 100px"] {
+    padding: 16px 0 50px !important;
+  }
+
+  [style*="padding: 80px"],
+  [style*="padding:80px"] {
+    padding: 40px 16px !important;
+  }
+
+  [style*="padding: 60px 32px"],
+  [style*="padding:60px 32px"] {
+    padding: 32px 16px !important;
+  }
+
+  /* Force ALL grid layouts (1fr 1fr, 1.1fr, 1.2fr, repeat 3-4) to single column */
+  [style*="grid-template-columns: 1fr 1fr"],
+  [style*="gridTemplateColumns: '1fr 1fr'"],
+  [style*="gridTemplateColumns:'1fr 1fr'"],
+  [style*='gridTemplateColumns: "1fr 1fr"'],
+  [style*="grid-template-columns: 1fr 1.1fr"],
+  [style*="grid-template-columns: 1fr 1.2fr"],
+  [style*="grid-template-columns: 1fr auto 1fr"],
+  [style*="grid-template-columns: 1fr 1fr 1fr"],
+  [style*="grid-template-columns: repeat(3, 1fr)"],
+  [style*="grid-template-columns: repeat(3, minmax(0, 1fr))"],
+  [style*="grid-template-columns: repeat(4, 1fr)"] {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  /* Hero buttons stat row - force to 2 cols max */
+  [style*="grid-template-columns: repeat(5, 1fr)"],
+  [style*="grid-template-columns: repeat(6, 1fr)"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  /* Hide decorative absolute-positioned mock product/phone images */
+  [style*="position: absolute"][style*="right:"],
+  [style*="position:absolute"][style*="right:"] {
+    display: none !important;
+  }
+  [style*="position: absolute"][style*="left:"][style*="-"],
+  [style*="position:absolute"][style*="left:"][style*="-"] {
+    display: none !important;
+  }
+
+  /* Container max widths */
+  [style*="maxWidth: 1024"],
+  [style*="maxWidth:1024"],
+  [style*="max-width: 1024"],
+  [style*="maxWidth: 1200"],
+  [style*="max-width: 1200"],
+  [style*="maxWidth: 1400"],
+  [style*="max-width: 1400"] {
+    max-width: 100% !important;
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+    box-sizing: border-box !important;
+  }
+
+  [style*="width: 720"],
+  [style*="width:720"] {
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+
+  /* Massive hero text - force readable size */
+  [style*="fontSize: 72"],
+  [style*="font-size: 72"],
+  [style*="fontSize: 64"],
+  [style*="font-size: 64"],
+  [style*="fontSize: 80"],
+  [style*="font-size: 80"],
+  [style*="fontSize: 96"],
+  [style*="font-size: 96"] {
+    font-size: 36px !important;
+    line-height: 1.15 !important;
+  }
+
+  [style*="fontSize: 56"],
+  [style*="font-size: 56"],
+  [style*="fontSize: 48"],
+  [style*="font-size: 48"],
+  [style*="fontSize: 44"],
+  [style*="font-size: 44"] {
+    font-size: 28px !important;
+    line-height: 1.2 !important;
+  }
+
+  [style*="fontSize: 40"],
+  [style*="font-size: 40"],
+  [style*="fontSize: 36"],
+  [style*="font-size: 36"],
+  [style*="fontSize: 32"],
+  [style*="font-size: 32"] {
+    font-size: 22px !important;
+    line-height: 1.25 !important;
+  }
+
+  /* Navbar: hide nav items on small screens (only logo + CTA) */
+  nav [style*="display: flex"][style*="gap: 32"],
+  nav [style*="display:flex"][style*="gap:32"],
+  nav [style*="display: flex"][style*="gap: 24"] {
+    display: none !important;
+  }
+
+  /* But keep the CTA button row */
+  nav button {
+    font-size: 12px !important;
+    padding: 8px 14px !important;
+  }
+
+  /* Hero stat cards row - shrink to 2 columns */
+  [style*="display: grid"][style*="repeat(5"],
+  [style*="display:grid"][style*="repeat(5"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  /* Stat cards font sizes - much smaller */
+  [style*="fontSize: 28"],
+  [style*="fontSize: 24"][style*="fontWeight: 800"] {
+    font-size: 18px !important;
+  }
+
+  /* Footer columns */
+  footer [style*="display: grid"],
+  footer [style*="display:grid"] {
+    grid-template-columns: 1fr !important;
+    gap: 32px !important;
+  }
+
+  /* Buttons full-width on mobile when grouped */
+  [style*="display: flex"][style*="gap: 16"]:has(> button) > button,
+  [style*="display:flex"][style*="gap:16"]:has(> button) > button {
+    flex: 1 1 100% !important;
+    min-width: 0 !important;
+  }
+}
+
+/* --------------------------------------------------------
+ * Very small screens (< 480px)
+ * -------------------------------------------------------- */
+@media (max-width: 480px) {
+  [style*="padding: 50px 16px"],
+  [style*="padding:50px 16px"] {
+    padding: 32px 14px !important;
+  }
+
+  [style*="fontSize: 36"][style*="fontWeight"] {
+    font-size: 26px !important;
+  }
+}
