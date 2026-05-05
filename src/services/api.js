@@ -259,6 +259,21 @@ export const aiCfoAPI = {
   context: () => apiFetch("/api/ai-cfo/context"),
 };
 
+
+// ──────────────────────────────────────────────
+// CASH CRISIS ALERTS (Sprint 2 - Track C)
+// ──────────────────────────────────────────────
+export const cashCrisisAPI = {
+  list: () => apiFetch("/api/cash-crisis"),
+  listAll: () => apiFetch("/api/cash-crisis/all"),
+  analyze: () =>
+    apiFetch("/api/cash-crisis/analyze", { method: "POST" }),
+  dismiss: (id) =>
+    apiFetch(`/api/cash-crisis/${id}/dismiss`, { method: "POST" }),
+  resolve: (id) =>
+    apiFetch(`/api/cash-crisis/${id}/resolve`, { method: "POST" }),
+};
+
 // ──────────────────────────────────────────────
 // Token Helpers
 // ──────────────────────────────────────────────
