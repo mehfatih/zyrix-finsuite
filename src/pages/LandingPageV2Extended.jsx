@@ -354,6 +354,7 @@ function Hero() {
 // ── TRUST BAR ─────────────────────────────────────────────────
 function TrustBar() {
   const { t, lang } = useI18n();
+  const isMobile = useIsMobile();
   const isSaudi = lang === "AR";
   const items = [
     { title: t("lv2.trust.gib.title"),     desc: t("lv2.trust.gib.desc"),     icon: <><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></> },
@@ -362,17 +363,19 @@ function TrustBar() {
     { title: t("lv2.trust.support.title"), desc: t("lv2.trust.support.desc"), icon: <><path d="M3 18v-6a9 9 0 0118 0v6"/><path d="M21 19a2 2 0 01-2 2h-1v-7h3v5zM3 19a2 2 0 002 2h1v-7H3v5z"/></> },
   ];
   return (
-    <div style={{ position: "relative", zIndex: 30, marginTop: -60, padding: "0 32px" }}>
+    <div style={{ position: "relative", zIndex: 30, marginTop: isMobile ? -20 : -60, padding: isMobile ? "0 16px" : "0 32px" }}>
       <div style={{
         maxWidth: 1180,
         margin: "0 auto",
         background: "white",
-        borderRadius: 36,
-        padding: "28px 36px",
+        borderRadius: isMobile ? 20 : 36,
+        padding: isMobile ? "20px 18px" : "28px 36px",
         display: "grid",
-        gridTemplateColumns: "repeat(4, 1fr)",
-        gap: 32,
-        boxShadow: "0 28px 60px rgba(42, 3, 6, 0.12), 0 0 0 1px " + C.hairline,
+        gridTemplateColumns: isMobile ? "repeat(2, 1fr)" : "repeat(4, 1fr)",
+        gap: isMobile ? 16 : 32,
+        boxShadow: isMobile
+          ? "0 12px 28px rgba(42, 3, 6, 0.10), 0 0 0 1px " + C.hairline
+          : "0 28px 60px rgba(42, 3, 6, 0.12), 0 0 0 1px " + C.hairline,
         position: "relative",
       }}>
         <div style={{
@@ -389,12 +392,12 @@ function TrustBar() {
           borderRadius: 4,
         }} />
         {items.map((item, i) => (
-          <div key={i} style={{ display: "flex", alignItems: "center", gap: 14 }}>
+          <div key={i} style={{ display: "flex", alignItems: "center", gap: isMobile ? 10 : 14 }}>
             <div style={{
-              width: 48,
-              height: 48,
+              width: isMobile ? 38 : 48,
+              height: isMobile ? 38 : 48,
               flexShrink: 0,
-              borderRadius: 14,
+              borderRadius: isMobile ? 11 : 14,
               background: isSaudi
                 ? `linear-gradient(135deg, ${SA.green50}, ${SA.green100})`
                 : `linear-gradient(135deg, ${C.wine50}, ${C.wine100})`,
@@ -403,20 +406,30 @@ function TrustBar() {
               color: isSaudi ? SA.greenDeep : C.redDeep,
               border: `1px solid ${isSaudi ? SA.hairline : C.hairline}`,
             }}>
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width={isMobile ? 18 : 22} height={isMobile ? 18 : 22} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 {item.icon}
               </svg>
             </div>
-            <div style={{ minWidth: 0 }}>
+            <div style={{ minWidth: 0, flex: 1 }}>
               <div style={{
                 fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-                fontSize: 14,
+                fontSize: isMobile ? 12 : 14,
                 fontWeight: 800,
                 color: C.ink,
                 letterSpacing: "-0.01em",
                 marginBottom: 2,
+                whiteSpace: isMobile ? "nowrap" : "normal",
+                overflow: isMobile ? "hidden" : "visible",
+                textOverflow: isMobile ? "ellipsis" : "clip",
               }}>{item.title}</div>
-              <div style={{ fontSize: 12, color: C.muted, lineHeight: 1.4 }}>{item.desc}</div>
+              <div style={{
+                fontSize: isMobile ? 10.5 : 12,
+                color: C.muted,
+                lineHeight: 1.35,
+                whiteSpace: isMobile ? "nowrap" : "normal",
+                overflow: isMobile ? "hidden" : "visible",
+                textOverflow: isMobile ? "ellipsis" : "clip",
+              }}>{item.desc}</div>
             </div>
           </div>
         ))}
