@@ -1853,6 +1853,7 @@ function AIInvoiceDemoSection() {
   return (
     <section
       ref={sectionRef}
+      className="ai-cmd-section"
       style={{
         position: "relative",
         padding: "120px 32px",
@@ -1863,8 +1864,9 @@ function AIInvoiceDemoSection() {
         direction: isRTL ? "rtl" : "ltr",
       }}
     >
-      <div style={{ maxWidth: 1024, margin: "0 auto 64px", textAlign: "center" }}>
+      <div className="ai-cmd-header" style={{ maxWidth: 1024, margin: "0 auto 64px", textAlign: "center" }}>
         <h2
+          className="ai-cmd-h2"
           style={{
             fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
             fontSize: "clamp(36px, 5vw, 56px)",
@@ -1881,6 +1883,7 @@ function AIInvoiceDemoSection() {
           </span>
         </h2>
         <p
+          className="ai-cmd-sub"
           style={{
             marginTop: 24,
             fontSize: 18,
@@ -1921,6 +1924,7 @@ function AIInvoiceDemoSection() {
             height: "100%",
             opacity: 0.96,
           }}
+          className="ai-cmd-card-left"
         >
           <div style={{ display: "flex", flexDirection: "column", gap: 12, minHeight: 168 }}>
             {chatMessages.map((m, i) => (
@@ -2021,6 +2025,7 @@ function AIInvoiceDemoSection() {
 
         {/* CENTER AI CORE */}
         <div
+          className="ai-cmd-core-wrap"
           style={{
             position: "relative",
             display: "flex",
@@ -2032,6 +2037,7 @@ function AIInvoiceDemoSection() {
         >
           {/* Wide radial glow powering the entire section */}
           <div
+            className="ai-cmd-glow-wide"
             style={{
               position: "absolute",
               width: 900,
@@ -2047,6 +2053,7 @@ function AIInvoiceDemoSection() {
           />
           {/* Inner concentrated glow */}
           <div
+            className="ai-cmd-glow-inner"
             style={{
               position: "absolute",
               width: 460,
@@ -2063,6 +2070,7 @@ function AIInvoiceDemoSection() {
           />
           {/* Connection lines to orbit labels (4 directions) */}
           <svg
+            className="ai-cmd-svg"
             style={{
               position: "absolute",
               width: 460,
@@ -2086,6 +2094,7 @@ function AIInvoiceDemoSection() {
             <line x1="230" y1="230" x2="50"  y2="230" stroke="url(#ai-line-grad)" strokeWidth="1.2" strokeDasharray="2 4" />
           </svg>
           <div
+            className="ai-cmd-ring-1"
             style={{
               position: "absolute",
               width: 280,
@@ -2096,6 +2105,7 @@ function AIInvoiceDemoSection() {
             }}
           />
           <div
+            className="ai-cmd-ring-2"
             style={{
               position: "absolute",
               width: 340,
@@ -2106,6 +2116,7 @@ function AIInvoiceDemoSection() {
             }}
           />
           <div
+            className="ai-cmd-ring-3"
             style={{
               position: "absolute",
               width: 400,
@@ -2117,6 +2128,7 @@ function AIInvoiceDemoSection() {
           />
 
           <div
+            className="ai-cmd-core"
             style={{
               width: 220,
               height: 220,
@@ -2139,6 +2151,7 @@ function AIInvoiceDemoSection() {
             }}
           >
             <span
+              className="ai-cmd-core-zyrix"
               style={{
                 fontSize: 36,
                 fontWeight: 800,
@@ -2150,6 +2163,7 @@ function AIInvoiceDemoSection() {
               Zyrix
             </span>
             <span
+              className="ai-cmd-core-ai"
               style={{
                 fontSize: 48,
                 fontWeight: 900,
@@ -2162,15 +2176,16 @@ function AIInvoiceDemoSection() {
             </span>
           </div>
 
-          <div style={{ position: "absolute", top: 18, fontSize: 11, fontWeight: 800, color: isArabic ? SA.green : C.red, letterSpacing: "2px", opacity: 0.8, textTransform: "uppercase", textShadow: isArabic ? "0 0 14px rgba(0,108,53,.3)" : "0 0 14px rgba(227,10,23,.3)", whiteSpace: "nowrap" }}>{c.orbit[0]}</div>
-          <div style={{ position: "absolute", bottom: 78, fontSize: 11, fontWeight: 800, color: isArabic ? SA.green : C.red, letterSpacing: "2px", opacity: 0.8, textTransform: "uppercase", textShadow: isArabic ? "0 0 14px rgba(0,108,53,.3)" : "0 0 14px rgba(227,10,23,.3)", whiteSpace: "nowrap" }}>{c.orbit[1]}</div>
-          <div style={{ position: "absolute", left: -10, top: "42%", fontSize: 11, fontWeight: 800, color: isArabic ? SA.green : C.red, letterSpacing: "2px", opacity: 0.8, textTransform: "uppercase", textShadow: isArabic ? "0 0 14px rgba(0,108,53,.3)" : "0 0 14px rgba(227,10,23,.3)", whiteSpace: "nowrap" }}>{c.orbit[2]}</div>
-          <div style={{ position: "absolute", right: -10, top: "42%", fontSize: 11, fontWeight: 800, color: isArabic ? SA.green : C.red, letterSpacing: "2px", opacity: 0.8, textTransform: "uppercase", textShadow: isArabic ? "0 0 14px rgba(0,108,53,.3)" : "0 0 14px rgba(227,10,23,.3)", whiteSpace: "nowrap" }}>{c.orbit[3]}</div>
-          <div style={{ marginTop: 32, fontSize: 12, fontWeight: 800, letterSpacing: "1.5px", color: T.muted, textTransform: "uppercase", opacity: 0.7 }}>AI Decision Engine</div>
+          <div className="ai-cmd-orbit ai-cmd-orbit-top" style={{ position: "absolute", top: 18, fontSize: 11, fontWeight: 800, color: isArabic ? SA.green : C.red, letterSpacing: "2px", opacity: 0.8, textTransform: "uppercase", textShadow: isArabic ? "0 0 14px rgba(0,108,53,.3)" : "0 0 14px rgba(227,10,23,.3)", whiteSpace: "nowrap" }}>{c.orbit[0]}</div>
+          <div className="ai-cmd-orbit ai-cmd-orbit-bottom" style={{ position: "absolute", bottom: 78, fontSize: 11, fontWeight: 800, color: isArabic ? SA.green : C.red, letterSpacing: "2px", opacity: 0.8, textTransform: "uppercase", textShadow: isArabic ? "0 0 14px rgba(0,108,53,.3)" : "0 0 14px rgba(227,10,23,.3)", whiteSpace: "nowrap" }}>{c.orbit[1]}</div>
+          <div className="ai-cmd-orbit ai-cmd-orbit-left" style={{ position: "absolute", left: -10, top: "42%", fontSize: 11, fontWeight: 800, color: isArabic ? SA.green : C.red, letterSpacing: "2px", opacity: 0.8, textTransform: "uppercase", textShadow: isArabic ? "0 0 14px rgba(0,108,53,.3)" : "0 0 14px rgba(227,10,23,.3)", whiteSpace: "nowrap" }}>{c.orbit[2]}</div>
+          <div className="ai-cmd-orbit ai-cmd-orbit-right" style={{ position: "absolute", right: -10, top: "42%", fontSize: 11, fontWeight: 800, color: isArabic ? SA.green : C.red, letterSpacing: "2px", opacity: 0.8, textTransform: "uppercase", textShadow: isArabic ? "0 0 14px rgba(0,108,53,.3)" : "0 0 14px rgba(227,10,23,.3)", whiteSpace: "nowrap" }}>{c.orbit[3]}</div>
+          <div className="ai-cmd-decision" style={{ marginTop: 32, fontSize: 12, fontWeight: 800, letterSpacing: "1.5px", color: T.muted, textTransform: "uppercase", opacity: 0.7 }}>AI Decision Engine</div>
         </div>
 
         {/* RIGHT DASHBOARD */}
         <div
+          className="ai-cmd-card-right"
           style={{
             background: "rgba(255,255,255,.85)",
             backdropFilter: "blur(18px)",
@@ -2397,6 +2412,7 @@ function AIInvoiceDemoSection() {
 
       <div style={{ textAlign: "center", marginTop: 48 }}>
         <button
+          className="ai-cmd-cta"
           style={{
             padding: "18px 36px",
             background: primaryGradient,
@@ -2456,8 +2472,30 @@ function AIInvoiceDemoSection() {
           .ai-cmd-grid > div:nth-child(2) { grid-column: 1 / -1; }
         }
         @media (max-width: 720px) {
-          .ai-cmd-grid   { grid-template-columns: 1fr !important; }
-          .ai-cmd-bottom { grid-template-columns: 1fr !important; }
+          .ai-cmd-grid   { grid-template-columns: 1fr !important; gap: 20px !important; }
+          .ai-cmd-bottom { grid-template-columns: 1fr !important; gap: 12px !important; margin-top: 36px !important; }
+          .ai-cmd-section { padding: 64px 16px !important; }
+          .ai-cmd-header { margin: 0 auto 36px !important; }
+          .ai-cmd-h2 { font-size: 28px !important; }
+          .ai-cmd-sub { font-size: 14px !important; margin-top: 12px !important; }
+          .ai-cmd-card-left, .ai-cmd-card-right { padding: 18px !important; border-radius: 18px !important; }
+          .ai-cmd-core-wrap { min-height: 300px !important; }
+          .ai-cmd-glow-wide { width: 400px !important; height: 400px !important; }
+          .ai-cmd-glow-inner { width: 280px !important; height: 280px !important; }
+          .ai-cmd-svg { width: 280px !important; height: 280px !important; }
+          .ai-cmd-ring-1 { width: 200px !important; height: 200px !important; }
+          .ai-cmd-ring-2 { width: 240px !important; height: 240px !important; }
+          .ai-cmd-ring-3 { width: 280px !important; height: 280px !important; }
+          .ai-cmd-core { width: 140px !important; height: 140px !important; }
+          .ai-cmd-core-zyrix { font-size: 22px !important; }
+          .ai-cmd-core-ai { font-size: 30px !important; }
+          .ai-cmd-orbit { font-size: 9px !important; letter-spacing: 1px !important; }
+          .ai-cmd-orbit-top { top: 4px !important; }
+          .ai-cmd-orbit-bottom { bottom: 36px !important; }
+          .ai-cmd-orbit-left { left: 0 !important; }
+          .ai-cmd-orbit-right { right: 0 !important; }
+          .ai-cmd-decision { font-size: 10px !important; margin-top: 18px !important; }
+          .ai-cmd-cta { padding: 14px 28px !important; font-size: 15px !important; }
         }
       `}</style>
     </section>
