@@ -5,7 +5,6 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { useAuth } from "../context/AuthContext";
-import { useIsMobile } from "../hooks/useIsMobile";
 
 // Sprint 1 features (lazy-loaded)
 const EIrsaliyePage   = React.lazy(() => import("./dashboard/EIrsaliyePage"));
@@ -1544,8 +1543,8 @@ function Sidebar({ page, setPage, user, logout, unreadCount, onNotifClick, onSet
   ];
   return (
     <>
-      <div className={"zyrix-sidebar-backdrop" + (mobileOpen ? " open" : "")} onClick={onMobileClose} />
-<aside className={"zyrix-sidebar" + (mobileOpen ? " open" : "")} style={{ width:230, background:P.sidebar, borderRight:`1.5px solid ${P.border}`, display:"flex", flexDirection:"column", padding:"20px 12px", gap:3, position:"fixed", top:0, left:0, height:"100vh", zIndex:200, boxShadow:"4px 0 24px rgba(108,58,255,0.06)", overflowY:"auto", overflowX:"hidden" }}>
+      {mobileOpen && <div onClick={onMobileClose} style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.4)", zIndex:199 }} />}
+      <aside style={{ width:230, background:P.sidebar, borderRight:`1.5px solid ${P.border}`, display:"flex", flexDirection:"column", padding:"20px 12px", gap:3, position:"fixed", top:0, left:0, height:"100vh", zIndex:200, boxShadow:"4px 0 24px rgba(108,58,255,0.06)", overflowY:"auto", overflowX:"hidden" }}>
         <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:28, padding:"0 8px" }}>
           <div style={{ width:38, height:38, borderRadius:12, background:`linear-gradient(135deg,${P.purple},${P.pink})`, display:"flex", alignItems:"center", justifyContent:"center", boxShadow:`0 4px 16px ${P.purple}35` }}>
             <span style={{ color:"#fff", fontWeight:900, fontSize:17 }}>Z</span>
@@ -1628,7 +1627,6 @@ function GreetingBanner({ user }) {
 
 // ── Main ──────────────────────────────────────────
 export default function CustomerDashboard() {
-  const isMobile = useIsMobile();
   const { user, logout } = useAuth();
   const [page, setPage] = useState("overview");
   const [showNotifs, setShowNotifs] = useState(false);

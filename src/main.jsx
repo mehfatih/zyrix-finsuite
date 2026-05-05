@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import { I18nProvider } from './i18n/i18n';
 import { CountryProvider } from './hooks/useCountry.jsx';
-import "./styles/mobile-overrides.css";
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <CountryProvider>
