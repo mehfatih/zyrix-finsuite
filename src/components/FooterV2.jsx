@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useI18n } from "../i18n/i18n.jsx";
 import { useCountry } from "../hooks/useCountry.jsx";
+import { useIsMobile } from "../hooks/useIsMobile";
 import { COUNTRY_PROFILES, VISIBLE_COUNTRIES } from "../utils/countryProfiles.js";
 
 // ---------- Palettes (extracted from LandingPageV2Extended) ----------
@@ -69,6 +70,7 @@ const getLogo = (lang, dark) => {
 export default function FooterV2() {
   const { t, lang } = useI18n();
   const { country, profile, setCountry } = useCountry();
+  const isMobile = useIsMobile();
   const isSaudi = lang === "AR";
 
   // Build compliance string dynamically from country profile
@@ -152,21 +154,21 @@ export default function FooterV2() {
   ];
 
   return (
-    <footer style={{ background: isSaudi ? SA.green950 : C.wine950, color: "rgba(255, 255, 255, 0.7)", padding: "80px 32px 32px" }}>
+    <footer style={{ background: isSaudi ? SA.green950 : C.wine950, color: "rgba(255, 255, 255, 0.7)", padding: isMobile ? "48px 16px 24px" : "80px 32px 32px" }}>
       <div style={{ maxWidth: 1280, margin: "0 auto" }}>
         <div style={{
-          display: "grid", gridTemplateColumns: "1.4fr 1fr 1fr 1fr 1fr",
-          gap: 48, paddingBottom: 56,
+          display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1.4fr 1fr 1fr 1fr 1fr",
+          gap: isMobile ? 32 : 48, paddingBottom: isMobile ? 32 : 56,
           borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
         }}>
           <div>
             <img src={getLogo(lang, true)} alt="Zyrix FinSuite"
-              style={{ height: 44, width: "auto", marginBottom: 18 }} />
-            <p style={{ fontSize: 14, lineHeight: 1.7, marginBottom: 24, maxWidth: 320 }}>
+              style={{ height: isMobile ? 36 : 44, width: "auto", marginBottom: isMobile ? 14 : 18 }} />
+            <p style={{ fontSize: isMobile ? 13 : 14, lineHeight: 1.65, marginBottom: isMobile ? 18 : 24, maxWidth: 320 }}>
               {t("lv2.footer.tagline")}
             </p>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: 24, fontSize: 13 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8, marginBottom: isMobile ? 18 : 24, fontSize: isMobile ? 12.5 : 13 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ color: isSaudi ? SA.greenSoft : C.redSoft }}>
                   <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/>
@@ -184,7 +186,7 @@ export default function FooterV2() {
             <div style={{ display: "flex", gap: 10 }}>
               {socialLinks.map((s, i) => (
                 <a key={i} href={s.url} target="_blank" rel="noopener noreferrer" aria-label={s.name} style={{
-                  width: 38, height: 38, borderRadius: 10,
+                  width: isMobile ? 34 : 38, height: isMobile ? 34 : 38, borderRadius: 10,
                   background: "rgba(255, 255, 255, 0.06)",
                   border: "1px solid rgba(255, 255, 255, 0.1)",
                   display: "grid", placeItems: "center",
@@ -202,8 +204,8 @@ export default function FooterV2() {
           </div>
 
           <div>
-            <h4 style={{ fontFamily: "monospace", fontSize: 18, fontWeight: 700, letterSpacing: "0.18em", color: "white", marginBottom: 18, marginTop: 0 }}>{t("lv2.footer.product")}</h4>
-            <ul style={{ listStyle: "none", padding: 0, display: "flex", flexDirection: "column", gap: 12 }}>
+            <h4 style={{ fontFamily: "monospace", fontSize: isMobile ? 14 : 18, fontWeight: 700, letterSpacing: isMobile ? "0.12em" : "0.18em", color: "white", marginBottom: isMobile ? 12 : 18, marginTop: 0 }}>{t("lv2.footer.product")}</h4>
+            <ul style={{ listStyle: "none", padding: 0, display: "flex", flexDirection: "column", gap: isMobile ? 10 : 12 }}>
               {productLinks.map((l, i) => (
                 <li key={i}><a href="#" style={{ color: "rgba(255, 255, 255, 0.6)", textDecoration: "none", fontSize: 13, transition: "color 0.2s" }} onMouseEnter={(e) => e.target.style.color = "white"} onMouseLeave={(e) => e.target.style.color = "rgba(255, 255, 255, 0.6)"}>{l}</a></li>
               ))}
@@ -211,8 +213,8 @@ export default function FooterV2() {
           </div>
 
           <div>
-            <h4 style={{ fontFamily: "monospace", fontSize: 18, fontWeight: 700, letterSpacing: "0.18em", color: "white", marginBottom: 18, marginTop: 0 }}>{t("lv2.footer.resources")}</h4>
-            <ul style={{ listStyle: "none", padding: 0, display: "flex", flexDirection: "column", gap: 12 }}>
+            <h4 style={{ fontFamily: "monospace", fontSize: isMobile ? 14 : 18, fontWeight: 700, letterSpacing: isMobile ? "0.12em" : "0.18em", color: "white", marginBottom: isMobile ? 12 : 18, marginTop: 0 }}>{t("lv2.footer.resources")}</h4>
+            <ul style={{ listStyle: "none", padding: 0, display: "flex", flexDirection: "column", gap: isMobile ? 10 : 12 }}>
               {resourceLinks.map((l, i) => (
                 <li key={i}><a href="#" style={{ color: "rgba(255, 255, 255, 0.6)", textDecoration: "none", fontSize: 13, transition: "color 0.2s" }} onMouseEnter={(e) => e.target.style.color = "white"} onMouseLeave={(e) => e.target.style.color = "rgba(255, 255, 255, 0.6)"}>{l}</a></li>
               ))}
@@ -220,8 +222,8 @@ export default function FooterV2() {
           </div>
 
           <div>
-            <h4 style={{ fontFamily: "monospace", fontSize: 18, fontWeight: 700, letterSpacing: "0.18em", color: "white", marginBottom: 18, marginTop: 0 }}>{t("lv2.footer.company")}</h4>
-            <ul style={{ listStyle: "none", padding: 0, display: "flex", flexDirection: "column", gap: 12 }}>
+            <h4 style={{ fontFamily: "monospace", fontSize: isMobile ? 14 : 18, fontWeight: 700, letterSpacing: isMobile ? "0.12em" : "0.18em", color: "white", marginBottom: isMobile ? 12 : 18, marginTop: 0 }}>{t("lv2.footer.company")}</h4>
+            <ul style={{ listStyle: "none", padding: 0, display: "flex", flexDirection: "column", gap: isMobile ? 10 : 12 }}>
               {companyLinks.map((l, i) => (
                 <li key={i}>
                   {l.route ? (
@@ -235,8 +237,8 @@ export default function FooterV2() {
           </div>
 
           <div>
-            <h4 style={{ fontFamily: "monospace", fontSize: 18, fontWeight: 700, letterSpacing: "0.18em", color: "white", marginBottom: 18, marginTop: 0 }}>{t("lv2.footer.legal")}</h4>
-            <ul style={{ listStyle: "none", padding: 0, display: "flex", flexDirection: "column", gap: 12 }}>
+            <h4 style={{ fontFamily: "monospace", fontSize: isMobile ? 14 : 18, fontWeight: 700, letterSpacing: isMobile ? "0.12em" : "0.18em", color: "white", marginBottom: isMobile ? 12 : 18, marginTop: 0 }}>{t("lv2.footer.legal")}</h4>
+            <ul style={{ listStyle: "none", padding: 0, display: "flex", flexDirection: "column", gap: isMobile ? 10 : 12 }}>
               {legalLinks.map((l, i) => (
                 <li key={i}>
                   {l.route ? (
@@ -252,10 +254,10 @@ export default function FooterV2() {
 
         <div style={{
           display: "flex", justifyContent: "space-between", alignItems: "center",
-          padding: "32px 0", borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
-          flexWrap: "wrap", gap: 16,
+          padding: isMobile ? "20px 0" : "32px 0", borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
+          flexWrap: "wrap", gap: isMobile ? 12 : 16,
         }}>
-          <div style={{ display: "flex", gap: 24, flexWrap: "wrap", alignItems: "center", fontSize: 12, color: "rgba(255, 255, 255, 0.55)" }}>
+          <div style={{ display: "flex", gap: isMobile ? 12 : 24, flexWrap: "wrap", alignItems: "center", fontSize: isMobile ? 11 : 12, color: "rgba(255, 255, 255, 0.55)" }}>
             <span style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={C.emerald} strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
               {eInvoice}
@@ -281,10 +283,10 @@ export default function FooterV2() {
         </div>
 
         <div style={{
-          paddingTop: 24,
+          paddingTop: isMobile ? 16 : 24,
           display: "flex", justifyContent: "space-between", alignItems: "center",
-          flexWrap: "wrap", gap: 16,
-          fontSize: 12, color: "rgba(255, 255, 255, 0.5)",
+          flexWrap: "wrap", gap: isMobile ? 8 : 16,
+          fontSize: isMobile ? 11 : 12, color: "rgba(255, 255, 255, 0.5)",
         }}>
           <div>© 2026 Zyrix Global Technology. {t("lv2.footer.rights")}</div>
           <div style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
