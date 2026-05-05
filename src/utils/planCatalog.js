@@ -185,32 +185,24 @@ export const PLAN_FEATURES = {
         "Trilingual destek (TR / EN / AR)",
         "Multi-Country: Turkiye + Suudi + BAE",
         "Premium V2 tasarim sistemi",
+        "WhatsApp Native Faturalama",
+        "Akilli Fis Okuma OCR",
       ],
       EN: [
         "Instant auto-activation (zero setup)",
         "Trilingual support (TR / EN / AR)",
         "Multi-country: Turkey + Saudi + UAE",
         "Premium V2 design system",
+        "WhatsApp-native invoicing",
+        "Smart Receipt OCR scanner",
       ],
       AR: [
         "تفعيل تلقائي فوري (بدون إعداد)",
         "دعم ثلاثي اللغات (TR / EN / AR)",
         "متعدد الدول: تركيا + السعودية + الإمارات",
         "نظام تصميم V2 المميز",
-      ],
-    },
-    comingSoon: {
-      TR: [
-        "WhatsApp Native Faturalama (4 hafta)",
-        "Akilli Fis Okuma OCR (5 hafta)",
-      ],
-      EN: [
-        "WhatsApp-native invoicing (4 weeks)",
-        "Smart Receipt OCR scanner (5 weeks)",
-      ],
-      AR: [
-        "إرسال الفواتير عبر واتساب (4 أسابيع)",
-        "ماسح الفواتير الذكي OCR (5 أسابيع)",
+        "إرسال الفواتير عبر واتساب",
+        "ماسح الفواتير الذكي OCR",
       ],
     },
   },
@@ -269,6 +261,8 @@ export const PLAN_FEATURES = {
         "AI nakit akisi tahminlemesi",
         "AI CFO Dashboard",
         "Otomatik Anında Aktivasyon",
+        "Trendyol Otomatik Mutabakat",
+        "Tahminsel Nakit Krizi Uyarilari",
       ],
       EN: [
         "Native Zyrix CRM (not integration)",
@@ -276,6 +270,8 @@ export const PLAN_FEATURES = {
         "AI cashflow forecasting",
         "AI CFO Dashboard",
         "Instant auto-activation",
+        "Trendyol auto-reconciliation",
+        "Predictive cash crisis alerts",
       ],
       AR: [
         "CRM زيركس مدمج (وليس تكاملاً)",
@@ -283,20 +279,8 @@ export const PLAN_FEATURES = {
         "تنبؤات التدفق النقدي بالذكاء الاصطناعي",
         "لوحة المدير المالي الذكية AI CFO",
         "تفعيل تلقائي فوري",
-      ],
-    },
-    comingSoon: {
-      TR: [
-        "Trendyol Otomatik Mutabakat (12 hafta)",
-        "Tahminsel Nakit Krizi Uyarilari (8 hafta)",
-      ],
-      EN: [
-        "Trendyol auto-reconciliation (12 weeks)",
-        "Predictive cash crisis alerts (8 weeks)",
-      ],
-      AR: [
-        "تسوية تلقائية مع Trendyol (12 أسبوع)",
-        "تنبيهات التنبؤ بأزمات التدفق النقدي (8 أسابيع)",
+        "تسوية تلقائية مع Trendyol",
+        "تنبيهات التنبؤ بأزمات التدفق النقدي",
       ],
     },
   },
@@ -344,6 +328,11 @@ export const PLAN_FEATURES = {
         "Premium V2 tasarim sistemi",
         "Cok bankali Smart Retry odeme kurtarma",
         "Otomatik Anında Aktivasyon",
+        "WhatsApp Native Faturalama",
+        "AI CFO Sesli Asistan - Turkce",
+        "Tahminsel Nakit Krizi Uyarilari",
+        "Trendyol/Hepsiburada Otomatik Mutabakat",
+        "Akilli Mali Musavir Aylik Ozet",
       ],
       EN: [
         "AI CFO Dashboard - all cashflow at a glance",
@@ -355,6 +344,11 @@ export const PLAN_FEATURES = {
         "Premium V2 design system",
         "Multi-bank Smart Retry payment recovery",
         "Instant auto-activation",
+        "WhatsApp-native invoicing",
+        "AI CFO Voice Assistant - Turkish",
+        "Predictive cash crisis alerts",
+        "Trendyol/Hepsiburada auto-reconciliation",
+        "Smart Mali Musavir monthly export",
       ],
       AR: [
         "لوحة AI CFO - كل التدفق النقدي في نظرة",
@@ -366,29 +360,11 @@ export const PLAN_FEATURES = {
         "نظام تصميم V2 المميز",
         "إعادة محاولة دفع ذكية متعددة البنوك",
         "تفعيل تلقائي فوري",
-      ],
-    },
-    comingSoon: {
-      TR: [
-        "WhatsApp Native Faturalama (4 hafta)",
-        "AI CFO Sesli Asistan - Turkce (10 hafta)",
-        "Tahminsel Nakit Krizi Uyarilari (8 hafta)",
-        "Trendyol/Hepsiburada Otomatik Mutabakat (12 hafta)",
-        "Akilli Mali Musavir Aylik Ozet (7 hafta)",
-      ],
-      EN: [
-        "WhatsApp-native invoicing (4 weeks)",
-        "AI CFO Voice Assistant - Turkish (10 weeks)",
-        "Predictive cash crisis alerts (8 weeks)",
-        "Trendyol/Hepsiburada auto-reconciliation (12 weeks)",
-        "Smart Mali Musavir monthly export (7 weeks)",
-      ],
-      AR: [
-        "إرسال الفواتير عبر واتساب (4 أسابيع)",
-        "مساعد AI CFO الصوتي بالتركية (10 أسابيع)",
-        "تنبيهات التنبؤ بأزمات التدفق النقدي (8 أسابيع)",
-        "تسوية تلقائية مع Trendyol/Hepsiburada (12 أسبوع)",
-        "ملخص شهري ذكي للمحاسب (7 أسابيع)",
+        "إرسال الفواتير عبر واتساب",
+        "مساعد AI CFO الصوتي بالتركية",
+        "تنبيهات التنبؤ بأزمات التدفق النقدي",
+        "تسوية تلقائية مع Trendyol/Hepsiburada",
+        "ملخص شهري ذكي للمحاسب",
       ],
     },
   },
@@ -408,11 +384,6 @@ export const TIER_LABELS = {
     EN: "Zyrix Exclusive",
     AR: "حصري في Zyrix",
   },
-  comingSoon: {
-    TR: "Yakinda Geliyor",
-    EN: "Coming Soon",
-    AR: "قريباً",
-  },
 };
 
 // ----------------------------------------------------------------
@@ -423,11 +394,6 @@ export const CTA_LABELS = {
     TR: "Aninda Aktif Et",
     EN: "Activate Instantly",
     AR: "تفعيل فوري",
-  },
-  comingSoonNote: {
-    TR: "Otomatik aktivasyon yakinda",
-    EN: "Auto-activation coming soon",
-    AR: "التفعيل التلقائي قريباً",
   },
   freeTrial: {
     TR: "14 gun ucretsiz dene",
@@ -459,11 +425,10 @@ export function getPlanPrice(planId, countryCode, billingCycle) {
 export function getPlanFeatures(planId, lang) {
   const lng = lang || "EN";
   const features = PLAN_FEATURES[planId];
-  if (!features) return { logoFeatures: [], zyrixExclusive: [], comingSoon: [] };
+  if (!features) return { logoFeatures: [], zyrixExclusive: [] };
   return {
     logoFeatures:   features.logoFeatures[lng]   || features.logoFeatures.EN   || [],
     zyrixExclusive: features.zyrixExclusive[lng] || features.zyrixExclusive.EN || [],
-    comingSoon:     features.comingSoon[lng]     || features.comingSoon.EN     || [],
   };
 }
 

@@ -789,7 +789,6 @@ export default function PricingPage() {
                         <>
                           {renderTier("logoFeatures", features.logoFeatures, C.emerald, "\u2713")}
                           {renderTier("zyrixExclusive", features.zyrixExclusive, themeColor, "\u2605")}
-                          {renderTier("comingSoon", features.comingSoon, C.amber, "\u2192")}
                         </>
                       );
                     })()}
