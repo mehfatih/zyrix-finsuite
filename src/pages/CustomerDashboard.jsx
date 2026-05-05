@@ -13,7 +13,7 @@ const WhatsAppPage    = React.lazy(() => import("./dashboard/WhatsAppPage"));
 const BanksPage       = React.lazy(() => import("./dashboard/BanksPage"));
 const AICfoPage       = React.lazy(() => import("./dashboard/AICfoPage"));
 const CashCrisisPage  = React.lazy(() => import("./dashboard/CashCrisisPage"));
-const TrendyolPage    = React.lazy(() => import("./dashboard/TrendyolPage"));
+const MarketplaceHubPage = React.lazy(() => import("./dashboard/MarketplaceHubPage"));
 
 // ── Light Palette ─────────────────────────────────
 const P = {
@@ -1354,108 +1354,6 @@ function RecurringPage() {
   );
 }
 
-// ── MarketplacePage ──────────────────────────────────────────
-function MarketplacePage() {
-  const { data, reload } = useApi(() => apiFetch("/api/marketplace/orders").then(r => r?.data));
-  const { data: intData, reload:reloadInt } = useApi(() => apiFetch("/api/marketplace/integrations").then(r => r?.data));
-  const [syncing, setSyncing] = useState(null);
-  const [tab, setTab] = useState("orders");
-  const [intForm, setIntForm] = useState({ channel:"TRENDYOL", apiKey:"", apiSecret:"", supplierId:"" });
-  const orders = data?.orders || [];
-  const stats = data?.stats || [];
-  const integrations = Array.isArray(intData) ? intData : [];
-
-  const sync = async (channel) => {
-    setSyncing(channel);
-    try { const res = await apiFetch(`/api/marketplace/sync/${channel}`, { method:"POST" }); alert(res?.message); reload(); }
-    catch(e) { alert(e.message); } finally { setSyncing(null); }
-  };
-
-  const saveInt = async () => {
-    try { await apiFetch("/api/marketplace/integrations", { method:"POST", body: JSON.stringify(intForm) }); reloadInt(); alert("Entegrasyon kaydedildi"); }
-    catch(e) { alert(e.message); }
-  };
-
-  const createInvoice = async (orderId) => {
-    try { const res = await apiFetch(`/api/marketplace/orders/${orderId}/create-invoice`, { method:"POST" }); alert(`✅ Fatura oluşturuldu: ${res?.data?.invoiceNumber}`); reload(); }
-    catch(e) { alert(e.message); }
-  };
-
-  const channelColor = { TRENDYOL:P.orange, HEPSIBURADA:"#FF6000", AMAZON_TR:P.amber, N11:P.cyan, GETIR:P.violet };
-
-  return (
-    <div style={{ animation:"fadeIn 0.3s ease" }}>
-      <div style={{ marginBottom:20 }}><h1 style={{ color:P.text, fontSize:24, fontWeight:800, margin:"0 0 4px" }}>Pazar Yeri Entegrasyonu</h1><div style={{ color:P.sub, fontSize:13 }}>Trendyol, Hepsiburada ve diğer platformlardan sipariş senkronizasyonu</div></div>
-      <div style={{ display:"flex", gap:10, marginBottom:20 }}>
-        {["orders","integrations"].map(t => (
-          <button key={t} onClick={()=>setTab(t)} style={{ background:tab===t?`linear-gradient(135deg,${P.orange},${P.amber})`:`${P.orange}10`, border:`1.5px solid ${P.orange}${tab===t?"":"20"}`, borderRadius:10, color:tab===t?"#fff":P.orange, padding:"8px 20px", cursor:"pointer", fontSize:13, fontWeight:700 }}>
-            {t==="orders"?"📦 Siparişler":"🔗 Entegrasyonlar"}
-          </button>
-        ))}
-        <div style={{ marginLeft:"auto", display:"flex", gap:8 }}>
-          {["TRENDYOL","HEPSIBURADA"].map(ch => (
-            <button key={ch} onClick={()=>sync(ch)} disabled={syncing===ch} style={{ background:`${channelColor[ch]}15`, border:`1.5px solid ${channelColor[ch]}30`, borderRadius:10, color:channelColor[ch], padding:"8px 16px", cursor:"pointer", fontSize:12, fontWeight:700 }}>
-              {syncing===ch?"Senkronize...":ch==="TRENDYOL"?"🔄 Trendyol":"🔄 Hepsiburada"}
-            </button>
-          ))}
-        </div>
-      </div>
-      {tab === "orders" && (
-        <>
-          {stats.length > 0 && (
-            <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(150px,1fr))", gap:12, marginBottom:20 }}>
-              {stats.map((s,i) => (
-                <div key={i} style={{ background:P.card, borderRadius:14, padding:"14px 16px", border:`1.5px solid ${channelColor[s.channel]||P.orange}20` }}>
-                  <div style={{ color:channelColor[s.channel]||P.orange, fontSize:11, fontWeight:700, marginBottom:4 }}>{s.channel}</div>
-                  <div style={{ color:P.text, fontSize:18, fontWeight:800 }}>{s._count}</div>
-                  <div style={{ color:P.emerald, fontSize:12, fontWeight:600 }}>₺{Number(s._sum?.total||0).toLocaleString("tr-TR",{maximumFractionDigits:0})}</div>
-                </div>
-              ))}
-            </div>
-          )}
-          <Table color={P.orange} rows={orders} emptyMsg="Sipariş yok — Trendyol veya Hepsiburada senkronize edin"
-            cols={[
-              { key:"channel", label:"Kanal", render:o=><span style={{ background:`${channelColor[o.channel]||P.orange}15`, color:channelColor[o.channel]||P.orange, borderRadius:20, padding:"2px 10px", fontSize:11, fontWeight:700 }}>{o.channel}</span> },
-              { key:"externalOrderId", label:"Sipariş No", render:o=><span style={{ color:P.text, fontFamily:"monospace", fontSize:12 }}>{o.externalOrderId}</span> },
-              { key:"customerName", label:"Müşteri", render:o=><span style={{ color:P.text, fontSize:13 }}>{o.customerName}</span> },
-              { key:"total", label:"Tutar", render:o=><span style={{ color:P.emerald, fontWeight:700, fontFamily:"monospace" }}>₺{Number(o.total).toLocaleString()}</span> },
-              { key:"status", label:"Durum", render:o=><span style={{ background:`${P.amber}15`, color:P.amber, borderRadius:20, padding:"2px 10px", fontSize:11, fontWeight:700 }}>{o.status}</span> },
-              { key:"orderDate", label:"Tarih", render:o=><span style={{ color:P.muted, fontSize:12 }}>{new Date(o.orderDate).toLocaleDateString("tr-TR")}</span> },
-              { key:"actions", label:"", render:o=>!o.invoiceId&&<button onClick={()=>createInvoice(o.id)} style={{ background:`${P.cyan}12`, border:`1px solid ${P.cyan}25`, color:P.cyan, borderRadius:8, padding:"3px 8px", cursor:"pointer", fontSize:10, fontWeight:700 }}>Fatura Oluştur</button> },
-            ]} />
-        </>
-      )}
-      {tab === "integrations" && (
-        <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:20 }}>
-          <div style={{ background:P.card, borderRadius:18, padding:24, border:`1.5px solid ${P.orange}15` }}>
-            <div style={{ color:P.text, fontWeight:700, fontSize:15, marginBottom:16 }}>Entegrasyon Ekle</div>
-            <div style={{ display:"grid", gap:12 }}>
-              <div><label style={{ color:P.sub, fontSize:11, fontWeight:700, display:"block", marginBottom:5 }}>Kanal</label><select value={intForm.channel} onChange={e=>setIntForm(f=>({...f,channel:e.target.value}))} style={{ width:"100%", background:P.light, border:`1.5px solid ${P.border}`, borderRadius:10, padding:"9px 12px", fontSize:13, color:P.text, outline:"none" }}><option>TRENDYOL</option><option>HEPSIBURADA</option><option>AMAZON_TR</option><option>N11</option></select></div>
-              {[["API Key","apiKey"],["API Secret","apiSecret"],["Supplier ID","supplierId"]].map(([lbl,key]) => (
-                <div key={key}><label style={{ color:P.sub, fontSize:11, fontWeight:700, display:"block", marginBottom:5 }}>{lbl}</label><input value={intForm[key]} onChange={e=>setIntForm(f=>({...f,[key]:e.target.value}))} style={{ width:"100%", background:P.light, border:`1.5px solid ${P.border}`, borderRadius:10, padding:"9px 12px", fontSize:13, color:P.text, outline:"none", boxSizing:"border-box" }} /></div>
-              ))}
-              <button onClick={saveInt} style={{ background:`linear-gradient(135deg,${P.orange},${P.amber})`, border:"none", borderRadius:10, color:"#fff", padding:"10px", cursor:"pointer", fontSize:13, fontWeight:700 }}>Kaydet</button>
-            </div>
-          </div>
-          <div>
-            <div style={{ color:P.text, fontWeight:700, fontSize:15, marginBottom:14 }}>Mevcut Entegrasyonlar</div>
-            {integrations.length === 0 ? <div style={{ color:P.muted, fontSize:13 }}>Henüz entegrasyon yok</div>
-            : integrations.map(int => (
-              <div key={int.id} style={{ background:P.card, borderRadius:14, padding:16, border:`1.5px solid ${channelColor[int.channel]||P.orange}20`, marginBottom:10 }}>
-                <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
-                  <span style={{ color:channelColor[int.channel]||P.orange, fontWeight:700 }}>{int.channel}</span>
-                  <span style={{ background:int.isActive?`${P.emerald}15`:`${P.rose}15`, color:int.isActive?P.emerald:P.rose, borderRadius:20, padding:"2px 8px", fontSize:11, fontWeight:700 }}>{int.isActive?"Aktif":"Pasif"}</span>
-                </div>
-                {int.lastSyncAt && <div style={{ color:P.muted, fontSize:11, marginTop:4 }}>Son sync: {new Date(int.lastSyncAt).toLocaleString("tr-TR")}</div>}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
 // ── TaxCalendarPage ──────────────────────────────────────────
 function TaxCalendarPage() {
   const { data, reload } = useApi(() => apiFetch("/api/tax-calendar?upcoming=true").then(r => r?.data));
@@ -1642,7 +1540,6 @@ function Sidebar({ page, setPage, user, logout, unreadCount, onNotifClick, onSet
     { id:"banks",       icon:"🏦", label:"Bankalar" },
     { id:"aicfo",       icon:"💼", label:"AI CFO" },
     { id:"cashcrisis",  icon:"🔮", label:"Kriz Uyarisi" },
-    { id:"trendyol",    icon:"🛍", label:"Trendyol" },
   ];
   return (
     <>
@@ -1660,7 +1557,7 @@ function Sidebar({ page, setPage, user, logout, unreadCount, onNotifClick, onSet
 
         {NAV.map(item => {
           const active = page === item.id;
-          const isNew = ["efatura","factoring","eirsaliye","receipts","whatsapp","banks","aicfo","cashcrisis","trendyol"].includes(item.id);
+          const isNew = ["efatura","factoring","eirsaliye","receipts","whatsapp","banks","aicfo","cashcrisis","marketplace"].includes(item.id);
           return (
             <button key={item.id} onClick={() => { setPage(item.id); onMobileClose?.(); }} style={{ background:active?`linear-gradient(90deg,${P.purple}15,${P.purple}06)`:"transparent", border:`1.5px solid ${active?P.purple+"30":"transparent"}`, borderRadius:12, color:active?P.purple:P.sub, padding:"10px 14px", cursor:"pointer", textAlign:"left", display:"flex", alignItems:"center", gap:10, fontSize:14, fontWeight:active?700:500, transition:"all 0.15s", position:"relative" }}
               onMouseEnter={e=>{ if(!active){e.currentTarget.style.background=`${P.purple}08`;e.currentTarget.style.color=P.purple;}}}
@@ -1843,11 +1740,6 @@ export default function CustomerDashboard() {
               <CashCrisisPage />
             </React.Suspense>
           )}
-          {page === "trendyol" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Yukleniyor...</div>}>
-              <TrendyolPage />
-            </React.Suspense>
-          )}
 
           {/* OVERVIEW */}
           {page === "overview" && (
@@ -2000,7 +1892,11 @@ export default function CustomerDashboard() {
           {page === "personnel"   && <PersonnelPage />}
           {page === "kartvizit"   && <KartvizitPage user={user} />}
           {page === "recurring"   && <RecurringPage />}
-          {page === "marketplace" && <MarketplacePage />}
+          {page === "marketplace" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Yukleniyor...</div>}>
+              <MarketplaceHubPage />
+            </React.Suspense>
+          )}
           {page === "taxcalendar" && <TaxCalendarPage />}
           {page === "benchmark"   && <BenchmarkPage />}
 

@@ -293,6 +293,35 @@ export const trendyolAPI = {
     apiFetch("/api/trendyol/connection", { method: "DELETE" }),
 };
 
+
+// ──────────────────────────────────────────────
+// MARKETPLACE HUB (20 providers - Sprint 2 Track C)
+// ──────────────────────────────────────────────
+export const marketplaceAPI = {
+  providers: () => apiFetch("/api/marketplace/providers"),
+  connect: (data) =>
+    apiFetch("/api/marketplace/connect", {
+      method: "POST",
+      body: JSON.stringify(data),
+    }),
+  connections: () => apiFetch("/api/marketplace/connections"),
+  syncOne: (id) =>
+    apiFetch("/api/marketplace/sync/" + id, { method: "POST" }),
+  syncAll: () =>
+    apiFetch("/api/marketplace/sync-all", { method: "POST" }),
+  orders: (provider, status) => {
+    const params = new URLSearchParams();
+    if (provider) params.set("provider", provider);
+    if (status) params.set("status", status);
+    const qs = params.toString();
+    return apiFetch("/api/marketplace/orders" + (qs ? "?" + qs : ""));
+  },
+  settlements: (provider) =>
+    apiFetch("/api/marketplace/settlements" + (provider ? "?provider=" + provider : "")),
+  disconnect: (id) =>
+    apiFetch("/api/marketplace/connection/" + id, { method: "DELETE" }),
+};
+
 // ──────────────────────────────────────────────
 // Token Helpers
 // ──────────────────────────────────────────────
