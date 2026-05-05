@@ -1434,13 +1434,14 @@ function Testimonials() {
 // ── FINAL CTA ────────────────────────────────────────────────
 function FinalCTA() {
   const { t, lang, isRTL } = useI18n();
+  const isMobile = useIsMobile();
   const isSaudi = lang === "AR";
   return (
     <section style={{
       background: isSaudi
         ? `linear-gradient(135deg, ${SA.green} 0%, ${SA.greenDeep} 50%, ${SA.green900} 100%)`
         : `linear-gradient(135deg, ${C.red} 0%, ${C.redDeep} 50%, ${C.wine900} 100%)`,
-      padding: "100px 32px", position: "relative", overflow: "hidden",
+      padding: isMobile ? "56px 16px" : "100px 32px", position: "relative", overflow: "hidden",
     }}>
       <svg viewBox="0 0 600 400" preserveAspectRatio="xMidYMid slice" style={{
         position: "absolute", inset: 0, width: "100%", height: "100%",
@@ -1469,22 +1470,22 @@ function FinalCTA() {
       <div style={{ maxWidth: 900, margin: "0 auto", textAlign: "center", position: "relative", zIndex: 1 }}>
         <h2 style={{
           fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-          fontSize: "clamp(36px, 4.5vw, 56px)", fontWeight: 800,
-          letterSpacing: "-0.025em", lineHeight: 1.1,
-          marginBottom: 20, color: "white",
+          fontSize: isMobile ? 28 : "clamp(36px, 4.5vw, 56px)", fontWeight: 800,
+          letterSpacing: "-0.025em", lineHeight: 1.15,
+          marginBottom: isMobile ? 14 : 20, color: "white",
         }}>{t("lv2.finalCta.title")}</h2>
         <p style={{
-          fontSize: 18, color: "rgba(255, 255, 255, 0.85)",
-          lineHeight: 1.6, marginBottom: 40,
+          fontSize: isMobile ? 14 : 18, color: "rgba(255, 255, 255, 0.85)",
+          lineHeight: 1.6, marginBottom: isMobile ? 26 : 40,
         }}>{t("lv2.finalCta.sub")}</p>
 
         <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap" }}>
           <a href="/register" style={{
             display: "inline-flex", alignItems: "center", gap: 10,
             background: "white", color: isSaudi ? SA.green : C.red,
-            fontSize: 15, fontWeight: 700,
-            padding: "16px 32px", borderRadius: 14, textDecoration: "none",
-            boxShadow: "0 16px 40px rgba(0, 0, 0, 0.2)",
+            fontSize: isMobile ? 14 : 15, fontWeight: 700,
+            padding: isMobile ? "13px 24px" : "16px 32px", borderRadius: 14, textDecoration: "none",
+            boxShadow: isMobile ? "0 8px 22px rgba(0, 0, 0, 0.18)" : "0 16px 40px rgba(0, 0, 0, 0.2)",
           }}>
             <span>{t("lv2.cta.startFree")}</span>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ transform: isRTL ? "scaleX(-1)" : "none" }}>
@@ -1494,8 +1495,8 @@ function FinalCTA() {
           <a href="#" style={{
             display: "inline-flex", alignItems: "center", gap: 10,
             background: "rgba(255, 255, 255, 0.12)",
-            color: "white", fontSize: 15, fontWeight: 600,
-            padding: "16px 30px", borderRadius: 14,
+            color: "white", fontSize: isMobile ? 14 : 15, fontWeight: 600,
+            padding: isMobile ? "13px 22px" : "16px 30px", borderRadius: 14,
             border: "1px solid rgba(255, 255, 255, 0.25)",
             textDecoration: "none",
           }}>{t("lv2.cta.watchDemo")}</a>
