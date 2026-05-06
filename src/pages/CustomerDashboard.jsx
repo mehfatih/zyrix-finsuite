@@ -221,13 +221,13 @@ function Pivot({ rows, cols, data, rk, ck, vk, color }) {
   if (!rows.length) return null;
   return (
     <div style={{ overflowX: "auto", marginTop: 16 }}>
-      <div style={{ color: P.muted, fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 }}>Pivot Analysis</div>
+      <div style={{ color: P.muted, fontSize: 10, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.08em", marginBottom: 8 }}>{t.pivotAnalysis}</div>
       <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
         <thead>
           <tr style={{ background: `${color}08` }}>
             <th style={{ padding: "8px 12px", textAlign: "left", color: P.sub, borderBottom: `1px solid ${P.border}` }}>{rk}</th>
             {cols.map(c => <th key={c} style={{ padding: "8px 12px", textAlign: "right", color: P.sub, borderBottom: `1px solid ${P.border}` }}>{c}</th>)}
-            <th style={{ padding: "8px 12px", textAlign: "right", color, fontWeight: 700, borderBottom: `1px solid ${P.border}` }}>Total</th>
+            <th style={{ padding: "8px 12px", textAlign: "right", color, fontWeight: 700, borderBottom: `1px solid ${P.border}` }}>{t.total}</th>
             <th style={{ padding: "8px 12px", minWidth: 80, borderBottom: `1px solid ${P.border}` }} />
           </tr>
         </thead>
@@ -327,13 +327,13 @@ function NotificationsPanel({ onClose }) {
       <div style={{ padding:"20px 20px 16px", borderBottom:`1.5px solid ${P.border}`, display:"flex", justifyContent:"space-between", alignItems:"center" }}>
         <div style={{ color:P.text, fontSize:16, fontWeight:800 }}>🔔 Bildirimler</div>
         <div style={{ display:"flex", gap:8 }}>
-          <button onClick={markAllRead} style={{ background:`${P.purple}12`, border:`1px solid ${P.purple}25`, color:P.purple, borderRadius:8, padding:"5px 10px", cursor:"pointer", fontSize:11, fontWeight:700 }}>Tümünü Oku</button>
+          <button onClick={markAllRead} style={{ background:`${P.purple}12`, border:`1px solid ${P.purple}25`, color:P.purple, borderRadius:8, padding:"5px 10px", cursor:"pointer", fontSize:11, fontWeight:700 }}>{t.readAll}</button>
           <button onClick={onClose} style={{ background:P.light, border:`1px solid ${P.border}`, color:P.sub, borderRadius:8, padding:"5px 10px", cursor:"pointer", fontSize:14 }}>✕</button>
         </div>
       </div>
       <div style={{ flex:1, overflow:"auto", padding:12 }}>
         {loading ? <div style={{ textAlign:"center", padding:40, color:P.muted }}>Yükleniyor...</div>
-        : notifs.length === 0 ? <div style={{ textAlign:"center", padding:40 }}><div style={{ fontSize:40, marginBottom:12 }}>🎉</div><div style={{ color:P.sub, fontSize:14 }}>Yeni bildirim yok</div></div>
+        : notifs.length === 0 ? <div style={{ textAlign:"center", padding:40 }}><div style={{ fontSize:40, marginBottom:12 }}>🎉</div><div style={{ color:P.sub, fontSize:14 }}>{t.noNewNotifications}</div></div>
         : notifs.map(n => (
           <div key={n.id} style={{ background:n.isRead?P.light:`${typeColor[n.type]||P.cyan}08`, border:`1px solid ${n.isRead?P.border:typeColor[n.type]||P.cyan}25`, borderRadius:12, padding:"12px 14px", marginBottom:8 }}>
             <div style={{ display:"flex", justifyContent:"space-between", marginBottom:4 }}>
@@ -408,12 +408,12 @@ function AIAssistantPanel({ onClose }) {
           <div style={{ display:"flex", alignItems:"center", gap:10 }}>
             <div style={{ width:40, height:40, borderRadius:14, background:`linear-gradient(135deg,${P.purple},${P.pink})`, display:"flex", alignItems:"center", justifyContent:"center", fontSize:20, boxShadow:`0 4px 16px ${P.purple}30` }}>🤖</div>
             <div>
-              <div style={{ color:P.text, fontSize:15, fontWeight:800 }}>Zyrix AI Asistan</div>
+              <div style={{ color:P.text, fontSize:15, fontWeight:800 }}>{t.zyrixAi}</div>
               <div style={{ color:P.emerald, fontSize:11, fontWeight:600 }}>● Türk Vergi & İş Hukuku Uzmanı</div>
             </div>
           </div>
           <div style={{ display:"flex", gap:8 }}>
-            <button onClick={clearHistory} title="Geçmişi Temizle" style={{ background:`${P.rose}12`, border:`1px solid ${P.rose}25`, color:P.rose, borderRadius:8, padding:"5px 10px", cursor:"pointer", fontSize:11, fontWeight:700 }}>Temizle</button>
+            <button onClick={clearHistory} title="Geçmişi Temizle" style={{ background:`${P.rose}12`, border:`1px solid ${P.rose}25`, color:P.rose, borderRadius:8, padding:"5px 10px", cursor:"pointer", fontSize:11, fontWeight:700 }}>{t.clear}</button>
             <button onClick={onClose} style={{ background:P.light, border:`1px solid ${P.border}`, color:P.sub, borderRadius:8, padding:"5px 10px", cursor:"pointer", fontSize:14 }}>✕</button>
           </div>
         </div>
@@ -590,7 +590,7 @@ function EFaturaPage({ invoices }) {
       <div style={{ background:`${P.amber}10`, border:`1.5px solid ${P.amber}30`, borderRadius:14, padding:"14px 18px", marginBottom:20, display:"flex", gap:12, alignItems:"flex-start" }}>
         <span style={{ fontSize:20 }}>⚠️</span>
         <div>
-          <div style={{ color:P.amber, fontWeight:700, fontSize:13, marginBottom:4 }}>Sandbox Modu Aktif</div>
+          <div style={{ color:P.amber, fontWeight:700, fontSize:13, marginBottom:4 }}>{t.sandboxActive}</div>
           <div style={{ color:P.sub, fontSize:12, lineHeight:1.6 }}>
             GİB credentials (GIB_API_URL + GIB_USERNAME + GIB_PASSWORD) Railway'e eklenince gerçek gönderim başlar.
             Şu an tüm işlemler simüle edilmektedir.
@@ -617,7 +617,7 @@ function EFaturaPage({ invoices }) {
               <input value={buyerVkn} onChange={e=>setBuyerVkn(e.target.value)} placeholder="1234567890" style={{ width:"100%", background:P.light, border:`1.5px solid ${P.border}`, borderRadius:10, padding:"9px 12px", fontSize:13, color:P.text, outline:"none", boxSizing:"border-box" }} />
             </div>
             <div style={{ gridColumn:"1/-1" }}>
-              <label style={{ color:P.sub, fontSize:11, fontWeight:700, display:"block", marginBottom:6 }}>Alıcı Unvanı</label>
+              <label style={{ color:P.sub, fontSize:11, fontWeight:700, display:"block", marginBottom:6 }}>{t.recipientTitle}</label>
               <input value={buyerTitle} onChange={e=>setBuyerTitle(e.target.value)} placeholder="Şirket Adı veya Ad Soyad" style={{ width:"100%", background:P.light, border:`1.5px solid ${P.border}`, borderRadius:10, padding:"9px 12px", fontSize:13, color:P.text, outline:"none", boxSizing:"border-box" }} />
             </div>
           </div>
@@ -626,7 +626,7 @@ function EFaturaPage({ invoices }) {
             <button onClick={handleCreate} disabled={creating} style={{ background:`linear-gradient(135deg,${P.purple},${P.pink})`, border:"none", borderRadius:10, color:"#fff", padding:"10px 24px", cursor:creating?"not-allowed":"pointer", fontSize:13, fontWeight:700, opacity:creating?0.7:1 }}>
               {creating ? "Oluşturuluyor..." : "E-Fatura Oluştur ve Gönder"}
             </button>
-            <button onClick={() => setShowForm(false)} style={{ background:P.light, border:`1.5px solid ${P.border}`, borderRadius:10, color:P.sub, padding:"10px 20px", cursor:"pointer", fontSize:13 }}>İptal</button>
+            <button onClick={() => setShowForm(false)} style={{ background:P.light, border:`1.5px solid ${P.border}`, borderRadius:10, color:P.sub, padding:"10px 20px", cursor:"pointer", fontSize:13 }}>{t.cancel}</button>
           </div>
         </div>
       )}
@@ -645,10 +645,10 @@ function EFaturaPage({ invoices }) {
           { key:"actions", label:"", render:e=>(
             <div style={{ display:"flex", gap:6 }}>
               {e.xmlContent && (
-                <a href={`${API}/api/efatura/${e.id}/xml`} target="_blank" rel="noreferrer" style={{ background:`${P.cyan}12`, border:`1px solid ${P.cyan}25`, color:P.cyan, borderRadius:8, padding:"4px 10px", cursor:"pointer", fontSize:11, fontWeight:700, textDecoration:"none" }}>XML</a>
+                <a href={`${API}/api/efatura/${e.id}/xml`} target="_blank" rel="noreferrer" style={{ background:`${P.cyan}12`, border:`1px solid ${P.cyan}25`, color:P.cyan, borderRadius:8, padding:"4px 10px", cursor:"pointer", fontSize:11, fontWeight:700, textDecoration:"none" }}>{t.xml}</a>
               )}
               {e.gibStatus !== "CANCELLED" && (
-                <button onClick={()=>handleCancel(e.id)} style={{ background:`${P.rose}12`, border:`1px solid ${P.rose}25`, color:P.rose, borderRadius:8, padding:"4px 10px", cursor:"pointer", fontSize:11, fontWeight:700 }}>İptal</button>
+                <button onClick={()=>handleCancel(e.id)} style={{ background:`${P.rose}12`, border:`1px solid ${P.rose}25`, color:P.rose, borderRadius:8, padding:"4px 10px", cursor:"pointer", fontSize:11, fontWeight:700 }}>{t.cancel}</button>
               )}
             </div>
           )},
@@ -698,7 +698,7 @@ function FactoringPage() {
   return (
     <div style={{ animation:"fadeIn 0.3s ease" }}>
       <div style={{ marginBottom:24 }}>
-        <h1 style={{ color:P.text, fontSize:24, fontWeight:800, margin:"0 0 4px" }}>Fatura Finansmanı</h1>
+        <h1 style={{ color:P.text, fontSize:24, fontWeight:800, margin:"0 0 4px" }}>{t.invoiceFactoring}</h1>
         <div style={{ color:P.sub, fontSize:13 }}>Bekleyen faturalarınız için erken ödeme alın — %80 avans, %2.5 komisyon</div>
       </div>
 
@@ -809,14 +809,14 @@ function CustomerScoreCard({ customer, onRefresh }) {
           </div>
           <div style={{ display:"flex", gap:12, marginBottom:10 }}>
             <div style={{ flex:1 }}>
-              <div style={{ color:P.sub, fontSize:10, marginBottom:4 }}>Ödeme Skoru</div>
+              <div style={{ color:P.sub, fontSize:10, marginBottom:4 }}>{t.paymentScore}</div>
               <div style={{ height:6, background:`${P.border}`, borderRadius:3, overflow:"hidden", marginBottom:3 }}>
                 <div style={{ width:`${payScore}%`, height:"100%", background: payScore >= 70 ? P.emerald : payScore >= 40 ? P.amber : P.rose, borderRadius:3, transition:"width 1s ease" }} />
               </div>
               <div style={{ color:P.text, fontSize:13, fontWeight:700 }}>{payScore}/100</div>
             </div>
             <div style={{ flex:1 }}>
-              <div style={{ color:P.sub, fontSize:10, marginBottom:4 }}>Sadakat Skoru</div>
+              <div style={{ color:P.sub, fontSize:10, marginBottom:4 }}>{t.loyaltyScore}</div>
               <div style={{ height:6, background:`${P.border}`, borderRadius:3, overflow:"hidden", marginBottom:3 }}>
                 <div style={{ width:`${retScore}%`, height:"100%", background: retScore >= 70 ? P.cyan : retScore >= 40 ? P.violet : P.muted, borderRadius:3, transition:"width 1s ease" }} />
               </div>
@@ -872,7 +872,7 @@ function StockPage() {
   return (
     <div style={{ animation:"fadeIn 0.3s ease" }}>
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:20 }}>
-        <div><h1 style={{ color:P.text, fontSize:24, fontWeight:800, margin:"0 0 4px" }}>Stok Yönetimi</h1><div style={{ color:P.sub, fontSize:13 }}>Ürün takibi, giriş/çıkış ve düşük stok uyarıları</div></div>
+        <div><h1 style={{ color:P.text, fontSize:24, fontWeight:800, margin:"0 0 4px" }}>{t.stockManagement}</h1><div style={{ color:P.sub, fontSize:13 }}>Ürün takibi, giriş/çıkış ve düşük stok uyarıları</div></div>
         <button onClick={() => setShowForm(v=>!v)} style={{ background:`linear-gradient(135deg,${P.teal},${P.emerald})`, border:"none", borderRadius:12, color:"#fff", padding:"10px 20px", cursor:"pointer", fontSize:13, fontWeight:700 }}>+ Ürün Ekle</button>
       </div>
       {sum && (
@@ -903,7 +903,7 @@ function StockPage() {
           </div>
           <div style={{ display:"flex", gap:10, marginTop:16 }}>
             <button onClick={save} disabled={saving} style={{ background:`linear-gradient(135deg,${P.teal},${P.emerald})`, border:"none", borderRadius:10, color:"#fff", padding:"10px 24px", cursor:"pointer", fontSize:13, fontWeight:700 }}>{saving?"Kaydediliyor...":"Kaydet"}</button>
-            <button onClick={()=>setShowForm(false)} style={{ background:P.light, border:`1.5px solid ${P.border}`, borderRadius:10, color:P.sub, padding:"10px 20px", cursor:"pointer", fontSize:13 }}>İptal</button>
+            <button onClick={()=>setShowForm(false)} style={{ background:P.light, border:`1.5px solid ${P.border}`, borderRadius:10, color:P.sub, padding:"10px 20px", cursor:"pointer", fontSize:13 }}>{t.cancel}</button>
           </div>
         </div>
       )}
@@ -912,17 +912,17 @@ function StockPage() {
           <div style={{ background:P.card, borderRadius:20, padding:28, width:360, boxShadow:"0 20px 60px rgba(0,0,0,0.2)" }}>
             <div style={{ color:P.text, fontWeight:700, fontSize:15, marginBottom:16 }}>Stok Hareketi — {movModal.name}</div>
             <div style={{ display:"grid", gap:12 }}>
-              <div><label style={{ color:P.sub, fontSize:11, fontWeight:700, display:"block", marginBottom:5 }}>İşlem Tipi</label>
+              <div><label style={{ color:P.sub, fontSize:11, fontWeight:700, display:"block", marginBottom:5 }}>{t.transactionType}</label>
                 <select value={movForm.type} onChange={e=>setMovForm(f=>({...f,type:e.target.value}))} style={{ width:"100%", background:P.light, border:`1.5px solid ${P.border}`, borderRadius:10, padding:"9px 12px", fontSize:13, color:P.text, outline:"none" }}>
-                  <option value="IN">Giriş (Stok Ekle)</option><option value="OUT">Çıkış (Stok Düş)</option><option value="ADJUSTMENT">Düzeltme</option><option value="RETURN">İade</option>
+                  <option value="IN">Giriş (Stok Ekle)</option><option value="OUT">Çıkış (Stok Düş)</option><option value="ADJUSTMENT">{t.adjustment}</option><option value="RETURN">{t.refund}</option>
                 </select>
               </div>
-              <div><label style={{ color:P.sub, fontSize:11, fontWeight:700, display:"block", marginBottom:5 }}>Miktar</label><input type="number" min="0.001" step="0.001" value={movForm.quantity} onChange={e=>setMovForm(f=>({...f,quantity:Number(e.target.value)}))} style={{ width:"100%", background:P.light, border:`1.5px solid ${P.border}`, borderRadius:10, padding:"9px 12px", fontSize:13, color:P.text, outline:"none", boxSizing:"border-box" }} /></div>
-              <div><label style={{ color:P.sub, fontSize:11, fontWeight:700, display:"block", marginBottom:5 }}>Not</label><input value={movForm.notes} onChange={e=>setMovForm(f=>({...f,notes:e.target.value}))} style={{ width:"100%", background:P.light, border:`1.5px solid ${P.border}`, borderRadius:10, padding:"9px 12px", fontSize:13, color:P.text, outline:"none", boxSizing:"border-box" }} /></div>
+              <div><label style={{ color:P.sub, fontSize:11, fontWeight:700, display:"block", marginBottom:5 }}>{t.quantity}</label><input type="number" min="0.001" step="0.001" value={movForm.quantity} onChange={e=>setMovForm(f=>({...f,quantity:Number(e.target.value)}))} style={{ width:"100%", background:P.light, border:`1.5px solid ${P.border}`, borderRadius:10, padding:"9px 12px", fontSize:13, color:P.text, outline:"none", boxSizing:"border-box" }} /></div>
+              <div><label style={{ color:P.sub, fontSize:11, fontWeight:700, display:"block", marginBottom:5 }}>{t.note}</label><input value={movForm.notes} onChange={e=>setMovForm(f=>({...f,notes:e.target.value}))} style={{ width:"100%", background:P.light, border:`1.5px solid ${P.border}`, borderRadius:10, padding:"9px 12px", fontSize:13, color:P.text, outline:"none", boxSizing:"border-box" }} /></div>
             </div>
             <div style={{ display:"flex", gap:10, marginTop:18 }}>
-              <button onClick={addMovement} style={{ flex:1, background:`linear-gradient(135deg,${P.teal},${P.emerald})`, border:"none", borderRadius:10, color:"#fff", padding:"10px", cursor:"pointer", fontSize:13, fontWeight:700 }}>Kaydet</button>
-              <button onClick={()=>setMovModal(null)} style={{ flex:1, background:P.light, border:`1.5px solid ${P.border}`, borderRadius:10, color:P.sub, padding:"10px", cursor:"pointer", fontSize:13 }}>İptal</button>
+              <button onClick={addMovement} style={{ flex:1, background:`linear-gradient(135deg,${P.teal},${P.emerald})`, border:"none", borderRadius:10, color:"#fff", padding:"10px", cursor:"pointer", fontSize:13, fontWeight:700 }}>{t.save}</button>
+              <button onClick={()=>setMovModal(null)} style={{ flex:1, background:P.light, border:`1.5px solid ${P.border}`, borderRadius:10, color:P.sub, padding:"10px", cursor:"pointer", fontSize:13 }}>{t.cancel}</button>
             </div>
           </div>
         </div>
@@ -933,7 +933,7 @@ function StockPage() {
           { key:"category", label:"Kategori", render:i=><span style={{ color:P.sub, fontSize:12 }}>{i.category||"—"}</span> },
           { key:"quantity", label:"Stok", render:i=>{const low=Number(i.quantity)<=Number(i.minQuantity)&&Number(i.minQuantity)>0;return <span style={{ color:low?P.rose:P.emerald, fontWeight:700, fontSize:13 }}>{Number(i.quantity).toLocaleString()} {i.unit}{low?" ⚠️":""}</span>;} },
           { key:"salePrice", label:"Satış Fiyatı", render:i=><span style={{ color:P.text, fontFamily:"monospace", fontSize:13 }}>{i.salePrice?`₺${Number(i.salePrice).toLocaleString()}`:"—"}</span> },
-          { key:"actions", label:"", render:i=><button onClick={()=>setMovModal(i)} style={{ background:`${P.teal}12`, border:`1px solid ${P.teal}25`, color:P.teal, borderRadius:8, padding:"4px 12px", cursor:"pointer", fontSize:11, fontWeight:700 }}>Hareket</button> },
+          { key:"actions", label:"", render:i=><button onClick={()=>setMovModal(i)} style={{ background:`${P.teal}12`, border:`1px solid ${P.teal}25`, color:P.teal, borderRadius:8, padding:"4px 12px", cursor:"pointer", fontSize:11, fontWeight:700 }}>{t.movement}</button> },
         ]} />
     </div>
   );
@@ -963,36 +963,36 @@ function InstallmentsPage({ invoices }) {
   return (
     <div style={{ animation:"fadeIn 0.3s ease" }}>
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:20 }}>
-        <div><h1 style={{ color:P.text, fontSize:24, fontWeight:800, margin:"0 0 4px" }}>Taksit & Vade Takibi</h1><div style={{ color:P.sub, fontSize:13 }}>Fatura taksitlendirme ve otomatik hatırlatma</div></div>
+        <div><h1 style={{ color:P.text, fontSize:24, fontWeight:800, margin:"0 0 4px" }}>Taksit & Vade Takibi</h1><div style={{ color:P.sub, fontSize:13 }}>{t.invoiceInstallmentDesc}</div></div>
         <button onClick={()=>setShowForm(v=>!v)} style={{ background:`linear-gradient(135deg,${P.indigo},${P.violet})`, border:"none", borderRadius:12, color:"#fff", padding:"10px 20px", cursor:"pointer", fontSize:13, fontWeight:700 }}>+ Taksit Planı</button>
       </div>
       {upcoming?.count > 0 && (
         <div style={{ background:`${P.amber}10`, border:`1.5px solid ${P.amber}25`, borderRadius:14, padding:"14px 18px", marginBottom:16, display:"flex", gap:12, alignItems:"center" }}>
           <span style={{ fontSize:22 }}>⏰</span>
-          <div><div style={{ color:P.amber, fontWeight:700, fontSize:13 }}>Bu Hafta {upcoming.count} Taksit Vadesi</div><div style={{ color:P.sub, fontSize:12 }}>Müşterilerinizi hatırlatın</div></div>
+          <div><div style={{ color:P.amber, fontWeight:700, fontSize:13 }}>Bu Hafta {upcoming.count} Taksit Vadesi</div><div style={{ color:P.sub, fontSize:12 }}>{t.remindCustomers}</div></div>
         </div>
       )}
       {showForm && (
         <div style={{ background:P.card, borderRadius:18, padding:24, border:`1.5px solid ${P.indigo}20`, marginBottom:20 }}>
-          <div style={{ color:P.text, fontWeight:700, fontSize:15, marginBottom:16 }}>Yeni Taksit Planı</div>
+          <div style={{ color:P.text, fontWeight:700, fontSize:15, marginBottom:16 }}>{t.newInstallmentPlan}</div>
           <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:12 }}>
             <div><label style={{ color:P.sub, fontSize:11, fontWeight:700, display:"block", marginBottom:5 }}>Fatura *</label>
               <select value={form.invoiceId} onChange={e=>setForm(f=>({...f,invoiceId:e.target.value}))} style={{ width:"100%", background:P.light, border:`1.5px solid ${P.border}`, borderRadius:10, padding:"9px 12px", fontSize:13, color:P.text, outline:"none" }}>
-                <option value="">Fatura seçin</option>
+                <option value="">{t.selectInvoice}</option>
                 {invoices.filter(i=>i.status!=="PAID").map(inv=><option key={inv.id} value={inv.id}>{inv.invoiceNumber} — {inv.customerName} ₺{Number(inv.total).toLocaleString()}</option>)}
               </select>
             </div>
-            <div><label style={{ color:P.sub, fontSize:11, fontWeight:700, display:"block", marginBottom:5 }}>Taksit Sayısı</label><input type="number" min="2" max="60" value={form.installmentCount} onChange={e=>setForm(f=>({...f,installmentCount:parseInt(e.target.value)}))} style={{ width:"100%", background:P.light, border:`1.5px solid ${P.border}`, borderRadius:10, padding:"9px 12px", fontSize:13, color:P.text, outline:"none", boxSizing:"border-box" }} /></div>
-            <div><label style={{ color:P.sub, fontSize:11, fontWeight:700, display:"block", marginBottom:5 }}>İlk Vade</label><input type="date" value={form.firstDueDate} onChange={e=>setForm(f=>({...f,firstDueDate:e.target.value}))} style={{ width:"100%", background:P.light, border:`1.5px solid ${P.border}`, borderRadius:10, padding:"9px 12px", fontSize:13, color:P.text, outline:"none", boxSizing:"border-box" }} /></div>
+            <div><label style={{ color:P.sub, fontSize:11, fontWeight:700, display:"block", marginBottom:5 }}>{t.installmentCount}</label><input type="number" min="2" max="60" value={form.installmentCount} onChange={e=>setForm(f=>({...f,installmentCount:parseInt(e.target.value)}))} style={{ width:"100%", background:P.light, border:`1.5px solid ${P.border}`, borderRadius:10, padding:"9px 12px", fontSize:13, color:P.text, outline:"none", boxSizing:"border-box" }} /></div>
+            <div><label style={{ color:P.sub, fontSize:11, fontWeight:700, display:"block", marginBottom:5 }}>{t.firstDueDate}</label><input type="date" value={form.firstDueDate} onChange={e=>setForm(f=>({...f,firstDueDate:e.target.value}))} style={{ width:"100%", background:P.light, border:`1.5px solid ${P.border}`, borderRadius:10, padding:"9px 12px", fontSize:13, color:P.text, outline:"none", boxSizing:"border-box" }} /></div>
           </div>
           <div style={{ display:"flex", gap:10, marginTop:16 }}>
             <button onClick={save} disabled={saving} style={{ background:`linear-gradient(135deg,${P.indigo},${P.violet})`, border:"none", borderRadius:10, color:"#fff", padding:"10px 24px", cursor:"pointer", fontSize:13, fontWeight:700 }}>{saving?"Oluşturuluyor...":"Plan Oluştur"}</button>
-            <button onClick={()=>setShowForm(false)} style={{ background:P.light, border:`1.5px solid ${P.border}`, borderRadius:10, color:P.sub, padding:"10px 20px", cursor:"pointer", fontSize:13 }}>İptal</button>
+            <button onClick={()=>setShowForm(false)} style={{ background:P.light, border:`1.5px solid ${P.border}`, borderRadius:10, color:P.sub, padding:"10px 20px", cursor:"pointer", fontSize:13 }}>{t.cancel}</button>
           </div>
         </div>
       )}
       {plans.length === 0 ? (
-        <div style={{ textAlign:"center", padding:60, color:P.muted }}><div style={{ fontSize:48, marginBottom:12 }}>📅</div><div>Henüz taksit planı yok</div></div>
+        <div style={{ textAlign:"center", padding:60, color:P.muted }}><div style={{ fontSize:48, marginBottom:12 }}>📅</div><div>{t.noInstallmentPlan}</div></div>
       ) : plans.map(plan => (
         <div key={plan.id} style={{ background:P.card, borderRadius:16, padding:20, border:`1.5px solid ${P.indigo}15`, marginBottom:14, boxShadow:`0 2px 12px ${P.indigo}06` }}>
           <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:14 }}>
@@ -1009,7 +1009,7 @@ function InstallmentsPage({ invoices }) {
                   <div style={{ color:P.text, fontWeight:700, fontSize:13 }}>₺{Number(inst.amount).toLocaleString()}</div>
                   <div style={{ color:P.muted, fontSize:10, marginBottom:6 }}>{new Date(inst.dueDate).toLocaleDateString("tr-TR")}</div>
                   {inst.status === "PAID" ? <span style={{ color:P.emerald, fontSize:11, fontWeight:700 }}>✓ Ödendi</span>
-                  : <button onClick={()=>pay(plan.id, inst.id)} style={{ background:`linear-gradient(135deg,${color},${color}90)`, border:"none", borderRadius:6, color:"#fff", padding:"4px 10px", cursor:"pointer", fontSize:10, fontWeight:700 }}>Öde</button>}
+                  : <button onClick={()=>pay(plan.id, inst.id)} style={{ background:`linear-gradient(135deg,${color},${color}90)`, border:"none", borderRadius:6, color:"#fff", padding:"4px 10px", cursor:"pointer", fontSize:10, fontWeight:700 }}>{t.pay}</button>}
                 </div>
               );
             })}
@@ -1068,7 +1068,7 @@ function ChecksPage() {
         <div style={{ background:P.card, borderRadius:18, padding:24, border:`1.5px solid ${P.orange}20`, marginBottom:20 }}>
           <div style={{ color:P.text, fontWeight:700, fontSize:15, marginBottom:16 }}>Yeni Çek</div>
           <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:12 }}>
-            <div><label style={{ color:P.sub, fontSize:11, fontWeight:700, display:"block", marginBottom:5 }}>Tip</label>
+            <div><label style={{ color:P.sub, fontSize:11, fontWeight:700, display:"block", marginBottom:5 }}>{t.type}</label>
               <select value={form.checkType} onChange={e=>setForm(f=>({...f,checkType:e.target.value}))} style={{ width:"100%", background:P.light, border:`1.5px solid ${P.border}`, borderRadius:10, padding:"9px 12px", fontSize:13, color:P.text, outline:"none" }}>
                 <option value="RECEIVED">Alınan Çek</option><option value="ISSUED">Verilen Çek</option>
               </select>
@@ -1081,7 +1081,7 @@ function ChecksPage() {
           </div>
           <div style={{ display:"flex", gap:10, marginTop:16 }}>
             <button onClick={save} disabled={saving} style={{ background:`linear-gradient(135deg,${P.orange},${P.amber})`, border:"none", borderRadius:10, color:"#fff", padding:"10px 24px", cursor:"pointer", fontSize:13, fontWeight:700 }}>{saving?"Kaydediliyor...":"Kaydet"}</button>
-            <button onClick={()=>setShowForm(false)} style={{ background:P.light, border:`1.5px solid ${P.border}`, borderRadius:10, color:P.sub, padding:"10px 20px", cursor:"pointer", fontSize:13 }}>İptal</button>
+            <button onClick={()=>setShowForm(false)} style={{ background:P.light, border:`1.5px solid ${P.border}`, borderRadius:10, color:P.sub, padding:"10px 20px", cursor:"pointer", fontSize:13 }}>{t.cancel}</button>
           </div>
         </div>
       )}
@@ -1095,8 +1095,8 @@ function ChecksPage() {
           { key:"status", label:"Durum", render:c=><span style={{ background:`${statusColor[c.status]||P.muted}15`, color:statusColor[c.status]||P.muted, border:`1px solid ${statusColor[c.status]||P.muted}25`, borderRadius:20, padding:"2px 10px", fontSize:11, fontWeight:700 }}>{statusLabel[c.status]||c.status}</span> },
           { key:"actions", label:"", render:c=>c.status==="PENDING"&&(
             <div style={{ display:"flex", gap:6 }}>
-              <button onClick={()=>updateStatus(c.id,"CLEARED")} style={{ background:`${P.emerald}12`, border:`1px solid ${P.emerald}25`, color:P.emerald, borderRadius:8, padding:"3px 8px", cursor:"pointer", fontSize:10, fontWeight:700 }}>Tahsil</button>
-              <button onClick={()=>updateStatus(c.id,"BOUNCED")} style={{ background:`${P.rose}12`, border:`1px solid ${P.rose}25`, color:P.rose, borderRadius:8, padding:"3px 8px", cursor:"pointer", fontSize:10, fontWeight:700 }}>İade</button>
+              <button onClick={()=>updateStatus(c.id,"CLEARED")} style={{ background:`${P.emerald}12`, border:`1px solid ${P.emerald}25`, color:P.emerald, borderRadius:8, padding:"3px 8px", cursor:"pointer", fontSize:10, fontWeight:700 }}>{t.collect}</button>
+              <button onClick={()=>updateStatus(c.id,"BOUNCED")} style={{ background:`${P.rose}12`, border:`1px solid ${P.rose}25`, color:P.rose, borderRadius:8, padding:"3px 8px", cursor:"pointer", fontSize:10, fontWeight:700 }}>{t.refund}</button>
             </div>
           )},
         ]} />
@@ -1147,7 +1147,7 @@ function PersonnelPage() {
       </div>
       {data?.totalMonthlyCost > 0 && (
         <div style={{ background:`linear-gradient(135deg,${P.sky}10,${P.cyan}05)`, border:`1.5px solid ${P.sky}20`, borderRadius:16, padding:20, marginBottom:20 }}>
-          <div style={{ color:P.sub, fontSize:12, marginBottom:4 }}>Aylık Toplam Personel Maliyeti</div>
+          <div style={{ color:P.sub, fontSize:12, marginBottom:4 }}>{t.monthlyPersonnelCost}</div>
           <div style={{ color:P.sky, fontSize:28, fontWeight:800 }}>₺{Number(data.totalMonthlyCost).toLocaleString("tr-TR",{maximumFractionDigits:0})}</div>
           <div style={{ color:P.muted, fontSize:12 }}>{personnel.filter(p=>p.status==="ACTIVE").length} aktif personel</div>
         </div>
@@ -1157,7 +1157,7 @@ function PersonnelPage() {
           <div style={{ color:P.text, fontWeight:700, fontSize:15, marginBottom:16 }}>🧮 Maaş Hesaplama (Türkiye 2026)</div>
           <div style={{ display:"flex", gap:12, alignItems:"flex-end", marginBottom:16 }}>
             <div style={{ flex:1 }}><label style={{ color:P.sub, fontSize:11, fontWeight:700, display:"block", marginBottom:5 }}>Brüt Maaş (TRY)</label><input type="number" value={calcSalary} onChange={e=>setCalcSalary(e.target.value)} placeholder="Örn: 25000" style={{ width:"100%", background:P.light, border:`1.5px solid ${P.border}`, borderRadius:10, padding:"10px 14px", fontSize:14, color:P.text, outline:"none", boxSizing:"border-box" }} /></div>
-            <button onClick={calculate} style={{ background:`linear-gradient(135deg,${P.sky},${P.cyan})`, border:"none", borderRadius:10, color:"#fff", padding:"10px 24px", cursor:"pointer", fontSize:13, fontWeight:700 }}>Hesapla</button>
+            <button onClick={calculate} style={{ background:`linear-gradient(135deg,${P.sky},${P.cyan})`, border:"none", borderRadius:10, color:"#fff", padding:"10px 24px", cursor:"pointer", fontSize:13, fontWeight:700 }}>{t.calculate}</button>
           </div>
           {calcResult && (
             <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(140px,1fr))", gap:10 }}>
@@ -1181,7 +1181,7 @@ function PersonnelPage() {
       )}
       {showForm && (
         <div style={{ background:P.card, borderRadius:18, padding:24, border:`1.5px solid ${P.sky}20`, marginBottom:20 }}>
-          <div style={{ color:P.text, fontWeight:700, fontSize:15, marginBottom:16 }}>Yeni Personel</div>
+          <div style={{ color:P.text, fontWeight:700, fontSize:15, marginBottom:16 }}>{t.newPersonnel}</div>
           <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:12 }}>
             {[["Ad Soyad *","name","text"],["Pozisyon","position","text"],["Departman","department","text"],["İşe Başlama *","startDate","date"],["Brüt Maaş (TRY) *","grossSalary","number"]].map(([lbl,key,type]) => (
               <div key={key}><label style={{ color:P.sub, fontSize:11, fontWeight:700, display:"block", marginBottom:5 }}>{lbl}</label><input type={type} value={form[key]} onChange={e=>setForm(f=>({...f,[key]:e.target.value}))} style={{ width:"100%", background:P.light, border:`1.5px solid ${P.border}`, borderRadius:10, padding:"9px 12px", fontSize:13, color:P.text, outline:"none", boxSizing:"border-box" }} /></div>
@@ -1189,7 +1189,7 @@ function PersonnelPage() {
           </div>
           <div style={{ display:"flex", gap:10, marginTop:16 }}>
             <button onClick={save} disabled={saving} style={{ background:`linear-gradient(135deg,${P.sky},${P.cyan})`, border:"none", borderRadius:10, color:"#fff", padding:"10px 24px", cursor:"pointer", fontSize:13, fontWeight:700 }}>{saving?"Kaydediliyor...":"Kaydet"}</button>
-            <button onClick={()=>setShowForm(false)} style={{ background:P.light, border:`1.5px solid ${P.border}`, borderRadius:10, color:P.sub, padding:"10px 20px", cursor:"pointer", fontSize:13 }}>İptal</button>
+            <button onClick={()=>setShowForm(false)} style={{ background:P.light, border:`1.5px solid ${P.border}`, borderRadius:10, color:P.sub, padding:"10px 20px", cursor:"pointer", fontSize:13 }}>{t.cancel}</button>
           </div>
         </div>
       )}
@@ -1199,8 +1199,8 @@ function PersonnelPage() {
             <div style={{ color:P.text, fontWeight:700, fontSize:15, marginBottom:16 }}>Bordro Oluştur — {slipModal.name}</div>
             <div><label style={{ color:P.sub, fontSize:11, fontWeight:700, display:"block", marginBottom:5 }}>Dönem (YYYY-MM)</label><input value={slipPeriod} onChange={e=>setSlipPeriod(e.target.value)} placeholder="2026-04" style={{ width:"100%", background:P.light, border:`1.5px solid ${P.border}`, borderRadius:10, padding:"9px 12px", fontSize:13, color:P.text, outline:"none", boxSizing:"border-box" }} /></div>
             <div style={{ display:"flex", gap:10, marginTop:18 }}>
-              <button onClick={generateSlip} style={{ flex:1, background:`linear-gradient(135deg,${P.sky},${P.cyan})`, border:"none", borderRadius:10, color:"#fff", padding:"10px", cursor:"pointer", fontSize:13, fontWeight:700 }}>Oluştur</button>
-              <button onClick={()=>setSlipModal(null)} style={{ flex:1, background:P.light, border:`1.5px solid ${P.border}`, borderRadius:10, color:P.sub, padding:"10px", cursor:"pointer", fontSize:13 }}>İptal</button>
+              <button onClick={generateSlip} style={{ flex:1, background:`linear-gradient(135deg,${P.sky},${P.cyan})`, border:"none", borderRadius:10, color:"#fff", padding:"10px", cursor:"pointer", fontSize:13, fontWeight:700 }}>{t.create}</button>
+              <button onClick={()=>setSlipModal(null)} style={{ flex:1, background:P.light, border:`1.5px solid ${P.border}`, borderRadius:10, color:P.sub, padding:"10px", cursor:"pointer", fontSize:13 }}>{t.cancel}</button>
             </div>
           </div>
         </div>
@@ -1212,7 +1212,7 @@ function PersonnelPage() {
           { key:"grossSalary", label:"Brüt Maaş", render:p=><span style={{ color:P.text, fontFamily:"monospace", fontWeight:700 }}>₺{Number(p.grossSalary).toLocaleString()}</span> },
           { key:"netSalary", label:"Net (Tahmini)", render:p=>{const net=Number(p.grossSalary)*0.7065;return <span style={{ color:P.emerald, fontFamily:"monospace", fontWeight:700 }}>₺{net.toLocaleString("tr-TR",{maximumFractionDigits:0})}</span>;} },
           { key:"status", label:"Durum", render:p=><span style={{ background:p.status==="ACTIVE"?`${P.emerald}15`:`${P.rose}15`, color:p.status==="ACTIVE"?P.emerald:P.rose, borderRadius:20, padding:"2px 10px", fontSize:11, fontWeight:700 }}>{p.status==="ACTIVE"?"Aktif":"Pasif"}</span> },
-          { key:"actions", label:"", render:p=><button onClick={()=>setSlipModal(p)} style={{ background:`${P.sky}12`, border:`1px solid ${P.sky}25`, color:P.sky, borderRadius:8, padding:"4px 12px", cursor:"pointer", fontSize:11, fontWeight:700 }}>Bordro</button> },
+          { key:"actions", label:"", render:p=><button onClick={()=>setSlipModal(p)} style={{ background:`${P.sky}12`, border:`1px solid ${P.sky}25`, color:P.sky, borderRadius:8, padding:"4px 12px", cursor:"pointer", fontSize:11, fontWeight:700 }}>{t.payroll}</button> },
         ]} />
     </div>
   );
@@ -1236,7 +1236,7 @@ function KartvizitPage({ user }) {
 
   return (
     <div style={{ animation:"fadeIn 0.3s ease" }}>
-      <div style={{ marginBottom:24 }}><h1 style={{ color:P.text, fontSize:24, fontWeight:800, margin:"0 0 4px" }}>Dijital Kartvizit</h1><div style={{ color:P.sub, fontSize:13 }}>Müşterilere paylaşılabilir public profil sayfası</div></div>
+      <div style={{ marginBottom:24 }}><h1 style={{ color:P.text, fontSize:24, fontWeight:800, margin:"0 0 4px" }}>{t.digitalCard}</h1><div style={{ color:P.sub, fontSize:13 }}>Müşterilere paylaşılabilir public profil sayfası</div></div>
       {qr?.profileUrl && (
         <div style={{ background:`linear-gradient(135deg,${P.violet}10,${P.pink}05)`, border:`1.5px solid ${P.violet}20`, borderRadius:18, padding:24, marginBottom:24, display:"flex", gap:24, alignItems:"center" }}>
           {qr.qrUrl && <img src={qr.qrUrl} alt="QR" style={{ width:100, height:100, borderRadius:12 }} />}
@@ -1248,15 +1248,15 @@ function KartvizitPage({ user }) {
         </div>
       )}
       <div style={{ background:P.card, borderRadius:18, padding:24, border:`1.5px solid ${P.violet}15` }}>
-        <div style={{ color:P.text, fontWeight:700, fontSize:15, marginBottom:16 }}>Profil Bilgileri</div>
+        <div style={{ color:P.text, fontWeight:700, fontSize:15, marginBottom:16 }}>{t.profileInfo}</div>
         <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr", gap:14 }}>
           {[["Görünen Ad *","displayName"],["Slogan","tagline"],["Telefon","phone"],["E-posta","email"],["Website","website"],["Adres","address"]].map(([lbl,key]) => (
             <div key={key}><label style={{ color:P.sub, fontSize:11, fontWeight:700, display:"block", marginBottom:5 }}>{lbl}</label><input value={form[key]||""} onChange={e=>setForm(f=>({...f,[key]:e.target.value}))} style={{ width:"100%", background:P.light, border:`1.5px solid ${P.border}`, borderRadius:10, padding:"9px 12px", fontSize:13, color:P.text, outline:"none", boxSizing:"border-box" }} /></div>
           ))}
-          <div style={{ gridColumn:"1/-1" }}><label style={{ color:P.sub, fontSize:11, fontWeight:700, display:"block", marginBottom:5 }}>Açıklama</label><textarea value={form.description||""} onChange={e=>setForm(f=>({...f,description:e.target.value}))} rows={3} style={{ width:"100%", background:P.light, border:`1.5px solid ${P.border}`, borderRadius:10, padding:"9px 12px", fontSize:13, color:P.text, outline:"none", resize:"none", fontFamily:"inherit", boxSizing:"border-box" }} /></div>
-          <div><label style={{ color:P.sub, fontSize:11, fontWeight:700, display:"block", marginBottom:5 }}>Tema Rengi</label>
+          <div style={{ gridColumn:"1/-1" }}><label style={{ color:P.sub, fontSize:11, fontWeight:700, display:"block", marginBottom:5 }}>{t.description}</label><textarea value={form.description||""} onChange={e=>setForm(f=>({...f,description:e.target.value}))} rows={3} style={{ width:"100%", background:P.light, border:`1.5px solid ${P.border}`, borderRadius:10, padding:"9px 12px", fontSize:13, color:P.text, outline:"none", resize:"none", fontFamily:"inherit", boxSizing:"border-box" }} /></div>
+          <div><label style={{ color:P.sub, fontSize:11, fontWeight:700, display:"block", marginBottom:5 }}>{t.themeColor}</label>
             <select value={form.theme} onChange={e=>setForm(f=>({...f,theme:e.target.value}))} style={{ width:"100%", background:P.light, border:`1.5px solid ${P.border}`, borderRadius:10, padding:"9px 12px", fontSize:13, color:P.text, outline:"none" }}>
-              <option value="purple">Mor (Varsayılan)</option><option value="blue">Mavi</option><option value="green">Yeşil</option><option value="orange">Turuncu</option><option value="pink">Pembe</option>
+              <option value="purple">Mor (Varsayılan)</option><option value="blue">{t.blue}</option><option value="green">Yeşil</option><option value="orange">Turuncu</option><option value="pink">Pembe</option>
             </select>
           </div>
           <div style={{ display:"flex", alignItems:"center", gap:12 }}><label style={{ color:P.sub, fontSize:13 }}>Profil Yayında:</label><input type="checkbox" checked={form.isActive} onChange={e=>setForm(f=>({...f,isActive:e.target.checked}))} style={{ width:18, height:18, cursor:"pointer" }} /></div>
@@ -1302,12 +1302,12 @@ function RecurringPage() {
   return (
     <div style={{ animation:"fadeIn 0.3s ease" }}>
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:20 }}>
-        <div><h1 style={{ color:P.text, fontSize:24, fontWeight:800, margin:"0 0 4px" }}>Otomatik Faturalama</h1><div style={{ color:P.sub, fontSize:13 }}>Aylık/yıllık tekrarlayan fatura planları</div></div>
+        <div><h1 style={{ color:P.text, fontSize:24, fontWeight:800, margin:"0 0 4px" }}>{t.autoInvoicing}</h1><div style={{ color:P.sub, fontSize:13 }}>Aylık/yıllık tekrarlayan fatura planları</div></div>
         <button onClick={()=>setShowForm(v=>!v)} style={{ background:`linear-gradient(135deg,${P.lime},${P.teal})`, border:"none", borderRadius:12, color:"#fff", padding:"10px 20px", cursor:"pointer", fontSize:13, fontWeight:700 }}>+ Plan Oluştur</button>
       </div>
       {showForm && (
         <div style={{ background:P.card, borderRadius:18, padding:24, border:`1.5px solid ${P.lime}20`, marginBottom:20 }}>
-          <div style={{ color:P.text, fontWeight:700, fontSize:15, marginBottom:16 }}>Yeni Tekrarlayan Fatura</div>
+          <div style={{ color:P.text, fontWeight:700, fontSize:15, marginBottom:16 }}>{t.newRecurringInvoice}</div>
           <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:12, marginBottom:16 }}>
             {[["Müşteri Adı *","customerName"],["E-posta","customerEmail"],["Telefon","customerPhone"]].map(([lbl,key]) => (
               <div key={key}><label style={{ color:P.sub, fontSize:11, fontWeight:700, display:"block", marginBottom:5 }}>{lbl}</label><input value={form[key]} onChange={e=>setForm(f=>({...f,[key]:e.target.value}))} style={{ width:"100%", background:P.light, border:`1.5px solid ${P.border}`, borderRadius:10, padding:"9px 12px", fontSize:13, color:P.text, outline:"none", boxSizing:"border-box" }} /></div>
@@ -1326,13 +1326,13 @@ function RecurringPage() {
             <span style={{ marginLeft:16, color:P.text, fontWeight:700 }}>Ara Toplam: ₺{subtotal.toLocaleString()}</span>
           </div>
           <div style={{ display:"grid", gridTemplateColumns:"1fr 1fr 1fr", gap:12 }}>
-            <div><label style={{ color:P.sub, fontSize:11, fontWeight:700, display:"block", marginBottom:5 }}>Periyot</label><select value={form.interval} onChange={e=>setForm(f=>({...f,interval:e.target.value}))} style={{ width:"100%", background:P.light, border:`1.5px solid ${P.border}`, borderRadius:10, padding:"9px 12px", fontSize:13, color:P.text, outline:"none" }}><option value="MONTHLY">Aylık</option><option value="YEARLY">Yıllık</option></select></div>
-            <div><label style={{ color:P.sub, fontSize:11, fontWeight:700, display:"block", marginBottom:5 }}>Ayın Günü</label><input type="number" min="1" max="28" value={form.dayOfMonth} onChange={e=>setForm(f=>({...f,dayOfMonth:parseInt(e.target.value)}))} style={{ width:"100%", background:P.light, border:`1.5px solid ${P.border}`, borderRadius:10, padding:"9px 12px", fontSize:13, color:P.text, outline:"none", boxSizing:"border-box" }} /></div>
-            <div><label style={{ color:P.sub, fontSize:11, fontWeight:700, display:"block", marginBottom:5 }}>Başlangıç Tarihi</label><input type="date" value={form.startDate} onChange={e=>setForm(f=>({...f,startDate:e.target.value}))} style={{ width:"100%", background:P.light, border:`1.5px solid ${P.border}`, borderRadius:10, padding:"9px 12px", fontSize:13, color:P.text, outline:"none", boxSizing:"border-box" }} /></div>
+            <div><label style={{ color:P.sub, fontSize:11, fontWeight:700, display:"block", marginBottom:5 }}>{t.period}</label><select value={form.interval} onChange={e=>setForm(f=>({...f,interval:e.target.value}))} style={{ width:"100%", background:P.light, border:`1.5px solid ${P.border}`, borderRadius:10, padding:"9px 12px", fontSize:13, color:P.text, outline:"none" }}><option value="MONTHLY">Aylık</option><option value="YEARLY">Yıllık</option></select></div>
+            <div><label style={{ color:P.sub, fontSize:11, fontWeight:700, display:"block", marginBottom:5 }}>{t.dayOfMonth}</label><input type="number" min="1" max="28" value={form.dayOfMonth} onChange={e=>setForm(f=>({...f,dayOfMonth:parseInt(e.target.value)}))} style={{ width:"100%", background:P.light, border:`1.5px solid ${P.border}`, borderRadius:10, padding:"9px 12px", fontSize:13, color:P.text, outline:"none", boxSizing:"border-box" }} /></div>
+            <div><label style={{ color:P.sub, fontSize:11, fontWeight:700, display:"block", marginBottom:5 }}>{t.startDate}</label><input type="date" value={form.startDate} onChange={e=>setForm(f=>({...f,startDate:e.target.value}))} style={{ width:"100%", background:P.light, border:`1.5px solid ${P.border}`, borderRadius:10, padding:"9px 12px", fontSize:13, color:P.text, outline:"none", boxSizing:"border-box" }} /></div>
           </div>
           <div style={{ display:"flex", gap:10, marginTop:16 }}>
             <button onClick={save} disabled={saving} style={{ background:`linear-gradient(135deg,${P.lime},${P.teal})`, border:"none", borderRadius:10, color:"#fff", padding:"10px 24px", cursor:"pointer", fontSize:13, fontWeight:700 }}>{saving?"Oluşturuluyor...":"Plan Oluştur"}</button>
-            <button onClick={()=>setShowForm(false)} style={{ background:P.light, border:`1.5px solid ${P.border}`, borderRadius:10, color:P.sub, padding:"10px 20px", cursor:"pointer", fontSize:13 }}>İptal</button>
+            <button onClick={()=>setShowForm(false)} style={{ background:P.light, border:`1.5px solid ${P.border}`, borderRadius:10, color:P.sub, padding:"10px 20px", cursor:"pointer", fontSize:13 }}>{t.cancel}</button>
           </div>
         </div>
       )}
@@ -1380,7 +1380,7 @@ function TaxCalendarPage() {
   return (
     <div style={{ animation:"fadeIn 0.3s ease" }}>
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:20 }}>
-        <div><h1 style={{ color:P.text, fontSize:24, fontWeight:800, margin:"0 0 4px" }}>Vergi Takvimi</h1><div style={{ color:P.sub, fontSize:13 }}>KDV, Muhtasar, SGK, Kurumlar — tüm beyanname tarihleri</div></div>
+        <div><h1 style={{ color:P.text, fontSize:24, fontWeight:800, margin:"0 0 4px" }}>{t.taxCalendar}</h1><div style={{ color:P.sub, fontSize:13 }}>KDV, Muhtasar, SGK, Kurumlar — tüm beyanname tarihleri</div></div>
         <button onClick={generate} disabled={generating} style={{ background:`linear-gradient(135deg,${P.rose},${P.orange})`, border:"none", borderRadius:12, color:"#fff", padding:"10px 20px", cursor:"pointer", fontSize:13, fontWeight:700 }}>
           {generating?"Oluşturuluyor...":"📅 Bu Yıl Takvimini Oluştur"}
         </button>
@@ -1388,8 +1388,8 @@ function TaxCalendarPage() {
       {events.length === 0 && allEvents.length === 0 ? (
         <div style={{ textAlign:"center", padding:60 }}>
           <div style={{ fontSize:60, marginBottom:12 }}>📅</div>
-          <div style={{ color:P.text, fontWeight:700, fontSize:16, marginBottom:8 }}>Vergi Takvimi Boş</div>
-          <div style={{ color:P.sub, fontSize:13, marginBottom:20 }}>Yukarıdaki butona tıklayarak bu yılın tüm vergi etkinliklerini otomatik oluşturun</div>
+          <div style={{ color:P.text, fontWeight:700, fontSize:16, marginBottom:8 }}>{t.taxCalendarEmpty}</div>
+          <div style={{ color:P.sub, fontSize:13, marginBottom:20 }}>{t.autoTaxCalendar}</div>
         </div>
       ) : (
         <>
@@ -1449,7 +1449,7 @@ function BenchmarkPage() {
   return (
     <div style={{ animation:"fadeIn 0.3s ease" }}>
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:20 }}>
-        <div><h1 style={{ color:P.text, fontSize:24, fontWeight:800, margin:"0 0 4px" }}>Sektör Karşılaştırması</h1><div style={{ color:P.sub, fontSize:13 }}>İşletmenizi sektör ortalamasıyla karşılaştırın</div></div>
+        <div><h1 style={{ color:P.text, fontSize:24, fontWeight:800, margin:"0 0 4px" }}>{t.sectorBenchmark}</h1><div style={{ color:P.sub, fontSize:13 }}>İşletmenizi sektör ortalamasıyla karşılaştırın</div></div>
         <button onClick={takeSnapshot} disabled={snapshotting} style={{ background:`linear-gradient(135deg,${P.indigo},${P.violet})`, border:"none", borderRadius:12, color:"#fff", padding:"10px 20px", cursor:"pointer", fontSize:13, fontWeight:700 }}>{snapshotting?"Alınıyor...":"📸 Snapshot Al"}</button>
       </div>
       {insights.length > 0 && (
@@ -1476,7 +1476,7 @@ function BenchmarkPage() {
               <div key={i} style={{ background:P.card, borderRadius:18, padding:20, border:`1.5px solid ${col}20`, boxShadow:`0 4px 16px ${col}06` }}>
                 <div style={{ color:P.sub, fontSize:12, marginBottom:8 }}>{m.label}</div>
                 <div style={{ display:"flex", justifyContent:"space-between", marginBottom:10 }}>
-                  <div><div style={{ color:P.muted, fontSize:10 }}>Sizin</div><div style={{ color:P.text, fontSize:20, fontWeight:800 }}>{m.prefix}{m.isPercent?m.yours.toFixed(1):Number(m.yours).toLocaleString("tr-TR",{maximumFractionDigits:0})}{m.suffix||""}</div></div>
+                  <div><div style={{ color:P.muted, fontSize:10 }}>{t.yours}</div><div style={{ color:P.text, fontSize:20, fontWeight:800 }}>{m.prefix}{m.isPercent?m.yours.toFixed(1):Number(m.yours).toLocaleString("tr-TR",{maximumFractionDigits:0})}{m.suffix||""}</div></div>
                   <div style={{ textAlign:"right" }}><div style={{ color:P.muted, fontSize:10 }}>Sektör Ort.</div><div style={{ color:P.sub, fontSize:18, fontWeight:600 }}>{m.prefix}{m.isPercent?m.avg.toFixed(1):Number(m.avg).toLocaleString("tr-TR",{maximumFractionDigits:0})}{m.suffix||""}</div></div>
                 </div>
                 <div style={{ height:4, background:`${P.border}`, borderRadius:2, overflow:"hidden", marginBottom:8 }}>
@@ -1490,8 +1490,8 @@ function BenchmarkPage() {
       ) : (
         <div style={{ textAlign:"center", padding:60 }}>
           <div style={{ fontSize:60, marginBottom:12 }}>📊</div>
-          <div style={{ color:P.text, fontWeight:700, fontSize:16, marginBottom:8 }}>Karşılaştırma Verisi Yok</div>
-          <div style={{ color:P.sub, fontSize:13 }}>Snapshot alın ve yeterli merchant verisi oluştuğunda karşılaştırma aktifleşir</div>
+          <div style={{ color:P.text, fontWeight:700, fontSize:16, marginBottom:8 }}>{t.noBenchmarkData}</div>
+          <div style={{ color:P.sub, fontSize:13 }}>{t.snapshotHint}</div>
         </div>
       )}
       {hist?.length > 0 && (
@@ -1601,7 +1601,7 @@ function Sidebar({ page, setPage, user, logout, unreadCount, onNotifClick, onSet
               <div style={{ color:P.muted, fontSize:10, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{user?.email}</div>
             </div>
           </div>
-          <button onClick={logout} style={{ width:"100%", background:`${P.rose}12`, border:`1.5px solid ${P.rose}25`, color:P.rose, borderRadius:10, padding:"9px 0", cursor:"pointer", fontSize:13, fontWeight:700 }}>Sign Out</button>
+          <button onClick={logout} style={{ width:"100%", background:`${P.rose}12`, border:`1.5px solid ${P.rose}25`, color:P.rose, borderRadius:10, padding:"9px 0", cursor:"pointer", fontSize:13, fontWeight:700 }}>{t.signOut}</button>
         </div>
       </aside>
     </>
@@ -1628,9 +1628,192 @@ function GreetingBanner({ user }) {
 
 // ── Main ──────────────────────────────────────────
 const TXT_CD = {
-  TR: { invoices: "Faturalar" },
-  EN: { invoices: "Invoices" },
-  AR: { invoices: "الفواتير" },
+  TR: {
+    invoices: "Faturalar",
+    cancel: "İptal",
+    save: "Kaydet",
+    create: "Oluştur",
+    deals: "Anlaşmalar",
+    customers: "Müşteriler",
+    tasks: "Görevler",
+    description: "Açıklama",
+    profileInfo: "Profil Bilgileri",
+    loyaltyScore: "Sadakat Skoru",
+    sandboxActive: "Sandbox Modu Aktif",
+    sectorBenchmark: "Sektör Karşılaştırması",
+    signOut: "Sign Out",
+    yours: "Sizin",
+    snapshotHint: "Snapshot alın ve yeterli merchant verisi oluştuğunda karşılaştırma aktifleşir",
+    stockManagement: "Stok Yönetimi",
+    collect: "Tahsil",
+    installmentCount: "Taksit Sayısı",
+    themeColor: "Tema Rengi",
+    clear: "Temizle",
+    type: "Tip",
+    total: "Total",
+    readAll: "Tümünü Oku",
+    taxCalendar: "Vergi Takvimi",
+    taxCalendarEmpty: "Vergi Takvimi Boş",
+    xml: "XML",
+    noNewNotifications: "Yeni bildirim yok",
+    newPersonnel: "Yeni Personel",
+    newInstallmentPlan: "Yeni Taksit Planı",
+    newRecurringInvoice: "Yeni Tekrarlayan Fatura",
+    autoTaxCalendar: "Yukarıdaki butona tıklayarak bu yılın tüm vergi etkinliklerini otomatik oluşturun",
+    zyrix: "Zyrix",
+    pivotAnalysis: "Pivot Analysis",
+    period: "Periyot",
+    zyrixAi: "Zyrix AI Asistan",
+    recipientTitle: "Alıcı Unvanı",
+    dayOfMonth: "Ayın Günü",
+    monthlyPersonnelCost: "Aylık Toplam Personel Maliyeti",
+    startDate: "Başlangıç Tarihi",
+    payroll: "Bordro",
+    digitalCard: "Dijital Kartvizit",
+    adjustment: "Düzeltme",
+    invoiceFactoring: "Fatura Finansmanı",
+    selectInvoice: "Fatura seçin",
+    invoiceInstallmentDesc: "Fatura taksitlendirme ve otomatik hatırlatma",
+    movement: "Hareket",
+    autoInvoicing: "Otomatik Faturalama",
+    noInstallmentPlan: "Henüz taksit planı yok",
+    refund: "İade",
+    firstDueDate: "İlk Vade",
+    transactionType: "İşlem Tipi",
+    noBenchmarkData: "Karşılaştırma Verisi Yok",
+    blue: "Mavi",
+    quantity: "Miktar",
+    remindCustomers: "Müşterilerinizi hatırlatın",
+    note: "Not",
+    pay: "Öde",
+    paymentScore: "Ödeme Skoru",
+    calculate: "Hesapla",
+    zyrixFinSuite: "Zyrix FinSuite"
+  },
+  EN: {
+    invoices: "Invoices",
+    cancel: "Cancel",
+    save: "Save",
+    create: "Create",
+    deals: "Deals",
+    customers: "Customers",
+    tasks: "Tasks",
+    description: "Description",
+    profileInfo: "Profile Info",
+    loyaltyScore: "Loyalty Score",
+    sandboxActive: "Sandbox Mode Active",
+    sectorBenchmark: "Sector Benchmark",
+    signOut: "Sign Out",
+    yours: "Yours",
+    snapshotHint: "Take a snapshot and benchmarking will activate when enough merchant data is collected",
+    stockManagement: "Stock Management",
+    collect: "Collect",
+    installmentCount: "Number of Installments",
+    themeColor: "Theme Color",
+    clear: "Clear",
+    type: "Type",
+    total: "Total",
+    readAll: "Read All",
+    taxCalendar: "Tax Calendar",
+    taxCalendarEmpty: "Tax Calendar Empty",
+    xml: "XML",
+    noNewNotifications: "No new notifications",
+    newPersonnel: "New Employee",
+    newInstallmentPlan: "New Installment Plan",
+    newRecurringInvoice: "New Recurring Invoice",
+    autoTaxCalendar: "Click the button above to auto-generate all tax events for this year",
+    zyrix: "Zyrix",
+    pivotAnalysis: "Pivot Analysis",
+    period: "Period",
+    zyrixAi: "Zyrix AI Assistant",
+    recipientTitle: "Recipient Title",
+    dayOfMonth: "Day of Month",
+    monthlyPersonnelCost: "Total Monthly Personnel Cost",
+    startDate: "Start Date",
+    payroll: "Payroll",
+    digitalCard: "Digital Card",
+    adjustment: "Adjustment",
+    invoiceFactoring: "Invoice Factoring",
+    selectInvoice: "Select invoice",
+    invoiceInstallmentDesc: "Invoice installments and auto reminders",
+    movement: "Movement",
+    autoInvoicing: "Auto Invoicing",
+    noInstallmentPlan: "No installment plans yet",
+    refund: "Refund",
+    firstDueDate: "First Due Date",
+    transactionType: "Transaction Type",
+    noBenchmarkData: "No Benchmark Data",
+    blue: "Blue",
+    quantity: "Quantity",
+    remindCustomers: "Remind your customers",
+    note: "Note",
+    pay: "Pay",
+    paymentScore: "Payment Score",
+    calculate: "Calculate",
+    zyrixFinSuite: "Zyrix FinSuite"
+  },
+  AR: {
+    invoices: "الفواتير",
+    cancel: "إلغاء",
+    save: "حفظ",
+    create: "إنشاء",
+    deals: "الصفقات",
+    customers: "العملاء",
+    tasks: "المهام",
+    description: "الوصف",
+    profileInfo: "معلومات الملف",
+    loyaltyScore: "نقاط الولاء",
+    sandboxActive: "وضع Sandbox نشط",
+    sectorBenchmark: "مقارنة القطاع",
+    signOut: "تسجيل الخروج",
+    yours: "أنت",
+    snapshotHint: "خذ لقطة وستنشط المقارنة عند جمع بيانات تجار كافية",
+    stockManagement: "إدارة المخزون",
+    collect: "تحصيل",
+    installmentCount: "عدد الأقساط",
+    themeColor: "لون السمة",
+    clear: "مسح",
+    type: "النوع",
+    total: "الإجمالي",
+    readAll: "قراءة الكل",
+    taxCalendar: "تقويم الضرائب",
+    taxCalendarEmpty: "تقويم الضرائب فارغ",
+    xml: "XML",
+    noNewNotifications: "لا توجد إشعارات جديدة",
+    newPersonnel: "موظف جديد",
+    newInstallmentPlan: "خطة تقسيط جديدة",
+    newRecurringInvoice: "فاتورة متكررة جديدة",
+    autoTaxCalendar: "انقر فوق الزر أعلاه لإنشاء جميع أحداث الضرائب لهذا العام تلقائياً",
+    zyrix: "Zyrix",
+    pivotAnalysis: "Pivot Analysis",
+    period: "الفترة",
+    zyrixAi: "مساعد Zyrix AI",
+    recipientTitle: "عنوان المستلم",
+    dayOfMonth: "يوم الشهر",
+    monthlyPersonnelCost: "إجمالي تكلفة الموظفين الشهرية",
+    startDate: "تاريخ البداية",
+    payroll: "كشف الرواتب",
+    digitalCard: "بطاقة رقمية",
+    adjustment: "تعديل",
+    invoiceFactoring: "خصم الفواتير",
+    selectInvoice: "اختر الفاتورة",
+    invoiceInstallmentDesc: "تقسيط الفواتير والتذكيرات التلقائية",
+    movement: "حركة",
+    autoInvoicing: "فوترة تلقائية",
+    noInstallmentPlan: "لا توجد خطط تقسيط بعد",
+    refund: "استرداد",
+    firstDueDate: "تاريخ الاستحقاق الأول",
+    transactionType: "نوع المعاملة",
+    noBenchmarkData: "لا توجد بيانات مقارنة",
+    blue: "أزرق",
+    quantity: "الكمية",
+    remindCustomers: "ذكّر عملاءك",
+    note: "ملاحظة",
+    pay: "ادفع",
+    paymentScore: "نقاط الدفع",
+    calculate: "احسب",
+    zyrixFinSuite: "Zyrix FinSuite"
+  },
 };
 
 export default function CustomerDashboard() {
@@ -1768,7 +1951,7 @@ export default function CustomerDashboard() {
                 </ChartCard>
               </div>
               <div style={{ marginBottom:24 }}>
-                <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:14 }}><span style={{ fontSize:18 }}>👥</span><span style={{ color:P.text, fontSize:15, fontWeight:700 }}>Müşteriler</span></div>
+                <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:14 }}><span style={{ fontSize:18 }}>👥</span><span style={{ color:P.text, fontSize:15, fontWeight:700 }}>{t.customers}</span></div>
                 <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(200px,1fr))", gap:16, marginBottom:16 }}>
                   <KPI label="Toplam Müşteri" value={kpis?.totalCustomers||0} color={P.purple} icon="👤" />
                   <KPI label="Bu Ay Yeni" value={kpis?.newCustomersThisMonth||0} color={P.pink} icon="✨" />
@@ -1776,7 +1959,7 @@ export default function CustomerDashboard() {
                 {custBars.length > 0 && <ChartCard title="Aylık Büyüme" color={P.purple} icon="🚀"><BarChart bars={custBars.map((b,i)=>({...b,color:COLORS[i%COLORS.length]}))} height={100} /><AIInsight kpis={{...kpis,totalCustomers:customers.length}} color={P.purple} /></ChartCard>}
               </div>
               <div style={{ marginBottom:24 }}>
-                <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:14 }}><span style={{ fontSize:18 }}>🤝</span><span style={{ color:P.text, fontSize:15, fontWeight:700 }}>Anlaşmalar</span></div>
+                <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:14 }}><span style={{ fontSize:18 }}>🤝</span><span style={{ color:P.text, fontSize:15, fontWeight:700 }}>{t.deals}</span></div>
                 <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(200px,1fr))", gap:16, marginBottom:16 }}>
                   <KPI label="Toplam Anlaşma" value={kpis?.totalDeals||0} color={P.amber} icon="🎯" />
                   <KPI label="Bu Ay Kazanılan" value={kpis?.wonDealsThisMonth||0} color={P.lime} icon="🏆" />
@@ -1791,7 +1974,7 @@ export default function CustomerDashboard() {
                 </ChartCard>}
               </div>
               <div style={{ marginBottom:24 }}>
-                <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:14 }}><span style={{ fontSize:18 }}>✅</span><span style={{ color:P.text, fontSize:15, fontWeight:700 }}>Görevler</span></div>
+                <div style={{ display:"flex", alignItems:"center", gap:8, marginBottom:14 }}><span style={{ fontSize:18 }}>✅</span><span style={{ color:P.text, fontSize:15, fontWeight:700 }}>{t.tasks}</span></div>
                 <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fit,minmax(180px,1fr))", gap:16, marginBottom:16 }}>
                   <KPI label="Bekleyen Görev" value={kpis?.pendingTasks||0} color={P.sky} icon="📋" />
                   <KPI label="Toplam Fatura" value={kpis?.totalInvoices||0} color={P.orange} icon="🧾" />
@@ -1805,7 +1988,7 @@ export default function CustomerDashboard() {
           {page === "customers" && (
             <div style={{ animation:"fadeIn 0.3s ease" }}>
               <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:20 }}>
-                <h1 style={{ color:P.text, fontSize:24, fontWeight:800, margin:0 }}>Müşteriler</h1>
+                <h1 style={{ color:P.text, fontSize:24, fontWeight:800, margin:0 }}>{t.customers}</h1>
                 <button onClick={async () => { await apiFetch("/api/customer-score/batch", { method:"POST" }); reloadCustomers(); }} style={{ background:`linear-gradient(135deg,${P.purple},${P.violet})`, border:"none", borderRadius:10, color:"#fff", padding:"8px 16px", cursor:"pointer", fontSize:12, fontWeight:700 }}>
                   🤖 Tüm Skorları Güncelle
                 </button>
@@ -1831,7 +2014,7 @@ export default function CustomerDashboard() {
 
           {page === "deals" && (
             <div style={{ animation:"fadeIn 0.3s ease" }}>
-              <h1 style={{ color:P.text, fontSize:24, fontWeight:800, margin:"0 0 20px" }}>Anlaşmalar</h1>
+              <h1 style={{ color:P.text, fontSize:24, fontWeight:800, margin:"0 0 20px" }}>{t.deals}</h1>
               <div style={{ overflowX:"auto" }}>
                 <Table color={P.amber} rows={deals} emptyMsg="Henüz anlaşma yok!"
                   cols={[
@@ -1877,7 +2060,7 @@ export default function CustomerDashboard() {
 
           {page === "tasks" && (
             <div style={{ animation:"fadeIn 0.3s ease" }}>
-              <h1 style={{ color:P.text, fontSize:24, fontWeight:800, margin:"0 0 20px" }}>Görevler</h1>
+              <h1 style={{ color:P.text, fontSize:24, fontWeight:800, margin:"0 0 20px" }}>{t.tasks}</h1>
               <div style={{ overflowX:"auto" }}>
                 <Table color={P.sky} rows={recent?.tasks||[]} emptyMsg="🎉 Bekleyen görev yok!"
                   cols={[
