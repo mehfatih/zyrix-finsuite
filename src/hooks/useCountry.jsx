@@ -38,7 +38,7 @@ const STORAGE_KEY = "zyrix_country";
 const SOURCE_KEY  = "zyrix_country_source";
 
 // Free IP geolocation. ~1000 requests per day per IP, no API key needed.
-const IP_API_URL = "https://ipapi.co/json/";
+const IP_API_URL = "https://ipwho.is/";
 
 const CountryContext = createContext({
   country: DEFAULT_COUNTRY,
