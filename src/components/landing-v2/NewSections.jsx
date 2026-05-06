@@ -133,6 +133,7 @@ export function WhyUsSection({ lang = "TR" }) {
               border: `1.5px solid ${COLORS.border}`,
               transition: "transform 0.2s, box-shadow 0.2s, border-color 0.2s",
               cursor: "default",
+              textAlign: "center",
             }}
             onMouseEnter={(e) => {
               e.currentTarget.style.transform = "translateY(-4px)";
@@ -266,11 +267,11 @@ export function SectorsSection({ lang = "TR" }) {
               e.currentTarget.style.borderColor = COLORS.border;
               e.currentTarget.style.transform = "";
             }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 14, marginBottom: 12 }}>
-                <div style={{ fontSize: 32 }}>{it.icon}</div>
-                <h3 style={{ margin: 0, fontSize: 17, fontWeight: 700, color: COLORS.text }}>{it.title}</h3>
+              <div style={{ textAlign: "center" }}>
+                <div style={{ fontSize: 40, marginBottom: 14 }}>{it.icon}</div>
+                <h3 style={{ margin: "0 0 10px", fontSize: 17, fontWeight: 700, color: COLORS.text }}>{it.title}</h3>
+                <p style={{ margin: 0, fontSize: 13.5, color: COLORS.muted, lineHeight: 1.55 }}>{it.desc}</p>
               </div>
-              <p style={{ margin: 0, fontSize: 13.5, color: COLORS.muted, lineHeight: 1.55 }}>{it.desc}</p>
             </div>
           ))}
         </div>
@@ -332,12 +333,13 @@ export function IntegrationsSection({ lang = "TR" }) {
           </p>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(5, minmax(0, 1fr))", gap: 16 }}>
+        <div className="integrations-grid" style={{ display: "grid", gridTemplateColumns: "repeat(5, minmax(0, 1fr))", gap: 16 }}>
           {INTEGRATIONS_LIST.map((it, i) => (
             <div key={i} style={{
-              background: COLORS.card, borderRadius: 14, padding: "20px 18px",
+              background: COLORS.card, borderRadius: 14, padding: "22px 14px",
               border: `1.5px solid ${COLORS.border}`,
-              display: "flex", alignItems: "center", gap: 14,
+              display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 10,
+              textAlign: "center",
               transition: "all 0.2s",
             }}
             onMouseEnter={(e) => {
@@ -354,11 +356,11 @@ export function IntegrationsSection({ lang = "TR" }) {
                 width: 44, height: 44, borderRadius: 10, background: COLORS.bg,
                 display: "flex", alignItems: "center", justifyContent: "center", fontSize: 22, flexShrink: 0,
               }}>{it.icon}</div>
-              <div style={{ minWidth: 0 }}>
-                <div style={{ fontSize: 14, fontWeight: 700, color: COLORS.text, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+              <div style={{ width: "100%" }}>
+                <div style={{ fontSize: 13, fontWeight: 700, color: COLORS.text, lineHeight: 1.3, marginBottom: 4 }}>
                   {it.name}
                 </div>
-                <div style={{ fontSize: 11, color: COLORS.muted, fontWeight: 500, marginTop: 2 }}>
+                <div style={{ fontSize: 11, color: COLORS.muted, fontWeight: 500, lineHeight: 1.3 }}>
                   {it.category}
                 </div>
               </div>

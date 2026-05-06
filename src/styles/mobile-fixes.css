@@ -157,3 +157,65 @@
     gap: 8px !important;
   }
 }
+
+
+/* ============================================================
+   GLOBAL OVERFLOW + LANDING PAGE MOBILE FIXES (Phase 2)
+   These fixes apply to ALL pages including landing.
+   Targets the horizontal scroll bug on the landing hero.
+   ============================================================ */
+
+/* Hard global block on horizontal scroll */
+html, body {
+  overflow-x: hidden !important;
+  max-width: 100vw !important;
+  position: relative;
+}
+
+#root {
+  overflow-x: hidden !important;
+  max-width: 100vw !important;
+}
+
+/* On mobile, force watermark images to stay inside hero */
+@media (max-width: 768px) {
+
+  /* Hide expensive decorative watermarks on mobile entirely.
+     They're absolute-positioned with negative offsets and cause
+     horizontal overflow. They are decorative only. */
+  .landing-page section img[alt*="Bridge"],
+  .landing-page section img[alt*="Tower"],
+  .landing-page section img[alt*="Flag"],
+  .landing-page section img[alt*="Skyline"],
+  .landing-page section svg[width="600"],
+  .landing-page section svg[width="500"],
+  .landing-page section svg[width="800"] {
+    display: none !important;
+  }
+
+  /* Body-level overflow safety on landing too */
+  body.landing-page {
+    overflow-x: hidden !important;
+  }
+
+  /* Cap any container that might have a minWidth pushing horizontal scroll */
+  .landing-page section > div {
+    max-width: 100vw !important;
+  }
+}
+
+
+/* ============================================================
+   INTEGRATIONS GRID — responsive breakpoints
+   Desktop: 5 columns. Tablet: 3. Mobile: 2.
+   ============================================================ */
+@media (max-width: 1024px) {
+  .integrations-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+}
+@media (max-width: 640px) {
+  .integrations-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}

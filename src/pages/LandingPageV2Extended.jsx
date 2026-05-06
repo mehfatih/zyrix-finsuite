@@ -213,9 +213,10 @@ function Hero() {
             </h1>
 
             <p style={{
-              fontSize: 17,
+              fontSize: isMobile ? 16 : 19,
               lineHeight: 1.6,
-              color: "rgba(255, 235, 235, 0.78)",
+              color: "rgba(255, 245, 245, 0.95)",
+              fontWeight: 500,
               maxWidth: 500,
               marginBottom: 36,
             }}>{t("lv2.hero.sub")}</p>
@@ -1106,32 +1107,39 @@ function Pricing() {
   const { profile } = useCountry();
   const isMobile = useIsMobile();
   const isSaudi = lang === "AR";
-  const priceMap = {
-    AR: { starter: "99",  business: "199", pro: "399"   },
-    EN: { starter: "29",  business: "59",  pro: "119"   },
-    TR: { starter: "499", business: "999", pro: "1.999" },
+  // Country-specific pricing (matches /pricing page exactly)
+  const COUNTRY_PRICING_LANDING = {
+    TR: { starter: 199, growth: 499 },
+    SA: { starter: 69,  growth: 179 },
+    AE: { starter: 69,  growth: 179 },
+    EG: { starter: 299, growth: 799 },
+    KW: { starter: 5,   growth: 15  },
+    QA: { starter: 69,  growth: 179 },
+    BH: { starter: 7,   growth: 18  },
+    OM: { starter: 7,   growth: 18  },
+    JO: { starter: 13,  growth: 35  },
+    US: { starter: 19,  growth: 49  },
   };
-  const P_raw = priceMap[lang] || priceMap.TR;
+  const cp = COUNTRY_PRICING_LANDING[profile?.code] || COUNTRY_PRICING_LANDING.TR;
   const P = {
-    starter:  formatCurrency(P_raw.starter,  profile, lang),
-    business: formatCurrency(P_raw.business, profile, lang),
-    pro:      formatCurrency(P_raw.pro,      profile, lang),
+    starter: formatCurrency(cp.starter, profile, lang),
+    growth:  formatCurrency(cp.growth,  profile, lang),
   };
   const plans = [
     {
-      name: "Starter", price: P.starter, popular: false,
+      name: "Starter", price: P.starter, popular: false, isCustom: false,
       desc: t("lv2.price.starterDesc"),
       features: [t("lv2.price.s1"), t("lv2.price.s2"), t("lv2.price.s3"), t("lv2.price.s4"), t("lv2.price.s5")],
       btn: t("lv2.cta.startFree"),
     },
     {
-      name: "Business", price: P.business, popular: true,
+      name: "Growth", price: P.growth, popular: true, isCustom: false,
       desc: t("lv2.price.businessDesc"),
       features: [t("lv2.price.b1"), t("lv2.price.b2"), t("lv2.price.b3"), t("lv2.price.b4"), t("lv2.price.b5"), t("lv2.price.b6")],
       btn: t("lv2.cta.startFree"),
     },
     {
-      name: "Pro", price: P.pro, popular: false,
+      name: "Scale", price: "Custom", popular: false, isCustom: true,
       desc: t("lv2.price.proDesc"),
       features: [t("lv2.price.p1"), t("lv2.price.p2"), t("lv2.price.p3"), t("lv2.price.p4"), t("lv2.price.p5"), t("lv2.price.p6")],
       btn: t("lv2.price.contact"),
@@ -1242,10 +1250,12 @@ function Pricing() {
                     fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
                     fontSize: isMobile ? 36 : 48, fontWeight: 800, letterSpacing: "-0.04em", lineHeight: 1,
                   }}>{plan.price}</strong>
-                  <span style={{
-                    fontSize: isMobile ? 13 : 14, fontWeight: 500,
-                    color: plan.popular ? "rgba(255,255,255,0.65)" : C.muted,
-                  }}>{t("lv2.price.month")}</span>
+                  {!plan.isCustom && (
+                    <span style={{
+                      fontSize: isMobile ? 13 : 14, fontWeight: 500,
+                      color: plan.popular ? "rgba(255,255,255,0.65)" : C.muted,
+                    }}>{t("lv2.price.month")}</span>
+                  )}
                 </div>
 
                 <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: isMobile ? 10 : 12, marginBottom: isMobile ? 22 : 32, padding: 0, flexGrow: 1 }}>
@@ -1286,6 +1296,23 @@ function Pricing() {
               </div>
             </div>
           ))}
+        </div>
+        <div style={{ textAlign: "center", marginTop: isMobile ? 32 : 48 }}>
+          <a href="/pricing" style={{
+            display: "inline-flex", alignItems: "center", gap: 8,
+            padding: isMobile ? "10px 20px" : "12px 24px",
+            fontSize: isMobile ? 13 : 14, fontWeight: 700,
+            color: isSaudi ? SA.greenDeep : C.redDeep,
+            background: "transparent",
+            border: "1.5px solid " + (isSaudi ? SA.green100 : C.wine100),
+            borderRadius: 12, textDecoration: "none",
+            transition: "all 0.2s",
+          }}>
+            <span>{lang === "AR" ? "عرض كل التفاصيل والمقارنة" : lang === "TR" ? "Tüm detayları ve karşılaştırmayı gör" : "View full pricing & comparison"}</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ transform: isRTL ? "scaleX(-1)" : "none" }}>
+              <path d="M5 12h14M12 5l7 7-7 7" />
+            </svg>
+          </a>
         </div>
       </div>
     </section>
