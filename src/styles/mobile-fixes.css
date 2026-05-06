@@ -242,3 +242,15 @@ html, body {
     grid-column: 1 / -1 !important;
   }
 }
+
+
+/* ============================================================
+   PRICING PAGE ROI GRID - stack on mobile
+   The 2-column ROI calculator overflows on narrow screens.
+   ============================================================ */
+@media (max-width: 768px) {
+  .pricing-roi-grid {
+    grid-template-columns: 1fr !important;
+    gap: 18px !important;
+  }
+}

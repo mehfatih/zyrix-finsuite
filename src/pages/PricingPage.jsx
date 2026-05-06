@@ -505,7 +505,7 @@ export default function PricingPage() {
 
           {/* ROI CALCULATOR */}
           <div style={{ ...card, padding: 32, marginBottom: 36, background: "linear-gradient(135deg, rgba(255,247,237,.96), rgba(255,255,255,.92))" }}>
-            <div style={{ display: "grid", gridTemplateColumns: "0.9fr 1.1fr", gap: 28, alignItems: "stretch" }}>
+            <div className="pricing-roi-grid" style={{ display: "grid", gridTemplateColumns: "0.9fr 1.1fr", gap: 28, alignItems: "stretch" }}>
               <div>
                 <div style={{ color: themeColor, fontSize: 12, fontWeight: 900, letterSpacing: "1.5px", marginBottom: 10 }}>
                   {t.roiBadge}
@@ -597,8 +597,8 @@ export default function PricingPage() {
               {t.plansSub}
             </p>
 
-            {/* Country / region selector */}
-            <div
+            {/* Country / region selector (HIDDEN - using auto IP detection) */}
+            {false && <div
               style={{
                 marginTop: 18,
                 display: "inline-flex",
@@ -650,7 +650,7 @@ export default function PricingPage() {
                   );
                 })}
               </select>
-            </div>
+            </div>}
 
             {/* Billing toggle */}
             <div style={{ marginTop: 22, display: "inline-flex", alignItems: "center", gap: 6, padding: 5, borderRadius: 999, background: "rgba(255,255,255,.95)", border: "1px solid " + T.hairline, boxShadow: "0 14px 32px rgba(58,5,9,.06)" }}>
