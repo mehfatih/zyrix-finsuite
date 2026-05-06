@@ -1,0 +1,19 @@
+// Barrel exports for all dashboard charts
+export { default as Sparkline }       from "./Sparkline";
+export { default as Gauge }           from "./Gauge";
+export { default as PulseRings }      from "./PulseRings";
+export { default as AreaChart }       from "./AreaChart";
+export { default as BarChart }        from "./BarChart";
+export { default as DonutChart }      from "./DonutChart";
+export { default as BulletChart }     from "./BulletChart";
+export { default as StepChart }       from "./StepChart";
+export { default as ConfidenceBand }  from "./ConfidenceBand";
+export { default as ScatterChart }    from "./ScatterChart";
+export { default as RadarChart }      from "./RadarChart";
+export { default as CalendarHeatmap } from "./CalendarHeatmap";
+export { default as Treemap }         from "./Treemap";
+export { default as Waterfall }       from "./Waterfall";
+export { default as MapHeatmap }      from "./MapHeatmap";
+export { default as Sunburst }        from "./Sunburst";
+export { default as SankeyDiagram }   from "./SankeyDiagram";
+export { default as ForceGraph }      from "./ForceGraph";

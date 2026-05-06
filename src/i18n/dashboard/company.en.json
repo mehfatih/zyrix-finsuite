@@ -1,0 +1,23 @@
+{
+  "title": "Company Settings",
+  "subtitle": "Your company information and brand",
+  "section.identity": "Company Identity",
+  "section.legal": "Legal",
+  "section.brand": "Brand",
+  "field.companyName": "Company name",
+  "field.legalName": "Legal name",
+  "field.taxId": "Tax ID / VAT No",
+  "field.taxOffice": "Tax office",
+  "field.address": "Address",
+  "field.country": "Country",
+  "field.city": "City",
+  "field.industry": "Industry",
+  "field.employees": "Employees",
+  "field.logo": "Logo",
+  "field.website": "Website",
+  "action.uploadLogo": "Upload logo",
+  "action.save": "Save",
+  "saved": "Company info saved",
+  "validateTaxId": "Invalid tax ID",
+  "logoHint": "PNG / SVG, max 1 MB"
+}

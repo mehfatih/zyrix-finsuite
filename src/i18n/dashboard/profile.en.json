@@ -1,0 +1,23 @@
+{
+  "title": "Profile",
+  "subtitle": "Your personal info and preferences",
+  "section.identity": "Identity",
+  "section.preferences": "Preferences",
+  "section.security": "Security",
+  "field.fullName": "Full name",
+  "field.email": "Email",
+  "field.phone": "Phone",
+  "field.role": "Role",
+  "field.bio": "Bio",
+  "field.language": "Language",
+  "field.timezone": "Time zone",
+  "field.avatar": "Avatar",
+  "action.upload": "Upload photo",
+  "action.save": "Save",
+  "action.cancel": "Cancel",
+  "action.changePassword": "Change password",
+  "action.enable2FA": "Enable 2FA",
+  "saved": "Profile saved",
+  "saveError": "Save failed",
+  "avatarHint": "JPG / PNG, max 2 MB"
+}

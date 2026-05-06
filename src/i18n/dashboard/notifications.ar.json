@@ -1,0 +1,20 @@
+{
+  "title": "الإشعارات",
+  "subtitle": "جميع التنبيهات وأحداث النظام",
+  "filter.all": "الكل",
+  "filter.unread": "غير مقروء",
+  "filter.system": "النظام",
+  "filter.invoice": "الفواتير",
+  "filter.payment": "المدفوعات",
+  "filter.tax": "الضرائب",
+  "filter.ai": "الذكاء الاصطناعي",
+  "action.markAllRead": "تحديد الكل كمقروء",
+  "action.markRead": "تحديد كمقروء",
+  "action.viewDetail": "عرض",
+  "empty.title": "لا توجد إشعارات",
+  "empty.description": "ستظهر الأحداث الجديدة هنا",
+  "time.now": "الآن",
+  "time.minutesAgo": "منذ {minutes} د",
+  "time.hoursAgo": "منذ {hours} س",
+  "time.daysAgo": "منذ {days} ي"
+}

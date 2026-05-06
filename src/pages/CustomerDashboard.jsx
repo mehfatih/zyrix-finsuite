@@ -15,6 +15,16 @@ const BanksPage       = React.lazy(() => import("./dashboard/BanksPage"));
 const AICfoPage       = React.lazy(() => import("./dashboard/AICfoPage"));
 const CashCrisisPage  = React.lazy(() => import("./dashboard/CashCrisisPage"));
 const MarketplaceHubPage = React.lazy(() => import("./dashboard/MarketplaceHubPage"));
+// Phase 1 pages (lazy-loaded)
+const DashboardHome        = React.lazy(() => import("./dashboard/DashboardHome"));
+const ProfilePage          = React.lazy(() => import("./dashboard/ProfilePage"));
+const CompanySettingsPage  = React.lazy(() => import("./dashboard/CompanySettingsPage"));
+const NotificationsPage    = React.lazy(() => import("./dashboard/NotificationsPage"));
+import {
+  PALETTE_HUES as DASH_PALETTE_HUES,
+  getCardPalette as getDashCardPalette,
+  getBrandPalette as getDashBrandPalette,
+} from "../utils/dashboardPalette";
 
 // ── Light Palette ─────────────────────────────────
 const P = {
@@ -1511,97 +1521,402 @@ function BenchmarkPage() {
     </div>
   );
 }
+// ── Phase 1 Sidebar — 12 grouped, collapsible, with search ────────────
+const SIDEBAR_GROUPS = [
+  {
+    id: "home",
+    label: { TR: "Ana Sayfa",    EN: "Home",        AR: "الرئيسية" },
+    paletteId: "wine",
+    items: [
+      { id: "home",     icon: "⌂", label: { TR: "Pano",          EN: "Home",         AR: "الرئيسية" },        tag: "built" },
+      { id: "overview", icon: "⊞", label: { TR: "Klasik Özet",   EN: "Classic View", AR: "الملخص الكلاسيكي" }, tag: "built" },
+    ],
+  },
+  {
+    id: "money",
+    label: { TR: "Para & Finans", EN: "Money & Finance", AR: "المال والمالية" },
+    paletteId: "teal",
+    items: [
+      { id: "invoices",    icon: "📄", label: { TR: "Faturalar",    EN: "Invoices",   AR: "الفواتير" },         tag: "built" },
+      { id: "efatura",     icon: "🧾", label: { TR: "E-Fatura",     EN: "E-Invoice",  AR: "الفاتورة الإلكترونية" }, tag: "ai" },
+      { id: "banks",       icon: "🏦", label: { TR: "Bankalar",     EN: "Banks",      AR: "البنوك" },           tag: "ai" },
+      { id: "factoring",   icon: "💰", label: { TR: "Finansman",    EN: "Factoring",  AR: "التمويل" },          tag: "star" },
+      { id: "recurring",   icon: "🔄", label: { TR: "Oto. Fatura",  EN: "Recurring",  AR: "متكرر" },           tag: "built" },
+      { id: "checks",      icon: "📑", label: { TR: "Çek & Senet",  EN: "Checks",     AR: "الشيكات" },          tag: "built" },
+      { id: "installments",icon: "📅", label: { TR: "Taksit",       EN: "Installments", AR: "أقساط" },         tag: "built" },
+    ],
+  },
+  {
+    id: "customers",
+    label: { TR: "Müşteriler", EN: "Customers", AR: "العملاء" },
+    paletteId: "indigo",
+    items: [
+      { id: "customers", icon: "👥", label: { TR: "Müşteriler", EN: "Customers", AR: "العملاء" },   tag: "ai" },
+      { id: "deals",     icon: "🤝", label: { TR: "Anlaşmalar", EN: "Deals",     AR: "الصفقات" },   tag: "built" },
+      { id: "tasks",     icon: "✅", label: { TR: "Görevler",   EN: "Tasks",     AR: "المهام" },     tag: "built" },
+    ],
+  },
+  {
+    id: "operations",
+    label: { TR: "Operasyon", EN: "Operations", AR: "العمليات" },
+    paletteId: "orange",
+    items: [
+      { id: "stock",     icon: "📦", label: { TR: "Stok",         EN: "Stock",     AR: "المخزون" },         tag: "built" },
+      { id: "eirsaliye", icon: "🚚", label: { TR: "e-İrsaliye",   EN: "E-Waybill", AR: "بوليصة الشحن" },     tag: "star" },
+      { id: "receipts",  icon: "📷", label: { TR: "Fiş Okuma",    EN: "Receipts",  AR: "إيصالات" },         tag: "ai" },
+      { id: "personnel", icon: "👤", label: { TR: "Personel & SGK", EN: "HR",      AR: "الموظفون" },        tag: "built" },
+    ],
+  },
+  {
+    id: "marketplace",
+    label: { TR: "Pazar Yeri", EN: "Marketplace", AR: "السوق" },
+    paletteId: "rose",
+    items: [
+      { id: "marketplace", icon: "🛒", label: { TR: "Pazar Yeri Hub", EN: "Marketplace Hub", AR: "مركز السوق" }, tag: "star" },
+      { id: "whatsapp",    icon: "💬", label: { TR: "WhatsApp",       EN: "WhatsApp",        AR: "واتساب" },     tag: "ai" },
+      { id: "kartvizit",   icon: "🪪", label: { TR: "Kartvizit",      EN: "Business Card",   AR: "بطاقة العمل" }, tag: "built" },
+    ],
+  },
+  {
+    id: "ai",
+    label: { TR: "Yapay Zeka", EN: "AI", AR: "الذكاء الاصطناعي" },
+    paletteId: "purple",
+    items: [
+      { id: "aicfo",      icon: "💼", label: { TR: "AI CFO",       EN: "AI CFO",       AR: "المدير المالي AI" }, tag: "ai" },
+      { id: "cashcrisis", icon: "🔮", label: { TR: "Kriz Uyarısı", EN: "Cash Crisis",  AR: "تنبيه الأزمة" },     tag: "ai" },
+    ],
+  },
+  {
+    id: "reports",
+    label: { TR: "Raporlar", EN: "Reports", AR: "التقارير" },
+    paletteId: "sky",
+    items: [
+      { id: "taxcalendar", icon: "🗓️", label: { TR: "Vergi Takvimi", EN: "Tax Calendar", AR: "التقويم الضريبي" }, tag: "built" },
+      { id: "benchmark",   icon: "📊", label: { TR: "Benchmark",     EN: "Benchmark",    AR: "المقارنة المرجعية" }, tag: "ai" },
+    ],
+  },
+  {
+    id: "growth",
+    label: { TR: "Büyüme", EN: "Growth", AR: "النمو" },
+    paletteId: "emerald",
+    items: [
+      { id: "campaigns", icon: "📣", label: { TR: "Kampanyalar", EN: "Campaigns", AR: "الحملات" }, tag: "built" },
+    ],
+  },
+  {
+    id: "team",
+    label: { TR: "Ekip", EN: "Team", AR: "الفريق" },
+    paletteId: "cyan",
+    items: [
+      { id: "team", icon: "👥", label: { TR: "Ekip Yönetimi", EN: "Team", AR: "الفريق" }, tag: "built" },
+    ],
+  },
+  {
+    id: "alerts",
+    label: { TR: "Bildirimler", EN: "Alerts", AR: "الإشعارات" },
+    paletteId: "amber",
+    items: [
+      { id: "notifications", icon: "🔔", label: { TR: "Bildirimler", EN: "Notifications", AR: "الإشعارات" }, tag: "built" },
+    ],
+  },
+  {
+    id: "settings",
+    label: { TR: "Ayarlar", EN: "Settings", AR: "الإعدادات" },
+    paletteId: "lime",
+    items: [
+      { id: "profile",  icon: "🪪", label: { TR: "Profil",  EN: "Profile",  AR: "الملف الشخصي" }, tag: "built" },
+      { id: "company",  icon: "🏢", label: { TR: "Şirket",  EN: "Company",  AR: "الشركة" },       tag: "built" },
+    ],
+  },
+  {
+    id: "account",
+    label: { TR: "Hesap", EN: "Account", AR: "الحساب" },
+    paletteId: "wine",
+    items: [],
+  },
+];
+
+const TAG_LABEL = {
+  ai:    { sym: "★ AI", color: "#6C3AFF", bg: "#F3EFFF" },
+  star:  { sym: "★",     color: "#F59E0B", bg: "#FFF8E5" },
+  built: { sym: "✓",     color: "#10B981", bg: "#E6FBF5" },
+};
+
 function Sidebar({ page, setPage, user, logout, unreadCount, onNotifClick, onSettingsClick, onAIClick, mobileOpen, onMobileClose }) {
-  const NAV = [
-    { id:"overview",   icon:"⊞",  label:"Overview" },
-    { id:"customers",  icon:"👥", label:"Customers" },
-    { id:"deals",      icon:"🤝", label:"Deals" },
-    { id:"invoices",   icon:"📄", label:"Invoices" },
-    { id:"tasks",       icon:"✅", label:"Tasks" },
-    // v2
-    { id:"efatura",     icon:"🧾", label:"E-Fatura" },
-    { id:"factoring",   icon:"💰", label:"Finansman" },
-    // v3
-    { id:"stock",       icon:"📦", label:"Stok" },
-    { id:"installments",icon:"📅", label:"Taksit" },
-    { id:"checks",      icon:"🏦", label:"Çek & Senet" },
-    { id:"personnel",   icon:"👤", label:"Personel & SGK" },
-    { id:"kartvizit",   icon:"🪪", label:"Kartvizit" },
-    { id:"recurring",   icon:"🔄", label:"Oto. Fatura" },
-    { id:"marketplace", icon:"🛒", label:"Pazar Yeri" },
-    { id:"taxcalendar", icon:"🗓️", label:"Vergi Takvimi" },
-    { id:"benchmark",   icon:"📊", label:"Benchmark" },
-    // v4
-    { id:"team",        icon:"👥", label:"Ekip Yönetimi" },
-    { id:"campaigns",   icon:"📣", label:"Kampanyalar" },
-    // v5 - Sprint 1
-    { id:"eirsaliye",   icon:"📦", label:"e-Irsaliye" },
-    { id:"receipts",    icon:"📷", label:"Fis Okuma" },
-    { id:"whatsapp",    icon:"💬", label:"WhatsApp" },
-    { id:"banks",       icon:"🏦", label:"Bankalar" },
-    { id:"aicfo",       icon:"💼", label:"AI CFO" },
-    { id:"cashcrisis",  icon:"🔮", label:"Kriz Uyarisi" },
-  ];
+  const { lang } = useI18n();
+  const brand = getDashBrandPalette(lang.toLowerCase());
+  const [query, setQuery] = useState("");
+  const [collapsed, setCollapsed] = useState(() => ({})); // { [groupId]: true }
+
+  const norm = (s) => String(s || "").toLowerCase();
+  const matchesQuery = (item) => {
+    if (!query) return true;
+    const q = norm(query);
+    return norm(item.label[lang] || item.label.EN || item.label.TR).includes(q) || norm(item.id).includes(q);
+  };
+
+  const lookupPalette = (pid) => DASH_PALETTE_HUES.find((p) => p.id === pid) || getDashCardPalette(0);
+
   return (
     <>
-      {mobileOpen && <div onClick={onMobileClose} style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.4)", zIndex:199 }} />}
-      <aside style={{ width:230, background:P.sidebar, borderRight:`1.5px solid ${P.border}`, display:"flex", flexDirection:"column", padding:"20px 12px", gap:3, position:"fixed", top:0, left:0, height:"100vh", zIndex:200, boxShadow:"4px 0 24px rgba(108,58,255,0.06)", overflowY:"auto", overflowX:"hidden" }}>
-        <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:28, padding:"0 8px" }}>
-          <div style={{ width:38, height:38, borderRadius:12, background:`linear-gradient(135deg,${P.purple},${P.pink})`, display:"flex", alignItems:"center", justifyContent:"center", boxShadow:`0 4px 16px ${P.purple}35` }}>
-            <span style={{ color:"#fff", fontWeight:900, fontSize:17 }}>Z</span>
+      {mobileOpen && <div onClick={onMobileClose} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.4)", zIndex: 199 }} />}
+      <aside
+        className={mobileOpen ? "dash-sidebar-mobile-open" : ""}
+        style={{
+          width: 246,
+          background: P.sidebar,
+          borderRight: `1.5px solid ${P.border}`,
+          display: "flex",
+          flexDirection: "column",
+          padding: "16px 10px 14px",
+          gap: 4,
+          position: "fixed",
+          top: 0,
+          left: 0,
+          height: "100vh",
+          zIndex: 200,
+          boxShadow: `4px 0 24px ${brand.base}10`,
+          overflowY: "auto",
+          overflowX: "hidden",
+        }}
+      >
+        {/* Brand */}
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 14, padding: "0 8px" }}>
+          <div
+            style={{
+              width: 38,
+              height: 38,
+              borderRadius: 12,
+              background: `linear-gradient(135deg,${brand.base},${brand.dark})`,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              boxShadow: `0 4px 16px ${brand.base}40`,
+            }}
+          >
+            <span style={{ color: "#fff", fontWeight: 900, fontSize: 17 }}>Z</span>
           </div>
           <div>
-            <div style={{ color:P.text, fontWeight:800, fontSize:16, lineHeight:1 }}>Zyrix</div>
-            <div style={{ color:P.purple, fontSize:9, fontWeight:700, letterSpacing:"0.12em", textTransform:"uppercase" }}>FinSuite v2</div>
+            <div style={{ color: P.text, fontWeight: 800, fontSize: 16, lineHeight: 1 }}>Zyrix</div>
+            <div style={{ color: brand.base, fontSize: 9, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase" }}>
+              FinSuite v2
+            </div>
           </div>
         </div>
 
-        {NAV.map(item => {
-          const active = page === item.id;
-          const isNew = ["efatura","factoring","eirsaliye","receipts","whatsapp","banks","aicfo","cashcrisis","marketplace"].includes(item.id);
+        {/* Search */}
+        <div style={{ position: "relative", margin: "0 6px 10px" }}>
+          <input
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder={lang === "AR" ? "ابحث…" : lang === "EN" ? "Search…" : "Ara…"}
+            aria-label="search nav"
+            style={{
+              width: "100%",
+              padding: "8px 10px 8px 30px",
+              borderRadius: 10,
+              border: `1px solid ${P.border}`,
+              background: P.light,
+              color: P.text,
+              fontSize: 12,
+              outline: "none",
+              boxSizing: "border-box",
+            }}
+          />
+          <span style={{ position: "absolute", left: 10, top: "50%", transform: "translateY(-50%)", color: P.muted, fontSize: 12 }}>
+            🔎
+          </span>
+        </div>
+
+        {/* Groups */}
+        {SIDEBAR_GROUPS.map((g) => {
+          if (g.id === "account") return null;
+          const visibleItems = g.items.filter(matchesQuery);
+          if (query && !visibleItems.length) return null;
+          const isCollapsed = !query && collapsed[g.id];
+          const palette = lookupPalette(g.paletteId);
           return (
-            <button key={item.id} onClick={() => { setPage(item.id); onMobileClose?.(); }} style={{ background:active?`linear-gradient(90deg,${P.purple}15,${P.purple}06)`:"transparent", border:`1.5px solid ${active?P.purple+"30":"transparent"}`, borderRadius:12, color:active?P.purple:P.sub, padding:"10px 14px", cursor:"pointer", textAlign:"left", display:"flex", alignItems:"center", gap:10, fontSize:14, fontWeight:active?700:500, transition:"all 0.15s", position:"relative" }}
-              onMouseEnter={e=>{ if(!active){e.currentTarget.style.background=`${P.purple}08`;e.currentTarget.style.color=P.purple;}}}
-              onMouseLeave={e=>{ if(!active){e.currentTarget.style.background="transparent";e.currentTarget.style.color=P.sub;}}}>
-              <span style={{ fontSize:17 }}>{item.icon}</span>{item.label}
-              {isNew && <span style={{ marginLeft:"auto", background:`${P.emerald}15`, color:P.emerald, borderRadius:20, fontSize:8, fontWeight:800, padding:"1px 6px", letterSpacing:"0.06em" }}>YENİ</span>}
-            </button>
+            <div key={g.id} style={{ marginBottom: 4 }}>
+              <button
+                type="button"
+                onClick={() => setCollapsed((c) => ({ ...c, [g.id]: !c[g.id] }))}
+                style={{
+                  width: "100%",
+                  background: "transparent",
+                  border: "none",
+                  padding: "8px 10px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                  cursor: "pointer",
+                  borderRadius: 8,
+                  color: palette.dark,
+                  fontSize: 10,
+                  fontWeight: 800,
+                  textTransform: "uppercase",
+                  letterSpacing: "0.08em",
+                  textAlign: "start",
+                }}
+              >
+                <span
+                  style={{
+                    width: 6,
+                    height: 6,
+                    borderRadius: "50%",
+                    background: palette.base,
+                    flexShrink: 0,
+                  }}
+                />
+                <span style={{ flex: 1, minWidth: 0 }}>{g.label[lang] || g.label.EN}</span>
+                <span style={{ fontSize: 10, opacity: 0.6 }}>{isCollapsed ? "▸" : "▾"}</span>
+              </button>
+              {!isCollapsed && (
+                <div style={{ display: "flex", flexDirection: "column", gap: 2, paddingInlineStart: 4 }}>
+                  {visibleItems.map((item) => {
+                    const active = page === item.id;
+                    const tag = TAG_LABEL[item.tag];
+                    return (
+                      <button
+                        key={item.id}
+                        onClick={() => {
+                          setPage(item.id);
+                          onMobileClose?.();
+                        }}
+                        style={{
+                          background: active ? `linear-gradient(90deg,${palette.base}18,${palette.base}06)` : "transparent",
+                          border: `1.5px solid ${active ? palette.base + "40" : "transparent"}`,
+                          borderRadius: 10,
+                          color: active ? palette.dark : P.sub,
+                          padding: "8px 10px",
+                          cursor: "pointer",
+                          textAlign: "start",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 9,
+                          fontSize: 13,
+                          fontWeight: active ? 700 : 500,
+                          transition: "all 0.15s",
+                          width: "100%",
+                        }}
+                        onMouseEnter={(e) => {
+                          if (!active) {
+                            e.currentTarget.style.background = `${palette.base}10`;
+                            e.currentTarget.style.color = palette.dark;
+                          }
+                        }}
+                        onMouseLeave={(e) => {
+                          if (!active) {
+                            e.currentTarget.style.background = "transparent";
+                            e.currentTarget.style.color = P.sub;
+                          }
+                        }}
+                      >
+                        <span style={{ fontSize: 15 }}>{item.icon}</span>
+                        <span style={{ flex: 1, minWidth: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                          {item.label[lang] || item.label.EN}
+                        </span>
+                        {item.id === "notifications" && unreadCount > 0 && (
+                          <span style={{ background: P.rose, color: "#fff", borderRadius: 999, fontSize: 10, fontWeight: 700, padding: "1px 6px" }}>
+                            {unreadCount}
+                          </span>
+                        )}
+                        {tag && (
+                          <span
+                            style={{
+                              background: tag.bg,
+                              color: tag.color,
+                              borderRadius: 999,
+                              fontSize: 9,
+                              fontWeight: 800,
+                              padding: "1px 6px",
+                              letterSpacing: "0.04em",
+                              flexShrink: 0,
+                            }}
+                          >
+                            {tag.sym}
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
           );
         })}
 
-        {/* Divider */}
-        <div style={{ height:1, background:P.border, margin:"8px 6px" }} />
+        {/* Quick action: AI */}
+        <button
+          onClick={onAIClick}
+          style={{
+            margin: "8px 6px 4px",
+            background: `linear-gradient(90deg,${P.purple}10,${P.pink}06)`,
+            border: `1.5px solid ${P.purple}25`,
+            borderRadius: 10,
+            color: P.purple,
+            padding: "10px 12px",
+            cursor: "pointer",
+            textAlign: "start",
+            display: "flex",
+            alignItems: "center",
+            gap: 9,
+            fontSize: 13,
+            fontWeight: 700,
+          }}
+        >
+          <span style={{ fontSize: 16 }}>🤖</span>
+          {lang === "AR" ? "مساعد AI" : lang === "EN" ? "AI Assistant" : "AI Asistan"}
+          <span style={{ marginInlineStart: "auto", background: `${P.purple}18`, color: P.purple, borderRadius: 999, fontSize: 9, fontWeight: 800, padding: "1px 6px" }}>
+            ★ AI
+          </span>
+        </button>
 
-        <div style={{ display:"flex", flexDirection:"column", gap:3 }}>
-          {/* AI Asistan */}
-          <button onClick={onAIClick} style={{ background:`linear-gradient(90deg,${P.purple}08,${P.pink}05)`, border:`1.5px solid ${P.purple}20`, borderRadius:12, color:P.purple, padding:"10px 14px", cursor:"pointer", textAlign:"left", display:"flex", alignItems:"center", gap:10, fontSize:14, fontWeight:600 }}>
-            <span style={{ fontSize:17 }}>🤖</span>AI Asistan
-            <span style={{ marginLeft:"auto", background:`${P.purple}15`, color:P.purple, borderRadius:20, fontSize:8, fontWeight:800, padding:"1px 6px" }}>YENİ</span>
-          </button>
-          <button onClick={onNotifClick} style={{ background:"transparent", border:"1.5px solid transparent", borderRadius:12, color:P.sub, padding:"10px 14px", cursor:"pointer", textAlign:"left", display:"flex", alignItems:"center", gap:10, fontSize:14, fontWeight:500 }}
-            onMouseEnter={e=>{e.currentTarget.style.background=`${P.purple}08`;e.currentTarget.style.color=P.purple;}}
-            onMouseLeave={e=>{e.currentTarget.style.background="transparent";e.currentTarget.style.color=P.sub;}}>
-            <span style={{ fontSize:17 }}>🔔</span>Bildirimler
-            {unreadCount>0 && <span style={{ marginLeft:"auto", background:P.rose, color:"#fff", borderRadius:20, fontSize:10, fontWeight:700, padding:"1px 6px" }}>{unreadCount}</span>}
-          </button>
-          <button onClick={onSettingsClick} style={{ background:"transparent", border:"1.5px solid transparent", borderRadius:12, color:P.sub, padding:"10px 14px", cursor:"pointer", textAlign:"left", display:"flex", alignItems:"center", gap:10, fontSize:14, fontWeight:500 }}
-            onMouseEnter={e=>{e.currentTarget.style.background=`${P.purple}08`;e.currentTarget.style.color=P.purple;}}
-            onMouseLeave={e=>{e.currentTarget.style.background="transparent";e.currentTarget.style.color=P.sub;}}>
-            <span style={{ fontSize:17 }}>⚙️</span>Ayarlar
-          </button>
-        </div>
-
-        <div style={{ paddingTop:16, borderTop:`1.5px solid ${P.border}`, marginTop:8 }}>
-          <div style={{ display:"flex", alignItems:"center", gap:10, marginBottom:12, padding:"8px 10px", background:P.light, borderRadius:12 }}>
-            <div style={{ width:34, height:34, borderRadius:"50%", background:`linear-gradient(135deg,${P.purple},${P.pink})`, display:"flex", alignItems:"center", justifyContent:"center", color:"#fff", fontSize:13, fontWeight:700, flexShrink:0 }}>
-              {(user?.name||"U")[0].toUpperCase()}
+        {/* Account block */}
+        <div style={{ paddingTop: 12, borderTop: `1.5px solid ${P.border}`, marginTop: 8, padding: "12px 6px 0" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10, padding: "8px 10px", background: P.light, borderRadius: 12 }}>
+            <div
+              style={{
+                width: 34,
+                height: 34,
+                borderRadius: "50%",
+                background: `linear-gradient(135deg,${brand.base},${brand.dark})`,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                color: "#fff",
+                fontSize: 13,
+                fontWeight: 700,
+                flexShrink: 0,
+              }}
+            >
+              {(user?.name || user?.email || "U")[0].toUpperCase()}
             </div>
-            <div style={{ overflow:"hidden", flex:1 }}>
-              <div style={{ color:P.text, fontSize:13, fontWeight:700, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{user?.name||"Merchant"}</div>
-              <div style={{ color:P.muted, fontSize:10, whiteSpace:"nowrap", overflow:"hidden", textOverflow:"ellipsis" }}>{user?.email}</div>
+            <div style={{ overflow: "hidden", flex: 1 }}>
+              <div style={{ color: P.text, fontSize: 13, fontWeight: 700, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                {user?.name || "Merchant"}
+              </div>
+              <div style={{ color: P.muted, fontSize: 10, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                {user?.email}
+              </div>
             </div>
           </div>
-          <button onClick={logout} style={{ width:"100%", background:`${P.rose}12`, border:`1.5px solid ${P.rose}25`, color:P.rose, borderRadius:10, padding:"9px 0", cursor:"pointer", fontSize:13, fontWeight:700 }}>{t.signOut}</button>
+          <button
+            onClick={logout}
+            style={{
+              width: "100%",
+              background: `${P.rose}12`,
+              border: `1.5px solid ${P.rose}25`,
+              color: P.rose,
+              borderRadius: 10,
+              padding: "9px 0",
+              cursor: "pointer",
+              fontSize: 13,
+              fontWeight: 700,
+            }}
+          >
+            {lang === "AR" ? "تسجيل الخروج" : lang === "EN" ? "Sign out" : "Çıkış"}
+          </button>
         </div>
       </aside>
     </>
@@ -1821,7 +2136,7 @@ export default function CustomerDashboard() {
   const t = TXT_CD[lang] || TXT_CD.TR;
 
   const { user, logout } = useAuth();
-  const [page, setPage] = useState("overview");
+  const [page, setPage] = useState("home");
   const [showNotifs, setShowNotifs] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [showAI, setShowAI] = useState(false);
@@ -2096,6 +2411,28 @@ export default function CustomerDashboard() {
           {/* ═══ v4 SAYFALAR ══════════════════════════════════ */}
           {page === "team"       && (() => { const TeamPage = React.lazy(() => import("./TeamPage")); return <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:"#94a3b8"}}>Yükleniyor...</div>}><TeamPage /></React.Suspense>; })()}
           {page === "campaigns"  && (() => { const CampaignsPage = React.lazy(() => import("./CampaignsPage")); return <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:"#94a3b8"}}>Yükleniyor...</div>}><CampaignsPage /></React.Suspense>; })()}
+
+          {/* ═══ Phase 1 PAGES ═══════════════════════════════ */}
+          {page === "home" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <DashboardHome />
+            </React.Suspense>
+          )}
+          {page === "profile" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <ProfilePage />
+            </React.Suspense>
+          )}
+          {page === "company" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <CompanySettingsPage />
+            </React.Suspense>
+          )}
+          {page === "notifications" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <NotificationsPage />
+            </React.Suspense>
+          )}
 
         </main>
       </div>

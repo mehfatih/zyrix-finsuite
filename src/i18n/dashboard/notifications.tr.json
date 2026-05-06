@@ -1,0 +1,20 @@
+{
+  "title": "Bildirimler",
+  "subtitle": "Tüm uyarılar ve sistem olayları",
+  "filter.all": "Tümü",
+  "filter.unread": "Okunmamış",
+  "filter.system": "Sistem",
+  "filter.invoice": "Fatura",
+  "filter.payment": "Ödeme",
+  "filter.tax": "Vergi",
+  "filter.ai": "AI",
+  "action.markAllRead": "Tümünü Okundu İşaretle",
+  "action.markRead": "Okundu",
+  "action.viewDetail": "Detay",
+  "empty.title": "Bildirim yok",
+  "empty.description": "Yeni olaylar olduğunda burada görünecek",
+  "time.now": "Az önce",
+  "time.minutesAgo": "{minutes} dk önce",
+  "time.hoursAgo": "{hours} sa önce",
+  "time.daysAgo": "{days} gün önce"
+}

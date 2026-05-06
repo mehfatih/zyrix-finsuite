@@ -1,0 +1,23 @@
+{
+  "title": "الملف الشخصي",
+  "subtitle": "معلوماتك الشخصية وتفضيلاتك",
+  "section.identity": "الهوية",
+  "section.preferences": "التفضيلات",
+  "section.security": "الأمان",
+  "field.fullName": "الاسم الكامل",
+  "field.email": "البريد الإلكتروني",
+  "field.phone": "الهاتف",
+  "field.role": "الدور",
+  "field.bio": "نبذة",
+  "field.language": "اللغة",
+  "field.timezone": "المنطقة الزمنية",
+  "field.avatar": "الصورة الرمزية",
+  "action.upload": "رفع صورة",
+  "action.save": "حفظ",
+  "action.cancel": "إلغاء",
+  "action.changePassword": "تغيير كلمة المرور",
+  "action.enable2FA": "تفعيل المصادقة الثنائية",
+  "saved": "تم حفظ الملف الشخصي",
+  "saveError": "فشل الحفظ",
+  "avatarHint": "JPG / PNG، بحد أقصى 2 ميغابايت"
+}

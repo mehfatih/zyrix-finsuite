@@ -1,0 +1,23 @@
+{
+  "title": "Profil",
+  "subtitle": "Kişisel bilgileriniz ve tercihleriniz",
+  "section.identity": "Kimlik Bilgileri",
+  "section.preferences": "Tercihler",
+  "section.security": "Güvenlik",
+  "field.fullName": "Ad Soyad",
+  "field.email": "E-posta",
+  "field.phone": "Telefon",
+  "field.role": "Rol",
+  "field.bio": "Hakkında",
+  "field.language": "Dil",
+  "field.timezone": "Saat Dilimi",
+  "field.avatar": "Profil Fotoğrafı",
+  "action.upload": "Fotoğraf Yükle",
+  "action.save": "Kaydet",
+  "action.cancel": "İptal",
+  "action.changePassword": "Parolayı Değiştir",
+  "action.enable2FA": "İki Faktörlü Doğrulamayı Etkinleştir",
+  "saved": "Profil kaydedildi",
+  "saveError": "Kaydetme başarısız",
+  "avatarHint": "JPG / PNG, en fazla 2 MB"
+}

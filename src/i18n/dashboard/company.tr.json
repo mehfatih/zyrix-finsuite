@@ -1,0 +1,23 @@
+{
+  "title": "Şirket Ayarları",
+  "subtitle": "Şirket bilgileriniz ve marka kimliği",
+  "section.identity": "Şirket Kimliği",
+  "section.legal": "Yasal Bilgiler",
+  "section.brand": "Marka",
+  "field.companyName": "Şirket Adı",
+  "field.legalName": "Yasal Ünvan",
+  "field.taxId": "Vergi No / KDV No",
+  "field.taxOffice": "Vergi Dairesi",
+  "field.address": "Adres",
+  "field.country": "Ülke",
+  "field.city": "Şehir",
+  "field.industry": "Sektör",
+  "field.employees": "Çalışan Sayısı",
+  "field.logo": "Logo",
+  "field.website": "Web Sitesi",
+  "action.uploadLogo": "Logo Yükle",
+  "action.save": "Kaydet",
+  "saved": "Şirket bilgileri kaydedildi",
+  "validateTaxId": "Geçersiz vergi numarası",
+  "logoHint": "PNG / SVG, en fazla 1 MB"
+}

@@ -1,0 +1,23 @@
+{
+  "title": "إعدادات الشركة",
+  "subtitle": "معلومات شركتك وهويتها",
+  "section.identity": "هوية الشركة",
+  "section.legal": "المعلومات القانونية",
+  "section.brand": "العلامة التجارية",
+  "field.companyName": "اسم الشركة",
+  "field.legalName": "الاسم القانوني",
+  "field.taxId": "الرقم الضريبي / ضريبة القيمة المضافة",
+  "field.taxOffice": "مكتب الضرائب",
+  "field.address": "العنوان",
+  "field.country": "الدولة",
+  "field.city": "المدينة",
+  "field.industry": "القطاع",
+  "field.employees": "عدد الموظفين",
+  "field.logo": "الشعار",
+  "field.website": "الموقع الإلكتروني",
+  "action.uploadLogo": "رفع الشعار",
+  "action.save": "حفظ",
+  "saved": "تم حفظ معلومات الشركة",
+  "validateTaxId": "الرقم الضريبي غير صالح",
+  "logoHint": "PNG / SVG، بحد أقصى 1 ميغابايت"
+}

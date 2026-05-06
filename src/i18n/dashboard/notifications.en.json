@@ -1,0 +1,20 @@
+{
+  "title": "Notifications",
+  "subtitle": "All alerts and system events",
+  "filter.all": "All",
+  "filter.unread": "Unread",
+  "filter.system": "System",
+  "filter.invoice": "Invoice",
+  "filter.payment": "Payment",
+  "filter.tax": "Tax",
+  "filter.ai": "AI",
+  "action.markAllRead": "Mark all read",
+  "action.markRead": "Mark read",
+  "action.viewDetail": "View",
+  "empty.title": "No notifications",
+  "empty.description": "New events will show up here",
+  "time.now": "just now",
+  "time.minutesAgo": "{minutes} min ago",
+  "time.hoursAgo": "{hours} h ago",
+  "time.daysAgo": "{days} d ago"
+}
