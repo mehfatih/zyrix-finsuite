@@ -5,6 +5,8 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useI18n } from "../i18n/i18n";
+import NavV2 from "../components/NavV2.jsx";
+import FooterV2 from "../components/FooterV2.jsx";
 
 // ============================================================================
 // COLOR SYSTEM
@@ -223,15 +225,17 @@ export default function SitemapPage() {
   const childR = Math.min(cx, cy) * 0.85;
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background: COLORS.bg,
-        direction: isRTL ? "rtl" : "ltr",
-        fontFamily: "'Plus Jakarta Sans', system-ui, -apple-system, sans-serif",
-        padding: "48px 24px 96px",
-      }}
-    >
+    <>
+      <NavV2 />
+      <div
+        style={{
+          minHeight: "100vh",
+          background: COLORS.bg,
+          direction: isRTL ? "rtl" : "ltr",
+          fontFamily: "'Plus Jakarta Sans', system-ui, -apple-system, sans-serif",
+          padding: "48px 24px 96px",
+        }}
+      >
       <div style={{ maxWidth: 1280, margin: "0 auto 32px", textAlign: "center" }}>
         <div
           style={{
@@ -273,23 +277,6 @@ export default function SitemapPage() {
         >
           {t.subtitle}
         </p>
-        <Link
-          to="/"
-          style={{
-            display: "inline-block",
-            padding: "10px 22px",
-            borderRadius: 12,
-            background: "#fff",
-            color: COLORS.text,
-            border: "1px solid " + COLORS.cardBorder,
-            fontSize: 14,
-            fontWeight: 700,
-            textDecoration: "none",
-            transition: "all 0.2s",
-          }}
-        >
-          {t.backHome}
-        </Link>
       </div>
 
       <div
@@ -617,6 +604,8 @@ export default function SitemapPage() {
           50%      { transform: scale(1.18); opacity: 0.5; }
         }
       `}</style>
-    </div>
+      </div>
+      <FooterV2 />
+    </>
   );
 }
