@@ -270,6 +270,15 @@ export const bankAPI = {
     const qs = new URLSearchParams(params).toString();
     return apiFetch(`/api/banks/transactions${qs ? `?${qs}` : ""}`);
   },
+
+  // CSV import
+  importCsv: (payload) =>
+    apiFetch(`/api/banks/import-csv`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
+  listImports: (limit = 20) =>
+    apiFetch(`/api/banks/imports?limit=${limit}`),
 };
 
 
