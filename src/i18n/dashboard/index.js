@@ -20,11 +20,16 @@ import notifTr from "./notifications.tr.json";
 import notifEn from "./notifications.en.json";
 import notifAr from "./notifications.ar.json";
 
+import salesTr from "./sales.tr.json";
+import salesEn from "./sales.en.json";
+import salesAr from "./sales.ar.json";
+
 const NAMESPACES = {
   home:          { TR: homeTr,    EN: homeEn,    AR: homeAr },
   profile:       { TR: profileTr, EN: profileEn, AR: profileAr },
   company:       { TR: companyTr, EN: companyEn, AR: companyAr },
   notifications: { TR: notifTr,   EN: notifEn,   AR: notifAr },
+  sales:         { TR: salesTr,   EN: salesEn,   AR: salesAr },
 };
 
 export function useDashboardI18n(namespace) {
