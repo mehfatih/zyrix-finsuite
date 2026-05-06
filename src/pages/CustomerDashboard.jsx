@@ -33,6 +33,22 @@ const TradesmanInvoicePage     = React.lazy(() => import("./dashboard/sales/Trad
 const CustomersListPage        = React.lazy(() => import("./dashboard/sales/CustomersListPage"));
 const CustomerDetailPage       = React.lazy(() => import("./dashboard/sales/CustomerDetailPage"));
 const SalesPipelinePage        = React.lazy(() => import("./dashboard/sales/SalesPipelinePage"));
+
+// Phase 3 — Purchases & Stock (lazy-loaded)
+const PurchaseInvoicesListPage    = React.lazy(() => import("./dashboard/purchases/PurchaseInvoicesListPage"));
+const PurchaseInvoiceCreatePage   = React.lazy(() => import("./dashboard/purchases/PurchaseInvoiceCreatePage"));
+const PurchaseInvoiceDetailPage   = React.lazy(() => import("./dashboard/purchases/PurchaseInvoiceDetailPage"));
+const PurchaseOrdersPage          = React.lazy(() => import("./dashboard/purchases/PurchaseOrdersPage"));
+const ServicePurchaseInvoicePage  = React.lazy(() => import("./dashboard/purchases/ServicePurchaseInvoicePage"));
+const SuppliersListPage           = React.lazy(() => import("./dashboard/purchases/SuppliersListPage"));
+const SupplierDetailPage          = React.lazy(() => import("./dashboard/purchases/SupplierDetailPage"));
+const ExpensesPage                = React.lazy(() => import("./dashboard/purchases/ExpensesPage"));
+const ProductsListPage            = React.lazy(() => import("./dashboard/products/ProductsListPage"));
+const ProductCreatePage           = React.lazy(() => import("./dashboard/products/ProductCreatePage"));
+const ProductDetailPage           = React.lazy(() => import("./dashboard/products/ProductDetailPage"));
+const ServicesPage                = React.lazy(() => import("./dashboard/products/ServicesPage"));
+const StockMovementsPage          = React.lazy(() => import("./dashboard/products/StockMovementsPage"));
+const StockReportsPage            = React.lazy(() => import("./dashboard/products/StockReportsPage"));
 import {
   PALETTE_HUES as DASH_PALETTE_HUES,
   getCardPalette as getDashCardPalette,
@@ -1583,11 +1599,34 @@ const SIDEBAR_GROUPS = [
     ],
   },
   {
+    id: "purchases",
+    label: { TR: "Alım & Tedarik", EN: "Purchases", AR: "المشتريات" },
+    paletteId: "orange",
+    items: [
+      { id: "purch-invoices",   icon: "📥", label: { TR: "Alış Faturaları",  EN: "Purchase Invoices", AR: "فواتير المشتريات" }, tag: "built" },
+      { id: "purch-orders",     icon: "📦", label: { TR: "Alış Siparişleri", EN: "Purchase Orders",   AR: "أوامر الشراء" },    tag: "built" },
+      { id: "purch-services",   icon: "🛠️", label: { TR: "Hizmet Alımı",    EN: "Service Purchase",  AR: "شراء الخدمات" },     tag: "built" },
+      { id: "purch-suppliers",  icon: "🏭", label: { TR: "Tedarikçiler",     EN: "Suppliers",         AR: "الموردون" },        tag: "ai" },
+      { id: "purch-expenses",   icon: "💸", label: { TR: "Giderler",         EN: "Expenses",          AR: "المصروفات" },       tag: "built" },
+    ],
+  },
+  {
+    id: "catalog",
+    label: { TR: "Ürün & Stok", EN: "Products & Stock", AR: "المنتجات والمخزون" },
+    paletteId: "lime",
+    items: [
+      { id: "prod-list",      icon: "📦", label: { TR: "Ürün Kataloğu",    EN: "Products",        AR: "المنتجات" },     tag: "built" },
+      { id: "prod-services",  icon: "🛎️", label: { TR: "Hizmet Kataloğu", EN: "Services",        AR: "الخدمات" },      tag: "built" },
+      { id: "prod-movements", icon: "📊", label: { TR: "Stok Hareketleri", EN: "Stock Movements", AR: "حركات المخزون" }, tag: "built" },
+      { id: "prod-reports",   icon: "📈", label: { TR: "Stok Raporları",   EN: "Stock Reports",   AR: "تقارير المخزون" }, tag: "ai" },
+    ],
+  },
+  {
     id: "operations",
     label: { TR: "Operasyon", EN: "Operations", AR: "العمليات" },
     paletteId: "orange",
     items: [
-      { id: "stock",     icon: "📦", label: { TR: "Stok",         EN: "Stock",     AR: "المخزون" },         tag: "built" },
+      { id: "stock",     icon: "📦", label: { TR: "Stok (Eski)",   EN: "Stock (Legacy)", AR: "المخزون (سابق)" }, tag: "built" },
       { id: "eirsaliye", icon: "🚚", label: { TR: "e-İrsaliye",   EN: "E-Waybill", AR: "بوليصة الشحن" },     tag: "star" },
       { id: "receipts",  icon: "📷", label: { TR: "Fiş Okuma",    EN: "Receipts",  AR: "إيصالات" },         tag: "ai" },
       { id: "personnel", icon: "👤", label: { TR: "Personel & SGK", EN: "HR",      AR: "الموظفون" },        tag: "built" },
@@ -2522,6 +2561,78 @@ export default function CustomerDashboard() {
           {page === "sales-pipeline" && (
             <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
               <SalesPipelinePage onNavigate={navigate} />
+            </React.Suspense>
+          )}
+
+          {/* ═══ Phase 3 PAGES — Purchases & Stock ════════════ */}
+          {page === "purch-invoices" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <PurchaseInvoicesListPage onNavigate={navigate} />
+            </React.Suspense>
+          )}
+          {page === "purch-invoice-new" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <PurchaseInvoiceCreatePage onNavigate={navigate} />
+            </React.Suspense>
+          )}
+          {page === "purch-invoice-detail" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <PurchaseInvoiceDetailPage invoiceId={pageParams.id} onNavigate={navigate} />
+            </React.Suspense>
+          )}
+          {page === "purch-orders" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <PurchaseOrdersPage onNavigate={navigate} />
+            </React.Suspense>
+          )}
+          {page === "purch-services" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <ServicePurchaseInvoicePage onNavigate={navigate} />
+            </React.Suspense>
+          )}
+          {page === "purch-suppliers" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <SuppliersListPage onNavigate={navigate} />
+            </React.Suspense>
+          )}
+          {page === "purch-supplier-detail" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <SupplierDetailPage supplierId={pageParams.id} onNavigate={navigate} />
+            </React.Suspense>
+          )}
+          {page === "purch-expenses" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <ExpensesPage />
+            </React.Suspense>
+          )}
+          {page === "prod-list" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <ProductsListPage onNavigate={navigate} />
+            </React.Suspense>
+          )}
+          {page === "prod-new" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <ProductCreatePage onNavigate={navigate} />
+            </React.Suspense>
+          )}
+          {page === "prod-detail" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <ProductDetailPage productId={pageParams.id} onNavigate={navigate} />
+            </React.Suspense>
+          )}
+          {page === "prod-services" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <ServicesPage />
+            </React.Suspense>
+          )}
+          {page === "prod-movements" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <StockMovementsPage />
+            </React.Suspense>
+          )}
+          {page === "prod-reports" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <StockReportsPage />
             </React.Suspense>
           )}
 
