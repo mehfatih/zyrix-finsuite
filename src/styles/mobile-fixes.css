@@ -230,8 +230,15 @@ html, body {
    stack with empty space on the side.
    ============================================================ */
 @media (max-width: 768px) {
-  footer [style*="1fr 1fr"] {
+  /* Match the specificity of the rule above with body:not(.landing-page) prefix */
+  body:not(.landing-page) footer [style*="1fr 1fr"],
+  body footer [style*="1fr 1fr"] {
     grid-template-columns: 1fr 1fr !important;
     gap: 24px 16px !important;
+  }
+  /* Also force the inner full-width brand block to span both columns */
+  body:not(.landing-page) footer [style*="gridColumn"],
+  body footer [style*="gridColumn"] {
+    grid-column: 1 / -1 !important;
   }
 }
