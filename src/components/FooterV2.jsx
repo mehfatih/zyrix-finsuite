@@ -424,8 +424,6 @@ export default function FooterV2() {
             <span>{t("lv2.footer.with")}</span>
           </div>
         </div>
-      </div>
-    
 
         {/* SITEMAP SECTION */}
         <div style={{
@@ -532,6 +530,7 @@ export default function FooterV2() {
           <span>·</span>
           <span>✓ {taxName} {taxRate}%</span>
         </div>
+      </div>
       </div>
     </footer>
   );
