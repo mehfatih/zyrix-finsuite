@@ -20,6 +20,19 @@ const DashboardHome        = React.lazy(() => import("./dashboard/DashboardHome"
 const ProfilePage          = React.lazy(() => import("./dashboard/ProfilePage"));
 const CompanySettingsPage  = React.lazy(() => import("./dashboard/CompanySettingsPage"));
 const NotificationsPage    = React.lazy(() => import("./dashboard/NotificationsPage"));
+
+// Phase 2 — Sales Cluster (lazy-loaded)
+const SalesInvoicesListPage    = React.lazy(() => import("./dashboard/sales/SalesInvoicesListPage"));
+const SalesInvoiceCreatePage   = React.lazy(() => import("./dashboard/sales/SalesInvoiceCreatePage"));
+const SalesInvoiceDetailPage   = React.lazy(() => import("./dashboard/sales/SalesInvoiceDetailPage"));
+const SalesInvoiceEditPage     = React.lazy(() => import("./dashboard/sales/SalesInvoiceEditPage"));
+const SalesOrdersPage          = React.lazy(() => import("./dashboard/sales/SalesOrdersPage"));
+const QuotesPage               = React.lazy(() => import("./dashboard/sales/QuotesPage"));
+const QuoteDetailPage          = React.lazy(() => import("./dashboard/sales/QuoteDetailPage"));
+const TradesmanInvoicePage     = React.lazy(() => import("./dashboard/sales/TradesmanInvoicePage"));
+const CustomersListPage        = React.lazy(() => import("./dashboard/sales/CustomersListPage"));
+const CustomerDetailPage       = React.lazy(() => import("./dashboard/sales/CustomerDetailPage"));
+const SalesPipelinePage        = React.lazy(() => import("./dashboard/sales/SalesPipelinePage"));
 import {
   PALETTE_HUES as DASH_PALETTE_HUES,
   getCardPalette as getDashCardPalette,
@@ -1533,6 +1546,18 @@ const SIDEBAR_GROUPS = [
     ],
   },
   {
+    id: "sales",
+    label: { TR: "Satış", EN: "Sales", AR: "المبيعات" },
+    paletteId: "wine",
+    items: [
+      { id: "sales-invoices",  icon: "🧾", label: { TR: "Satış Faturaları", EN: "Sales Invoices", AR: "فواتير المبيعات" }, tag: "built" },
+      { id: "sales-orders",    icon: "📦", label: { TR: "Siparişler",       EN: "Sales Orders",   AR: "الطلبات" },         tag: "built" },
+      { id: "sales-quotes",    icon: "📄", label: { TR: "Teklifler",        EN: "Quotes",         AR: "العروض" },          tag: "built" },
+      { id: "sales-tradesman", icon: "🛠️", label: { TR: "Esnaf Faturası",   EN: "Tradesman Inv.", AR: "فاتورة الحرفي" },   tag: "built" },
+      { id: "sales-pipeline",  icon: "🤝", label: { TR: "Satış Hattı",      EN: "Pipeline",       AR: "خط المبيعات" },     tag: "ai" },
+    ],
+  },
+  {
     id: "money",
     label: { TR: "Para & Finans", EN: "Money & Finance", AR: "المال والمالية" },
     paletteId: "teal",
@@ -1551,9 +1576,10 @@ const SIDEBAR_GROUPS = [
     label: { TR: "Müşteriler", EN: "Customers", AR: "العملاء" },
     paletteId: "indigo",
     items: [
-      { id: "customers", icon: "👥", label: { TR: "Müşteriler", EN: "Customers", AR: "العملاء" },   tag: "ai" },
-      { id: "deals",     icon: "🤝", label: { TR: "Anlaşmalar", EN: "Deals",     AR: "الصفقات" },   tag: "built" },
-      { id: "tasks",     icon: "✅", label: { TR: "Görevler",   EN: "Tasks",     AR: "المهام" },     tag: "built" },
+      { id: "sales-customers", icon: "👥", label: { TR: "Müşteriler 360°", EN: "Customers 360°", AR: "العملاء 360°" }, tag: "ai" },
+      { id: "customers",       icon: "👤", label: { TR: "Müşteri Skor",    EN: "Customer Score", AR: "نتيجة العميل" },  tag: "ai" },
+      { id: "deals",           icon: "🤝", label: { TR: "Anlaşmalar",      EN: "Deals",          AR: "الصفقات" },       tag: "built" },
+      { id: "tasks",           icon: "✅", label: { TR: "Görevler",        EN: "Tasks",          AR: "المهام" },         tag: "built" },
     ],
   },
   {
@@ -2137,11 +2163,19 @@ export default function CustomerDashboard() {
 
   const { user, logout } = useAuth();
   const [page, setPage] = useState("home");
+  const [pageParams, setPageParams] = useState({});
   const [showNotifs, setShowNotifs] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [showAI, setShowAI] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+
+  // Sales-cluster navigation helper — keeps sub-pages composable while we
+  // remain on the page-state model used throughout the dashboard.
+  const navigate = useCallback((target, params = {}) => {
+    setPage(target);
+    setPageParams(params);
+  }, []);
 
   useEffect(() => {
     apiFetch("/api/notifications").then(r => setUnreadCount(r?.data?.unreadCount||0)).catch(()=>{});
@@ -2431,6 +2465,63 @@ export default function CustomerDashboard() {
           {page === "notifications" && (
             <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
               <NotificationsPage />
+            </React.Suspense>
+          )}
+
+          {/* ═══ Phase 2 PAGES — Sales Cluster ════════════════ */}
+          {page === "sales-invoices" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <SalesInvoicesListPage onNavigate={navigate} />
+            </React.Suspense>
+          )}
+          {page === "sales-invoice-new" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <SalesInvoiceCreatePage onNavigate={navigate} initial={pageParams} />
+            </React.Suspense>
+          )}
+          {page === "sales-invoice-detail" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <SalesInvoiceDetailPage invoiceId={pageParams.id} onNavigate={navigate} />
+            </React.Suspense>
+          )}
+          {page === "sales-invoice-edit" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <SalesInvoiceEditPage invoiceId={pageParams.id} onNavigate={navigate} />
+            </React.Suspense>
+          )}
+          {page === "sales-orders" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <SalesOrdersPage onNavigate={navigate} />
+            </React.Suspense>
+          )}
+          {page === "sales-quotes" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <QuotesPage onNavigate={navigate} />
+            </React.Suspense>
+          )}
+          {page === "sales-quote-detail" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <QuoteDetailPage quoteId={pageParams.id} onNavigate={navigate} />
+            </React.Suspense>
+          )}
+          {page === "sales-tradesman" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <TradesmanInvoicePage onNavigate={navigate} />
+            </React.Suspense>
+          )}
+          {page === "sales-customers" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <CustomersListPage onNavigate={navigate} />
+            </React.Suspense>
+          )}
+          {page === "sales-customer-detail" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <CustomerDetailPage customerId={pageParams.id} onNavigate={navigate} />
+            </React.Suspense>
+          )}
+          {page === "sales-pipeline" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <SalesPipelinePage onNavigate={navigate} />
             </React.Suspense>
           )}
 
