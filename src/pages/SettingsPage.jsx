@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
+import { useI18n } from "../i18n/i18n";
+
+const TXT = {
+  TR: { settings: "Ayarlar", preferences: "Tercihler", subscription: "Abonelik", status: "Durum" },
+  EN: { settings: "Settings", preferences: "Preferences", subscription: "Subscription", status: "Status" },
+  AR: { settings: "الإعدادات", preferences: "التفضيلات", subscription: "الاشتراك", status: "الحالة" },
+};
 
 const P = {
   bg:"#F0F4FF", card:"#FFFFFF", border:"#E2E8F8",
@@ -54,6 +61,9 @@ function Input({ value, onChange, type="text", placeholder, disabled }) {
 }
 
 export default function SettingsPage({ onClose }) {
+  const { lang } = useI18n();
+  const t = TXT[lang] || TXT.TR;
+
   const { user, logout } = useAuth();
   const [tab, setTab] = useState("profile");
   const [profile, setProfile] = useState(null);
@@ -130,7 +140,7 @@ export default function SettingsPage({ onClose }) {
             <button onClick={onClose} style={{ background:P.light, border:`1.5px solid ${P.border}`, color:P.sub, borderRadius:10, padding:"7px 14px", cursor:"pointer", fontSize:13, fontWeight:600 }}>
               ← Geri
             </button>
-            <h1 style={{ color:P.text, fontSize:20, fontWeight:800, margin:0 }}>Ayarlar</h1>
+            <h1 style={{ color:P.text, fontSize:20, fontWeight:800, margin:0 }}>{t.settings}</h1>
           </div>
           <button onClick={handleSave} disabled={saving || tab==="security" || tab==="subscription"}
             style={{ background:saving?P.muted:`linear-gradient(135deg,${P.purple},${P.pink})`, border:"none", color:"#fff", borderRadius:10, padding:"9px 22px", cursor:saving?"not-allowed":"pointer", fontSize:14, fontWeight:700, opacity:(tab==="security"||tab==="subscription")?0:1 }}>
@@ -209,7 +219,7 @@ export default function SettingsPage({ onClose }) {
               {/* Preferences Tab */}
               {tab==="preferences" && profile && (
                 <div style={{ display:"flex", flexDirection:"column", gap:16 }}>
-                  <h2 style={{ color:P.text, fontSize:17, fontWeight:800, margin:"0 0 4px" }}>Tercihler</h2>
+                  <h2 style={{ color:P.text, fontSize:17, fontWeight:800, margin:"0 0 4px" }}>{t.preferences}</h2>
                   <Field label="Para Birimi">
                     <div style={{ display:"flex", gap:10 }}>
                       {[{id:"TRY",flag:"🇹🇷",label:"₺ TRY"},{id:"USD",flag:"🇺🇸",label:"$ USD"},{id:"EUR",flag:"🇪🇺",label:"€ EUR"}].map(c=>(
@@ -254,7 +264,7 @@ export default function SettingsPage({ onClose }) {
               {/* Subscription Tab */}
               {tab==="subscription" && profile && (
                 <div>
-                  <h2 style={{ color:P.text, fontSize:17, fontWeight:800, margin:"0 0 20px" }}>Abonelik</h2>
+                  <h2 style={{ color:P.text, fontSize:17, fontWeight:800, margin:"0 0 20px" }}>{t.subscription}</h2>
                   <div style={{ background:P.light, borderRadius:14, padding:20, marginBottom:20 }}>
                     <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center" }}>
                       <div>
@@ -262,7 +272,7 @@ export default function SettingsPage({ onClose }) {
                         <div style={{ color:planColors[profile.plan]||P.muted, fontSize:22, fontWeight:800 }}>{profile.plan}</div>
                       </div>
                       <div style={{ textAlign:"right" }}>
-                        <div style={{ color:P.muted, fontSize:12, marginBottom:4 }}>Durum</div>
+                        <div style={{ color:P.muted, fontSize:12, marginBottom:4 }}>{t.status}</div>
                         <span style={{ background:`${profile.status==="ACTIVE"?P.emerald:P.amber}15`, color:profile.status==="ACTIVE"?P.emerald:P.amber, borderRadius:20, padding:"3px 12px", fontSize:12, fontWeight:700 }}>{profile.status}</span>
                       </div>
                     </div>

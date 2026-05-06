@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
+import { useI18n } from "../i18n/i18n";
 import { useAuth } from "../context/AuthContext";
 
 const P = {
@@ -333,7 +334,7 @@ function MerchantDetailsPage({ merchantId, onBack }) {
 
             {/* Plan */}
             <div style={{ background:P.light, borderRadius:14, padding:18 }}>
-              <div style={{ color:P.sub, fontSize:12, fontWeight:700, textTransform:"uppercase", marginBottom:12 }}>Plan</div>
+              <div style={{ color:P.sub, fontSize:12, fontWeight:700, textTransform:"uppercase", marginBottom:12 }}>{t.plan}</div>
               <div style={{ display:"flex", gap:10, flexWrap:"wrap" }}>
                 {["STARTER","BUSINESS","PRO","ENTERPRISE"].map(p=>(
                   <button key={p} onClick={()=>doPlanChange(p)} style={{
@@ -529,7 +530,7 @@ function MerchantDetailsPage({ merchantId, onBack }) {
         <div style={{ display:"flex", flexDirection:"column", gap:14 }}>
           <Input label="Başlık" value={notifForm.title} onChange={e=>setNotifForm(f=>({...f,title:e.target.value}))} placeholder="Bildirim başlığı" />
           <div>
-            <label style={{ color:P.sub, fontSize:12, fontWeight:600, display:"block", marginBottom:5 }}>Mesaj</label>
+            <label style={{ color:P.sub, fontSize:12, fontWeight:600, display:"block", marginBottom:5 }}>{t.message}</label>
             <textarea value={notifForm.body} onChange={e=>setNotifForm(f=>({...f,body:e.target.value}))} rows={3} placeholder="Bildirim mesajı..."
               style={{ width:"100%", background:P.light, border:`1.5px solid ${P.border}`, color:P.text, borderRadius:10, padding:"10px 14px", fontSize:14, outline:"none", resize:"none", boxSizing:"border-box", fontFamily:"inherit" }} />
           </div>
@@ -613,7 +614,7 @@ function OverviewPage() {
       {loading ? <Spinner /> : !stats ? null : (
         <>
           <div style={{ marginBottom:22 }}>
-            <div style={{ color:P.sub, fontSize:11, fontWeight:700, textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:12 }}>Merchantlar</div>
+            <div style={{ color:P.sub, fontSize:11, fontWeight:700, textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:12 }}>{t.merchants}</div>
             <div style={{ display:"grid", gridTemplateColumns:"repeat(4,1fr)", gap:14 }}>
               <StatCard label="Toplam" value={s?.total??0} icon="🏪" color={P.purple} />
               <StatCard label="Aktif"  value={s?.active??0} icon="✅" color={P.emerald} sub={s?.total?`${Math.round((s.active/s.total)*100)}%`:null} />
@@ -622,7 +623,7 @@ function OverviewPage() {
             </div>
           </div>
           <div style={{ marginBottom:22 }}>
-            <div style={{ color:P.sub, fontSize:11, fontWeight:700, textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:12 }}>Gelir</div>
+            <div style={{ color:P.sub, fontSize:11, fontWeight:700, textTransform:"uppercase", letterSpacing:"0.08em", marginBottom:12 }}>{t.revenue}</div>
             <div style={{ display:"grid", gridTemplateColumns:"repeat(2,1fr)", gap:14 }}>
               <StatCard label="Bu Ay" value={r?.thisMonth?`$${Number(r.thisMonth).toLocaleString()}`:"$0"} icon="📈" color={P.emerald} />
               <StatCard label="Geçen Ay" value={r?.lastMonth?`$${Number(r.lastMonth).toLocaleString()}`:"$0"} icon="📅" color={P.indigo} />
@@ -642,8 +643,8 @@ function OverviewPage() {
               <div style={{ background:P.card, border:`1.5px solid ${P.border}`, borderRadius:16, overflow:"hidden" }}>
                 <table style={{ width:"100%", borderCollapse:"collapse" }}>
                   <thead><tr style={{ background:`${P.purple}08`, borderBottom:`1.5px solid ${P.border}` }}>
-                    <th style={{ padding:"10px 16px", textAlign:"left", color:P.sub, fontSize:11, fontWeight:700, textTransform:"uppercase" }}>Plan</th>
-                    <th style={{ padding:"10px 16px", textAlign:"right", color:P.sub, fontSize:11, fontWeight:700 }}>Merchant</th>
+                    <th style={{ padding:"10px 16px", textAlign:"left", color:P.sub, fontSize:11, fontWeight:700, textTransform:"uppercase" }}>{t.plan}</th>
+                    <th style={{ padding:"10px 16px", textAlign:"right", color:P.sub, fontSize:11, fontWeight:700 }}>{t.merchant}</th>
                     <th style={{ padding:"10px 16px", minWidth:120 }} />
                   </tr></thead>
                   <tbody>
@@ -670,7 +671,7 @@ function OverviewPage() {
           )}
           {stats?.countryDistribution?.length > 0 && (
             <div>
-              <div style={{ color:P.sub, fontSize:11, fontWeight:700, textTransform:"uppercase", marginBottom:12 }}>İller</div>
+              <div style={{ color:P.sub, fontSize:11, fontWeight:700, textTransform:"uppercase", marginBottom:12 }}>{t.provinces}</div>
               <div style={{ display:"flex", flexWrap:"wrap", gap:10 }}>
                 {stats.countryDistribution.map((c,i)=>(
                   <div key={i} style={{ background:P.card, border:`1.5px solid ${COLORS[i%COLORS.length]}25`, borderRadius:20, padding:"7px 16px", display:"flex", alignItems:"center", gap:8, boxShadow:`0 2px 10px ${COLORS[i%COLORS.length]}10` }}>
@@ -722,7 +723,7 @@ function MerchantsPage({ onSelectMerchant }) {
     <div>
       <div style={{ display:"flex", justifyContent:"space-between", alignItems:"center", marginBottom:20 }}>
         <div>
-          <h1 style={{ color:P.text, fontSize:24, fontWeight:800, margin:0 }}>Merchantlar</h1>
+          <h1 style={{ color:P.text, fontSize:24, fontWeight:800, margin:0 }}>{t.merchants}</h1>
           <p style={{ color:P.sub, fontSize:14, margin:"4px 0 0" }}>{merchants.length} kayıtlı merchant</p>
         </div>
         <div style={{ display:"flex", gap:10 }}>
@@ -818,7 +819,7 @@ function MerchantsPage({ onSelectMerchant }) {
             </select>
           </div>
           <div>
-            <label style={{ color:P.sub, fontSize:12, fontWeight:600, display:"block", marginBottom:5 }}>Plan</label>
+            <label style={{ color:P.sub, fontSize:12, fontWeight:600, display:"block", marginBottom:5 }}>{t.plan}</label>
             <select value={form.plan} onChange={e=>set("plan",e.target.value)} style={{ width:"100%", background:P.light, border:`1.5px solid ${P.border}`, color:P.text, borderRadius:10, padding:"10px 14px", fontSize:14, outline:"none" }}>
               {[["STARTER","Starter"],["BUSINESS","Business"],["PRO","Pro"],["ENTERPRISE","Enterprise"]].map(([v,l])=><option key={v} value={v}>{l}</option>)}
             </select>
@@ -909,7 +910,16 @@ function Sidebar({ page, setPage, user, logout }) {
 }
 
 // ── Main ──────────────────────────────────────────
+const TXT_ADMIN = {
+  TR: { plan: "Plan", message: "Mesaj", merchants: "Merchantlar", revenue: "Gelir", provinces: "İller", merchant: "Merchant" },
+  EN: { plan: "Plan", message: "Message", merchants: "Merchants", revenue: "Revenue", provinces: "Provinces", merchant: "Merchant" },
+  AR: { plan: "الخطة", message: "الرسالة", merchants: "التجار", revenue: "الإيرادات", provinces: "المحافظات", merchant: "التاجر" },
+};
+
 export default function AdminPanel() {
+  const { lang } = useI18n();
+  const t = TXT_ADMIN[lang] || TXT_ADMIN.TR;
+
   const { user, logout } = useAuth();
   const [page, setPage] = useState("overview");
   const [selectedMerchantId, setSelectedMerchantId] = useState(null);

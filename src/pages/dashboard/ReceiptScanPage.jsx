@@ -4,6 +4,7 @@
 // ============================================================
 
 import React, { useState, useEffect } from "react";
+import { useI18n } from "../../i18n/i18n";
 import { receiptScanAPI } from "../../services/api";
 
 const STATUS_LABELS = {
@@ -14,7 +15,16 @@ const STATUS_LABELS = {
   CONVERTED: { tr: "Gidere Eklendi", color: "#10B981", bg: "#D1FAE5" },
 };
 
+const TXT = {
+  TR: { vendor: "Saticy", amount: "Tutar", date: "Tarih", category: "Kategori", status: "Durum" },
+  EN: { vendor: "Vendor",  amount: "Amount", date: "Date", category: "Category", status: "Status" },
+  AR: { vendor: "البائع",   amount: "المبلغ", date: "التاريخ", category: "الفئة", status: "الحالة" },
+};
+
 export default function ReceiptScanPage() {
+  const { lang } = useI18n();
+  const t = TXT[lang] || TXT.TR;
+
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
   const [scanning, setScanning] = useState(false);
@@ -121,11 +131,11 @@ export default function ReceiptScanPage() {
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <thead style={{ background: "#F8FAFF" }}>
               <tr>
-                <th style={th}>Saticy</th>
-                <th style={th}>Tutar</th>
-                <th style={th}>Tarih</th>
-                <th style={th}>Kategori</th>
-                <th style={th}>Durum</th>
+                <th style={th}>{t.vendor}</th>
+                <th style={th}>{t.amount}</th>
+                <th style={th}>{t.date}</th>
+                <th style={th}>{t.category}</th>
+                <th style={th}>{t.status}</th>
               </tr>
             </thead>
             <tbody>

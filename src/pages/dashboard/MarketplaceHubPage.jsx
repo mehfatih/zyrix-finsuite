@@ -4,6 +4,7 @@
 // ============================================================
 
 import React, { useState, useEffect } from "react";
+import { useI18n } from "../../i18n/i18n";
 import { marketplaceAPI } from "../../services/api";
 
 const COUNTRY_FLAGS = { TR: "🇹🇷", SA: "🇸🇦", AE: "🇦🇪" };
@@ -16,7 +17,16 @@ const SETTLEMENT_STATUS = {
   DISCREPANCY: { bg: "#FEE2E2", color: "#991B1B", label: "Fark Var" },
 };
 
+const TXT_MP = {
+  TR: { cancel: "Iptal", marketplace: "Pazaryeri", period: "Donem", gross: "Brut", commission: "Komisyon", expected: "Beklenen", status: "Durum", diff: "Fark", date: "Tarih", order: "Siparis", customer: "Musteri", product: "Urun", quantity: "Adet" },
+  EN: { cancel: "Cancel", marketplace: "Marketplace", period: "Period", gross: "Gross", commission: "Commission", expected: "Expected", status: "Status", diff: "Diff", date: "Date", order: "Order", customer: "Customer", product: "Product", quantity: "Qty" },
+  AR: { cancel: "إلغاء", marketplace: "المتجر", period: "الفترة", gross: "الإجمالي", commission: "العمولة", expected: "متوقع", status: "الحالة", diff: "الفرق", date: "التاريخ", order: "الطلب", customer: "العميل", product: "المنتج", quantity: "الكمية" },
+};
+
 export default function MarketplaceHubPage() {
+  const { lang } = useI18n();
+  const t = TXT_MP[lang] || TXT_MP.TR;
+
   const [providers, setProviders] = useState([]);
   const [connections, setConnections] = useState([]);
   const [settlements, setSettlements] = useState([]);
@@ -297,6 +307,9 @@ function ProviderCard({ provider, connection, onConnect, onSync, onDisconnect, s
 }
 
 function ConnectModal({ provider, onClose, onConnected }) {
+  const { lang } = useI18n();
+  const t = TXT_MP[lang] || TXT_MP.TR;
+
   const [sellerId, setSellerId] = useState("");
   const [storeName, setStoreName] = useState("");
   const [apiKey, setApiKey] = useState("");
@@ -339,7 +352,7 @@ function ConnectModal({ provider, onClose, onConnected }) {
           <Field label="API Secret (opsiyonel)" value={apiSecret} onChange={setApiSecret} type="password" />
         </div>
         <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", marginTop: 18 }}>
-          <button onClick={onClose} disabled={busy} style={btnSecondary}>Iptal</button>
+          <button onClick={onClose} disabled={busy} style={btnSecondary}>{t.cancel}</button>
           <button onClick={submit} disabled={busy || !sellerId.trim()} style={{ ...btnPrimary, background: provider.brandColor, opacity: busy ? 0.6 : 1 }}>
             {busy ? "Kaydediliyor..." : "Bagla"}
           </button>
@@ -350,6 +363,9 @@ function ConnectModal({ provider, onClose, onConnected }) {
 }
 
 function SettlementsTable({ rows, providers }) {
+  const { lang } = useI18n();
+  const t = TXT_MP[lang] || TXT_MP.TR;
+
   if (rows.length === 0) {
     return <EmptyState icon="📊" message="Hic hakkedis yok. Once bir magaza baglayip senkronize edin." />;
   }
@@ -359,14 +375,14 @@ function SettlementsTable({ rows, providers }) {
       <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
         <thead>
           <tr style={{ background: "#F8FAFF", borderBottom: "1.5px solid #E2E8F8" }}>
-            <th style={th}>Pazaryeri</th>
-            <th style={th}>Donem</th>
-            <th style={th}>Brut</th>
-            <th style={th}>Komisyon</th>
+            <th style={th}>{t.marketplace}</th>
+            <th style={th}>{t.period}</th>
+            <th style={th}>{t.gross}</th>
+            <th style={th}>{t.commission}</th>
             <th style={th}>Net</th>
-            <th style={th}>Beklenen</th>
-            <th style={th}>Durum</th>
-            <th style={th}>Fark</th>
+            <th style={th}>{t.expected}</th>
+            <th style={th}>{t.status}</th>
+            <th style={th}>{t.diff}</th>
           </tr>
         </thead>
         <tbody>
@@ -402,6 +418,9 @@ function SettlementsTable({ rows, providers }) {
 }
 
 function OrdersTable({ rows, providers }) {
+  const { lang } = useI18n();
+  const t = TXT_MP[lang] || TXT_MP.TR;
+
   if (rows.length === 0) {
     return <EmptyState icon="📦" message="Hic siparis yok." />;
   }
@@ -411,14 +430,14 @@ function OrdersTable({ rows, providers }) {
       <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
         <thead>
           <tr style={{ background: "#F8FAFF", borderBottom: "1.5px solid #E2E8F8" }}>
-            <th style={th}>Pazaryeri</th>
-            <th style={th}>Tarih</th>
-            <th style={th}>Siparis</th>
-            <th style={th}>Musteri</th>
-            <th style={th}>Urun</th>
-            <th style={th}>Adet</th>
+            <th style={th}>{t.marketplace}</th>
+            <th style={th}>{t.date}</th>
+            <th style={th}>{t.order}</th>
+            <th style={th}>{t.customer}</th>
+            <th style={th}>{t.product}</th>
+            <th style={th}>{t.quantity}</th>
             <th style={th}>Net</th>
-            <th style={th}>Durum</th>
+            <th style={th}>{t.status}</th>
           </tr>
         </thead>
         <tbody>

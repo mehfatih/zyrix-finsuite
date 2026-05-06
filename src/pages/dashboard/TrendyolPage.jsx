@@ -4,6 +4,7 @@
 // ============================================================
 
 import React, { useState, useEffect } from "react";
+import { useI18n } from "../../i18n/i18n";
 import { trendyolAPI } from "../../services/api";
 
 const SETTLEMENT_STATUS_COLORS = {
@@ -22,7 +23,16 @@ const ORDER_STATUS_COLORS = {
   RETURNED:  { bg: "#FEE2E2", color: "#991B1B" },
 };
 
+const TXT_TY = {
+  TR: { period: "Donem", commission: "Komisyon", status: "Durum", diff: "Fark", date: "Tarih", customer: "Musteri", product: "Urun", quantity: "Adet", gross: "Brut", cancel: "Iptal" },
+  EN: { period: "Period", commission: "Commission", status: "Status", diff: "Diff", date: "Date", customer: "Customer", product: "Product", quantity: "Qty", gross: "Gross", cancel: "Cancel" },
+  AR: { period: "الفترة", commission: "العمولة", status: "الحالة", diff: "الفرق", date: "التاريخ", customer: "العميل", product: "المنتج", quantity: "الكمية", gross: "الإجمالي", cancel: "إلغاء" },
+};
+
 export default function TrendyolPage() {
+  const { lang } = useI18n();
+  const t = TXT_TY[lang] || TXT_TY.TR;
+
   const [tab, setTab] = useState("settlements"); // settlements | orders
   const [connection, setConnection] = useState(null);
   const [settlements, setSettlements] = useState([]);
@@ -214,6 +224,9 @@ function TabBtn({ active, children, onClick }) {
 }
 
 function SettlementsTable({ rows }) {
+  const { lang } = useI18n();
+  const t = TXT_TY[lang] || TXT_TY.TR;
+
   if (rows.length === 0) {
     return <EmptyState icon="📊" message="Hic hakkedis yok. Senkronize Et butonuna basin." />;
   }
@@ -222,13 +235,13 @@ function SettlementsTable({ rows }) {
       <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
         <thead>
           <tr style={{ background: "#F8FAFF", borderBottom: "1.5px solid #E2E8F8" }}>
-            <th style={th}>Donem</th>
+            <th style={th}>{t.period}</th>
             <th style={th}>Brut Satis</th>
-            <th style={th}>Komisyon</th>
+            <th style={th}>{t.commission}</th>
             <th style={th}>Net Hakkedis</th>
             <th style={th}>Beklenen Odeme</th>
-            <th style={th}>Durum</th>
-            <th style={th}>Fark</th>
+            <th style={th}>{t.status}</th>
+            <th style={th}>{t.diff}</th>
           </tr>
         </thead>
         <tbody>
@@ -269,14 +282,14 @@ function OrdersTable({ rows }) {
       <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 12 }}>
         <thead>
           <tr style={{ background: "#F8FAFF", borderBottom: "1.5px solid #E2E8F8" }}>
-            <th style={th}>Tarih</th>
+            <th style={th}>{t.date}</th>
             <th style={th}>Siparis No</th>
-            <th style={th}>Musteri</th>
-            <th style={th}>Urun</th>
-            <th style={th}>Adet</th>
-            <th style={th}>Brut</th>
+            <th style={th}>{t.customer}</th>
+            <th style={th}>{t.product}</th>
+            <th style={th}>{t.quantity}</th>
+            <th style={th}>{t.gross}</th>
             <th style={th}>Net</th>
-            <th style={th}>Durum</th>
+            <th style={th}>{t.status}</th>
           </tr>
         </thead>
         <tbody>
@@ -306,6 +319,9 @@ function OrdersTable({ rows }) {
 }
 
 function ConnectModal({ onClose, onConnected }) {
+  const { lang } = useI18n();
+  const t = TXT_TY[lang] || TXT_TY.TR;
+
   const [sellerId, setSellerId] = useState("");
   const [storeName, setStoreName] = useState("");
   const [apiKey, setApiKey] = useState("");
@@ -344,7 +360,7 @@ function ConnectModal({ onClose, onConnected }) {
           <Field label="API Secret (opsiyonel)" value={apiSecret} onChange={setApiSecret} type="password" />
         </div>
         <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", marginTop: 18 }}>
-          <button onClick={onClose} disabled={busy} style={btnSecondary}>Iptal</button>
+          <button onClick={onClose} disabled={busy} style={btnSecondary}>{t.cancel}</button>
           <button onClick={submit} disabled={busy || !sellerId.trim()} style={{ ...btnPrimary, opacity: busy ? 0.6 : 1 }}>
             {busy ? "Kaydediliyor..." : "Bagla"}
           </button>

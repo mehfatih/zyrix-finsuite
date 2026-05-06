@@ -4,6 +4,7 @@
 // ================================================================
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
+import { useI18n } from "../i18n/i18n";
 import { useAuth } from "../context/AuthContext";
 
 // Sprint 1 features (lazy-loaded)
@@ -1626,7 +1627,16 @@ function GreetingBanner({ user }) {
 }
 
 // ── Main ──────────────────────────────────────────
+const TXT_CD = {
+  TR: { invoices: "Faturalar" },
+  EN: { invoices: "Invoices" },
+  AR: { invoices: "الفواتير" },
+};
+
 export default function CustomerDashboard() {
+  const { lang } = useI18n();
+  const t = TXT_CD[lang] || TXT_CD.TR;
+
   const { user, logout } = useAuth();
   const [page, setPage] = useState("overview");
   const [showNotifs, setShowNotifs] = useState(false);
@@ -1837,7 +1847,7 @@ export default function CustomerDashboard() {
 
           {page === "invoices" && (
             <div style={{ animation:"fadeIn 0.3s ease" }}>
-              <h1 style={{ color:P.text, fontSize:24, fontWeight:800, margin:"0 0 20px" }}>Faturalar</h1>
+              <h1 style={{ color:P.text, fontSize:24, fontWeight:800, margin:"0 0 20px" }}>{t.invoices}</h1>
               <div style={{ overflowX:"auto" }}>
                 <Table color={P.cyan} rows={invoices} emptyMsg="Henüz fatura yok!"
                   cols={[

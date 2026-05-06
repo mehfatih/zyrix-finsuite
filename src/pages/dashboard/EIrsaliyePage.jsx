@@ -4,6 +4,7 @@
 // ============================================================
 
 import React, { useState, useEffect } from "react";
+import { useI18n } from "../../i18n/i18n";
 import { eIrsaliyeAPI } from "../../services/api";
 
 const STATUS_LABELS = {
@@ -16,7 +17,16 @@ const STATUS_LABELS = {
   CANCELLED: { tr: "Iptal Edildi", color: "#64748B", bg: "#F1F5F9" },
 };
 
+const TXT_PAGE = {
+  TR: { recipient: "Alici", amount: "Tutar", date: "Tarih", status: "Durum", actions: "Islemler", send: "Gonder", items: "Kalemler", cancel: "Iptal" },
+  EN: { recipient: "Recipient", amount: "Amount", date: "Date", status: "Status", actions: "Actions", send: "Send", items: "Items", cancel: "Cancel" },
+  AR: { recipient: "المستلم", amount: "المبلغ", date: "التاريخ", status: "الحالة", actions: "الإجراءات", send: "إرسال", items: "البنود", cancel: "إلغاء" },
+};
+
 export default function EIrsaliyePage() {
+  const { lang } = useI18n();
+  const t = TXT_PAGE[lang] || TXT_PAGE.TR;
+
   const [rows, setRows] = useState([]);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -87,11 +97,11 @@ export default function EIrsaliyePage() {
             <thead style={{ background: "#F8FAFF" }}>
               <tr>
                 <th style={th}>Irsaliye No</th>
-                <th style={th}>Alici</th>
-                <th style={th}>Tutar</th>
-                <th style={th}>Tarih</th>
-                <th style={th}>Durum</th>
-                <th style={th}>Islemler</th>
+                <th style={th}>{t.recipient}</th>
+                <th style={th}>{t.amount}</th>
+                <th style={th}>{t.date}</th>
+                <th style={th}>{t.status}</th>
+                <th style={th}>{t.actions}</th>
               </tr>
             </thead>
             <tbody>
@@ -111,7 +121,7 @@ export default function EIrsaliyePage() {
                     </td>
                     <td style={td}>
                       {r.status === "DRAFT" && (
-                        <button onClick={() => onQueue(r.id)} style={btn}>Gonder</button>
+                        <button onClick={() => onQueue(r.id)} style={btn}>{t.send}</button>
                       )}
                     </td>
                   </tr>
@@ -131,6 +141,9 @@ export default function EIrsaliyePage() {
 // Create modal
 // ----------------------------------------------------------------
 function CreateModal({ onClose, onCreated }) {
+  const { lang } = useI18n();
+  const t = TXT_PAGE[lang] || TXT_PAGE.TR;
+
   const [form, setForm] = useState({
     buyerTitle: "",
     buyerVkn: "",
@@ -206,7 +219,7 @@ function CreateModal({ onClose, onCreated }) {
 
         <div style={{ marginBottom: 14 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-            <strong style={{ fontSize: 13, color: "#1E1B4B" }}>Kalemler</strong>
+            <strong style={{ fontSize: 13, color: "#1E1B4B" }}>{t.items}</strong>
             <button onClick={addItem} style={btnSmall}>+ Kalem Ekle</button>
           </div>
           {form.items.map((it, i) => (
@@ -221,7 +234,7 @@ function CreateModal({ onClose, onCreated }) {
         </div>
 
         <div style={{ display: "flex", justifyContent: "flex-end", gap: 8 }}>
-          <button onClick={onClose} style={btnSecondary}>Iptal</button>
+          <button onClick={onClose} style={btnSecondary}>{t.cancel}</button>
           <button onClick={submit} disabled={submitting} style={btn}>{submitting ? "Olusturuluyor..." : "Olustur"}</button>
         </div>
       </div>
