@@ -75,6 +75,15 @@ const CashflowForecastPage        = React.lazy(() => import("./dashboard/ai-fina
 const CashCrisisAlertsPage        = React.lazy(() => import("./dashboard/ai-finance/CashCrisisAlertsPage"));
 const RealProfitPage              = React.lazy(() => import("./dashboard/ai-finance/RealProfitPage"));
 
+// Phase 6 — AI Autopilots (lazy-loaded)
+const InvoiceAutopilotPage        = React.lazy(() => import("./dashboard/autopilots/InvoiceAutopilotPage"));
+const ReconciliationAutopilotPage = React.lazy(() => import("./dashboard/autopilots/ReconciliationAutopilotPage"));
+const WhatsAppAgentPage           = React.lazy(() => import("./dashboard/autopilots/WhatsAppAgentPage"));
+const MultiChannelInboxPage       = React.lazy(() => import("./dashboard/autopilots/MultiChannelInboxPage"));
+const DocumentVaultPage           = React.lazy(() => import("./dashboard/autopilots/DocumentVaultPage"));
+const DocumentAutoFilingPage      = React.lazy(() => import("./dashboard/autopilots/DocumentAutoFilingPage"));
+const RecurringSetupPage          = React.lazy(() => import("./dashboard/autopilots/RecurringSetupPage"));
+
 import {
   PALETTE_HUES as DASH_PALETTE_HUES,
   getCardPalette as getDashCardPalette,
@@ -1626,9 +1635,23 @@ const SIDEBAR_GROUPS = [
     ],
   },
   {
+    id: "autopilots",
+    label: { TR: "★ AI Otopilotlar", EN: "★ AI Autopilots", AR: "★ الطيارات AI" },
+    paletteId: "purple",
+    items: [
+      { id: "ap-invoice",   icon: "🤖", label: { TR: "Fatura Otopilotu",       EN: "Invoice Autopilot",     AR: "طيار الفواتير" },       tag: "ai" },
+      { id: "ap-recon",     icon: "🔄", label: { TR: "Mutabakat Otopilotu",    EN: "Reconciliation",        AR: "طيار المطابقة" },        tag: "ai" },
+      { id: "ap-whatsapp",  icon: "💬", label: { TR: "WhatsApp AI",            EN: "WhatsApp AI",           AR: "واتساب AI" },          tag: "ai" },
+      { id: "ap-inbox",     icon: "📨", label: { TR: "Çok Kanal Kutusu",       EN: "Multi-Channel Inbox",   AR: "صندوق متعدد القنوات" }, tag: "ai" },
+      { id: "ap-vault",     icon: "🗂️", label: { TR: "Doküman Kasası",        EN: "Document Vault",        AR: "خزنة المستندات" },     tag: "ai" },
+      { id: "ap-filing",    icon: "📁", label: { TR: "Oto. Dosyalama",         EN: "Auto Filing",           AR: "أرشفة تلقائية" },      tag: "ai" },
+      { id: "ap-recurring", icon: "🔁", label: { TR: "Hızlı Otomatik Fatura",  EN: "Recurring Setup",       AR: "إعداد المتكرر" },       tag: "star" },
+    ],
+  },
+  {
     id: "aifin",
     label: { TR: "AI Finans", EN: "AI Finance", AR: "المالية AI" },
-    paletteId: "purple",
+    paletteId: "violet",
     items: [
       { id: "af-cfo",         icon: "🤖", label: { TR: "AI CFO",            EN: "AI CFO",            AR: "المدير المالي AI" },   tag: "ai" },
       { id: "af-forecast",    icon: "🔮", label: { TR: "Nakit Tahmini",     EN: "Cashflow Forecast", AR: "توقع التدفق" },         tag: "ai" },
@@ -2815,6 +2838,43 @@ export default function CustomerDashboard() {
           {page === "af-real-profit" && (
             <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
               <RealProfitPage />
+            </React.Suspense>
+          )}
+
+          {/* ═══ Phase 6 PAGES — AI Autopilots ════════════════ */}
+          {page === "ap-invoice" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <InvoiceAutopilotPage onNavigate={navigate} />
+            </React.Suspense>
+          )}
+          {page === "ap-recon" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <ReconciliationAutopilotPage />
+            </React.Suspense>
+          )}
+          {page === "ap-whatsapp" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <WhatsAppAgentPage />
+            </React.Suspense>
+          )}
+          {page === "ap-inbox" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <MultiChannelInboxPage />
+            </React.Suspense>
+          )}
+          {page === "ap-vault" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <DocumentVaultPage />
+            </React.Suspense>
+          )}
+          {page === "ap-filing" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <DocumentAutoFilingPage />
+            </React.Suspense>
+          )}
+          {page === "ap-recurring" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <RecurringSetupPage onNavigate={navigate} />
             </React.Suspense>
           )}
 
