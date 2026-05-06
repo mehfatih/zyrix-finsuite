@@ -52,19 +52,29 @@ import aiFinanceTr from "./ai-finance.tr.json";
 import aiFinanceEn from "./ai-finance.en.json";
 import aiFinanceAr from "./ai-finance.ar.json";
 
+import autopilotsTr from "./autopilots.tr.json";
+import autopilotsEn from "./autopilots.en.json";
+import autopilotsAr from "./autopilots.ar.json";
+
+import inboxTr from "./inbox.tr.json";
+import inboxEn from "./inbox.en.json";
+import inboxAr from "./inbox.ar.json";
+
 const NAMESPACES = {
-  home:          { TR: homeTr,       EN: homeEn,       AR: homeAr },
-  profile:       { TR: profileTr,    EN: profileEn,    AR: profileAr },
-  company:       { TR: companyTr,    EN: companyEn,    AR: companyAr },
-  notifications: { TR: notifTr,      EN: notifEn,      AR: notifAr },
-  sales:         { TR: salesTr,      EN: salesEn,      AR: salesAr },
-  purchases:     { TR: purchasesTr,  EN: purchasesEn,  AR: purchasesAr },
-  products:      { TR: productsTr,   EN: productsEn,   AR: productsAr },
-  stock:         { TR: stockTr,      EN: stockEn,      AR: stockAr },
-  efatura:       { TR: efaturaTr,    EN: efaturaEn,    AR: efaturaAr },
-  tax:           { TR: taxTr,        EN: taxEn,        AR: taxAr },
-  cash:          { TR: cashTr,       EN: cashEn,       AR: cashAr },
-  "ai-finance":  { TR: aiFinanceTr,  EN: aiFinanceEn,  AR: aiFinanceAr },
+  home:          { TR: homeTr,        EN: homeEn,        AR: homeAr },
+  profile:       { TR: profileTr,     EN: profileEn,     AR: profileAr },
+  company:       { TR: companyTr,     EN: companyEn,     AR: companyAr },
+  notifications: { TR: notifTr,       EN: notifEn,       AR: notifAr },
+  sales:         { TR: salesTr,       EN: salesEn,       AR: salesAr },
+  purchases:     { TR: purchasesTr,   EN: purchasesEn,   AR: purchasesAr },
+  products:      { TR: productsTr,    EN: productsEn,    AR: productsAr },
+  stock:         { TR: stockTr,       EN: stockEn,       AR: stockAr },
+  efatura:       { TR: efaturaTr,     EN: efaturaEn,     AR: efaturaAr },
+  tax:           { TR: taxTr,         EN: taxEn,         AR: taxAr },
+  cash:          { TR: cashTr,        EN: cashEn,        AR: cashAr },
+  "ai-finance":  { TR: aiFinanceTr,   EN: aiFinanceEn,   AR: aiFinanceAr },
+  autopilots:    { TR: autopilotsTr,  EN: autopilotsEn,  AR: autopilotsAr },
+  inbox:         { TR: inboxTr,       EN: inboxEn,       AR: inboxAr },
 };
 
 export function useDashboardI18n(namespace) {
