@@ -36,6 +36,14 @@ import stockTr from "./stock.tr.json";
 import stockEn from "./stock.en.json";
 import stockAr from "./stock.ar.json";
 
+import efaturaTr from "./efatura.tr.json";
+import efaturaEn from "./efatura.en.json";
+import efaturaAr from "./efatura.ar.json";
+
+import taxTr from "./tax.tr.json";
+import taxEn from "./tax.en.json";
+import taxAr from "./tax.ar.json";
+
 const NAMESPACES = {
   home:          { TR: homeTr,      EN: homeEn,      AR: homeAr },
   profile:       { TR: profileTr,   EN: profileEn,   AR: profileAr },
@@ -45,6 +53,8 @@ const NAMESPACES = {
   purchases:     { TR: purchasesTr, EN: purchasesEn, AR: purchasesAr },
   products:      { TR: productsTr,  EN: productsEn,  AR: productsAr },
   stock:         { TR: stockTr,     EN: stockEn,     AR: stockAr },
+  efatura:       { TR: efaturaTr,   EN: efaturaEn,   AR: efaturaAr },
+  tax:           { TR: taxTr,       EN: taxEn,       AR: taxAr },
 };
 
 export function useDashboardI18n(namespace) {
