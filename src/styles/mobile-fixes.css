@@ -219,3 +219,19 @@ html, body {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   }
 }
+
+
+/* ============================================================
+   FOOTER OVERRIDE - keep 2-column layout on mobile across all pages
+   The body:not(.landing-page) rule above forces grids to 1 column,
+   but the footer should stay 2-column on mobile (it has its own
+   isMobile logic that already handles desktop layout). Without this
+   override, every non-landing page shows the footer as a single
+   stack with empty space on the side.
+   ============================================================ */
+@media (max-width: 768px) {
+  footer [style*="1fr 1fr"] {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 24px 16px !important;
+  }
+}
