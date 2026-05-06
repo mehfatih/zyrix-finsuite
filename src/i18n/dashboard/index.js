@@ -44,17 +44,27 @@ import taxTr from "./tax.tr.json";
 import taxEn from "./tax.en.json";
 import taxAr from "./tax.ar.json";
 
+import cashTr from "./cash.tr.json";
+import cashEn from "./cash.en.json";
+import cashAr from "./cash.ar.json";
+
+import aiFinanceTr from "./ai-finance.tr.json";
+import aiFinanceEn from "./ai-finance.en.json";
+import aiFinanceAr from "./ai-finance.ar.json";
+
 const NAMESPACES = {
-  home:          { TR: homeTr,      EN: homeEn,      AR: homeAr },
-  profile:       { TR: profileTr,   EN: profileEn,   AR: profileAr },
-  company:       { TR: companyTr,   EN: companyEn,   AR: companyAr },
-  notifications: { TR: notifTr,     EN: notifEn,     AR: notifAr },
-  sales:         { TR: salesTr,     EN: salesEn,     AR: salesAr },
-  purchases:     { TR: purchasesTr, EN: purchasesEn, AR: purchasesAr },
-  products:      { TR: productsTr,  EN: productsEn,  AR: productsAr },
-  stock:         { TR: stockTr,     EN: stockEn,     AR: stockAr },
-  efatura:       { TR: efaturaTr,   EN: efaturaEn,   AR: efaturaAr },
-  tax:           { TR: taxTr,       EN: taxEn,       AR: taxAr },
+  home:          { TR: homeTr,       EN: homeEn,       AR: homeAr },
+  profile:       { TR: profileTr,    EN: profileEn,    AR: profileAr },
+  company:       { TR: companyTr,    EN: companyEn,    AR: companyAr },
+  notifications: { TR: notifTr,      EN: notifEn,      AR: notifAr },
+  sales:         { TR: salesTr,      EN: salesEn,      AR: salesAr },
+  purchases:     { TR: purchasesTr,  EN: purchasesEn,  AR: purchasesAr },
+  products:      { TR: productsTr,   EN: productsEn,   AR: productsAr },
+  stock:         { TR: stockTr,      EN: stockEn,      AR: stockAr },
+  efatura:       { TR: efaturaTr,    EN: efaturaEn,    AR: efaturaAr },
+  tax:           { TR: taxTr,        EN: taxEn,        AR: taxAr },
+  cash:          { TR: cashTr,       EN: cashEn,       AR: cashAr },
+  "ai-finance":  { TR: aiFinanceTr,  EN: aiFinanceEn,  AR: aiFinanceAr },
 };
 
 export function useDashboardI18n(namespace) {
