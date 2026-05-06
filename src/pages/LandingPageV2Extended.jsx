@@ -17,6 +17,7 @@ import BurjMamlakaWatermark from "../components/landing-v2/BurjMamlakaWatermark"
 
 import NavV2 from "../components/NavV2.jsx";
 import FooterV2 from "../components/FooterV2.jsx";
+import { WhyUsSection, SectorsSection, IntegrationsSection, FAQSection, WhatsAppWidget } from "../components/landing-v2/NewSections";
 
 import { useCountry } from "../hooks/useCountry.jsx";
 import { formatCurrency } from "../utils/formatCurrency.js";
@@ -2535,12 +2536,17 @@ export default function LandingPageV2Extended() {
         <StatsStrip />
         <AIInvoiceDemoSection />
         <ProblemSolution />
+        <WhyUsSection lang={lang} />
         <Features />
+        <SectorsSection lang={lang} />
+        <IntegrationsSection lang={lang} />
         <CashflowCTA />
         <Pricing />
         <Testimonials />
+        <FAQSection lang={lang} />
         <FinalCTA />
         <FooterV2 />
+        <WhatsAppWidget lang={lang} />
       </div>
 
     </>

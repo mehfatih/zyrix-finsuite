@@ -27,6 +27,7 @@ import TermsPage from "./pages/TermsPage.jsx";
 import SecurityPage from "./pages/SecurityPage.jsx";
 import SecuritySettingsPage from "./pages/dashboard/SecuritySettingsPage.jsx";
 import NotFoundPage from "./pages/NotFoundPage.jsx";
+import BlogPage from "./pages/BlogPage.jsx";
 import ScrollToTop from "./components/ScrollToTop.jsx";
 function HomeRedirect() {
   const { user, loading } = useAuth();
@@ -70,7 +71,8 @@ export default function App() {
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/privacy" element={<PrivacyPage />} />
         <Route path="/terms" element={<TermsPage />} />
-        <Route path="/security" element={<SecurityPage />} />
+        <Route path="/blog"        element={<BlogPage />} />
+          <Route path="/security" element={<SecurityPage />} />
         <Route path="/dashboard/security" element={<SecuritySettingsPage />} />
         <Route path="/v2-ext" element={<Navigate to="/" replace />} />
         <Route path="/v2-ext/*" element={<Navigate to="/" replace />} />
