@@ -84,6 +84,14 @@ const DocumentVaultPage           = React.lazy(() => import("./dashboard/autopil
 const DocumentAutoFilingPage      = React.lazy(() => import("./dashboard/autopilots/DocumentAutoFilingPage"));
 const RecurringSetupPage          = React.lazy(() => import("./dashboard/autopilots/RecurringSetupPage"));
 
+// Phase 7 — Intelligence (Hidden Money & Daily Briefings) lazy-loaded
+const HiddenCashPage              = React.lazy(() => import("./dashboard/intelligence/HiddenCashPage"));
+const DailyBriefingPage           = React.lazy(() => import("./dashboard/intelligence/DailyBriefingPage"));
+const MonthlyReportPage           = React.lazy(() => import("./dashboard/intelligence/MonthlyReportPage"));
+const HiddenRevenuePage           = React.lazy(() => import("./dashboard/intelligence/HiddenRevenuePage"));
+const SmartPricingPage            = React.lazy(() => import("./dashboard/intelligence/SmartPricingPage"));
+const DiscountOptimizerPage       = React.lazy(() => import("./dashboard/intelligence/DiscountOptimizerPage"));
+
 import {
   PALETTE_HUES as DASH_PALETTE_HUES,
   getCardPalette as getDashCardPalette,
@@ -1649,6 +1657,19 @@ const SIDEBAR_GROUPS = [
     ],
   },
   {
+    id: "intelligence",
+    label: { TR: "★ Gizli Para & Brifing", EN: "★ Hidden Money & Briefings", AR: "★ الأموال المخفية والموجزات" },
+    paletteId: "wine",
+    items: [
+      { id: "in-hidden-cash", icon: "💰", label: { TR: "Gizli Para Bulucu",   EN: "Hidden Cash",        AR: "الأموال المخفية" },   tag: "star" },
+      { id: "in-briefing",    icon: "☀️", label: { TR: "Günlük Brifing",      EN: "Daily Briefing",     AR: "الموجز اليومي" },     tag: "ai" },
+      { id: "in-monthly",     icon: "📄", label: { TR: "Aylık Rapor",         EN: "Monthly Report",     AR: "التقرير الشهري" },    tag: "built" },
+      { id: "in-hidden-rev",  icon: "💎", label: { TR: "Gizli Gelir",         EN: "Hidden Revenue",     AR: "الإيرادات المخفية" }, tag: "star" },
+      { id: "in-pricing",     icon: "🎯", label: { TR: "Akıllı Fiyatlama",    EN: "Smart Pricing",      AR: "التسعير الذكي" },    tag: "ai" },
+      { id: "in-discount",    icon: "🎫", label: { TR: "İndirim Optimizatörü",EN: "Discount Optimizer", AR: "محسّن الخصومات" },    tag: "ai" },
+    ],
+  },
+  {
     id: "aifin",
     label: { TR: "AI Finans", EN: "AI Finance", AR: "المالية AI" },
     paletteId: "violet",
@@ -2875,6 +2896,38 @@ export default function CustomerDashboard() {
           {page === "ap-recurring" && (
             <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
               <RecurringSetupPage onNavigate={navigate} />
+            </React.Suspense>
+          )}
+
+          {/* ═══ Phase 7 PAGES — Hidden Money & Briefings ════════ */}
+          {page === "in-hidden-cash" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <HiddenCashPage />
+            </React.Suspense>
+          )}
+          {page === "in-briefing" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <DailyBriefingPage />
+            </React.Suspense>
+          )}
+          {page === "in-monthly" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <MonthlyReportPage />
+            </React.Suspense>
+          )}
+          {page === "in-hidden-rev" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <HiddenRevenuePage onNavigate={navigate} />
+            </React.Suspense>
+          )}
+          {page === "in-pricing" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <SmartPricingPage />
+            </React.Suspense>
+          )}
+          {page === "in-discount" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <DiscountOptimizerPage />
             </React.Suspense>
           )}
 
