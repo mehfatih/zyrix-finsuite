@@ -25,6 +25,7 @@ import ContactPage from "./pages/ContactPage.jsx";
 import PrivacyPage from "./pages/PrivacyPage.jsx";
 import TermsPage from "./pages/TermsPage.jsx";
 import SecurityPage from "./pages/SecurityPage.jsx";
+import SecuritySettingsPage from "./pages/dashboard/SecuritySettingsPage.jsx";
 import NotFoundPage from "./pages/NotFoundPage.jsx";
 import ScrollToTop from "./components/ScrollToTop.jsx";
 function HomeRedirect() {
@@ -70,6 +71,7 @@ export default function App() {
         <Route path="/privacy" element={<PrivacyPage />} />
         <Route path="/terms" element={<TermsPage />} />
         <Route path="/security" element={<SecurityPage />} />
+        <Route path="/dashboard/security" element={<SecuritySettingsPage />} />
         <Route path="/v2-ext" element={<Navigate to="/" replace />} />
         <Route path="/v2-ext/*" element={<Navigate to="/" replace />} />
           {/* Legacy V2 paths redirect to root (V2 is now the home page) */}

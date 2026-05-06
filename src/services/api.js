@@ -345,3 +345,56 @@ export const tokenUtils = {
 };
 
 export default apiFetch;
+
+// ──────────────────────────────────────────────
+// SPRINT 3 - RBAC, Audit Logs, IP Allowlist
+// ──────────────────────────────────────────────
+
+export const sprint3API = {
+  // Users (RBAC)
+  listUsers: () => apiFetch("/api/sprint3/users"),
+  inviteUser: (payload) =>
+    apiFetch("/api/sprint3/users/invite", {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
+  updateUser: (id, payload) =>
+    apiFetch(`/api/sprint3/users/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(payload),
+    }),
+  deleteUser: (id) =>
+    apiFetch(`/api/sprint3/users/${id}`, { method: "DELETE" }),
+
+  // Reference / self
+  rolesCatalog: () => apiFetch("/api/sprint3/roles"),
+  myPermissions: () => apiFetch("/api/sprint3/me/permissions"),
+
+  // Audit logs
+  listAuditLogs: (params = {}) => {
+    const qs = new URLSearchParams(params).toString();
+    return apiFetch(`/api/sprint3/audit-logs${qs ? `?${qs}` : ""}`);
+  },
+  auditSummary: (days = 30) =>
+    apiFetch(`/api/sprint3/audit-logs/summary?days=${days}`),
+
+  // IP allowlist
+  getAllowlist: () => apiFetch("/api/sprint3/ip-allowlist"),
+  setAllowlistMode: (mode, enforceFor = []) =>
+    apiFetch("/api/sprint3/ip-allowlist/mode", {
+      method: "PUT",
+      body: JSON.stringify({ mode, enforceFor }),
+    }),
+  addAllowlistEntry: (ipAddress, description) =>
+    apiFetch("/api/sprint3/ip-allowlist/entries", {
+      method: "POST",
+      body: JSON.stringify({ ipAddress, description }),
+    }),
+  toggleAllowlistEntry: (id, isActive) =>
+    apiFetch(`/api/sprint3/ip-allowlist/entries/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify({ isActive }),
+    }),
+  removeAllowlistEntry: (id) =>
+    apiFetch(`/api/sprint3/ip-allowlist/entries/${id}`, { method: "DELETE" }),
+};
