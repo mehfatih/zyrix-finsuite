@@ -150,8 +150,8 @@ function Hero() {
 
       {/* Orbs */}
       <div style={{ position: "absolute", borderRadius: "50%", filter: "blur(100px)", pointerEvents: "none", right: "8%", top: "18%", width: 500, height: 500, background: isSaudi ? "rgba(0, 140, 70, 0.45)" : "rgba(227, 10, 23, 0.45)" }} />
-      <div style={{ position: "absolute", borderRadius: "50%", filter: "blur(100px)", pointerEvents: "none", left: "35%", bottom: "12%", width: 380, height: 380, background: isSaudi ? "rgba(14, 165, 113, 0.18)" : "rgba(255, 61, 48, 0.18)" }} />
-      <div style={{ position: "absolute", borderRadius: "50%", filter: "blur(100px)", pointerEvents: "none", right: "15%", bottom: "20%", width: 600, height: 600, background: isSaudi ? "rgba(0, 80, 40, 0.35)" : "rgba(184, 5, 15, 0.35)" }} />
+      <div style={{ position: "absolute", borderRadius: "50%", filter: "blur(80px)", pointerEvents: "none", left: "35%", bottom: "30%", width: 320, height: 320, background: isSaudi ? "rgba(14, 165, 113, 0.12)" : "rgba(255, 61, 48, 0.12)" }} />
+      <div style={{ position: "absolute", borderRadius: "50%", filter: "blur(80px)", pointerEvents: "none", right: "15%", bottom: "35%", width: 420, height: 420, background: isSaudi ? "rgba(0, 80, 40, 0.22)" : "rgba(184, 5, 15, 0.22)" }} />
 
       {/* Body */}
       <div style={{ maxWidth: 1280, margin: "0 auto", padding: isMobile ? "0 16px" : "0 32px" }}>
