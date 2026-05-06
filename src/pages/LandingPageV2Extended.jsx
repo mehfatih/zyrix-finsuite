@@ -153,35 +153,6 @@ function Hero() {
       <div style={{ position: "absolute", borderRadius: "50%", filter: "blur(100px)", pointerEvents: "none", left: "35%", bottom: "12%", width: 380, height: 380, background: isSaudi ? "rgba(14, 165, 113, 0.18)" : "rgba(255, 61, 48, 0.18)" }} />
       <div style={{ position: "absolute", borderRadius: "50%", filter: "blur(100px)", pointerEvents: "none", right: "15%", bottom: "20%", width: 600, height: 600, background: isSaudi ? "rgba(0, 80, 40, 0.35)" : "rgba(184, 5, 15, 0.35)" }} />
 
-      {/* Right-side cinematic streaks */}
-      <div style={{ position: "absolute", right: 0, top: 0, bottom: 0, width: isMobile ? "0" : "60%", pointerEvents: "none", overflow: "hidden", zIndex: 2, display: isMobile ? "none" : "block" }}>
-        <svg viewBox="0 0 600 800" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" style={{ position: "absolute", right: "-10%", top: 0, width: "110%", height: "100%", opacity: 0.6 }}>
-          <defs>
-            <linearGradient id="streak1V2" x1="0%" x2="100%" y1="0%" y2="0%">
-              <stop offset="0%" stopColor="rgba(227, 10, 23, 0)" />
-              <stop offset="40%" stopColor="rgba(255, 100, 100, 0.4)" />
-              <stop offset="55%" stopColor="rgba(255, 220, 220, 0.7)" />
-              <stop offset="70%" stopColor="rgba(255, 100, 100, 0.4)" />
-              <stop offset="100%" stopColor="rgba(227, 10, 23, 0)" />
-            </linearGradient>
-            <linearGradient id="streak2V2" x1="0%" x2="100%" y1="0%" y2="0%">
-              <stop offset="0%" stopColor="rgba(184, 5, 15, 0)" />
-              <stop offset="50%" stopColor="rgba(255, 80, 80, 0.5)" />
-              <stop offset="100%" stopColor="rgba(184, 5, 15, 0)" />
-            </linearGradient>
-            <filter id="streakGlowV2" x="-20%" y="-50%" width="140%" height="200%">
-              <feGaussianBlur stdDeviation="3" />
-            </filter>
-          </defs>
-          <path d="M 100 200 Q 350 180 600 150" fill="none" stroke="url(#streak1V2)" strokeWidth="3" filter="url(#streakGlowV2)" />
-          <path d="M 50 280 Q 350 260 600 240" fill="none" stroke="url(#streak2V2)" strokeWidth="2.5" filter="url(#streakGlowV2)" opacity="0.9" />
-          <path d="M 80 350 Q 350 340 600 330" fill="none" stroke="url(#streak1V2)" strokeWidth="2" filter="url(#streakGlowV2)" opacity="0.8" />
-          <path d="M 30 460 Q 300 440 600 420" fill="none" stroke="url(#streak2V2)" strokeWidth="3" filter="url(#streakGlowV2)" opacity="0.95" />
-          <path d="M 60 560 Q 300 545 600 530" fill="none" stroke="url(#streak1V2)" strokeWidth="2" filter="url(#streakGlowV2)" opacity="0.7" />
-          <path d="M 100 660 Q 350 645 600 630" fill="none" stroke="url(#streak2V2)" strokeWidth="2.5" filter="url(#streakGlowV2)" opacity="0.85" />
-        </svg>
-      </div>
-
       {/* Body */}
       <div style={{ maxWidth: 1280, margin: "0 auto", padding: isMobile ? "0 16px" : "0 32px" }}>
         <div style={{

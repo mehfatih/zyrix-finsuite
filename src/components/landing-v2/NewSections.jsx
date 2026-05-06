@@ -332,7 +332,7 @@ export function IntegrationsSection({ lang = "TR" }) {
           </p>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 16 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(5, minmax(0, 1fr))", gap: 16 }}>
           {INTEGRATIONS_LIST.map((it, i) => (
             <div key={i} style={{
               background: COLORS.card, borderRadius: 14, padding: "20px 18px",
