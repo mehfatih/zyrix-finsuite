@@ -213,11 +213,39 @@ export const receiptScanAPI = {
 // WHATSAPP (Sprint 1 - Phase 1B)
 // ──────────────────────────────────────────────
 export const whatsappAPI = {
+  // Send text invoice
   sendInvoice: (invoiceId, recipientPhone, customMessage) =>
     apiFetch(`/api/whatsapp/send-invoice/${invoiceId}`, {
       method: "POST",
       body: JSON.stringify({ recipientPhone, customMessage }),
     }),
+
+  // Send invoice as PDF document
+  sendPdf: (invoiceId, payload) =>
+    apiFetch(`/api/whatsapp/send-pdf/${invoiceId}`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
+
+  // Send any media (image/document/video) to a number
+  sendMedia: (payload) =>
+    apiFetch(`/api/whatsapp/send-media`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
+
+  // Bulk text message to up to 100 recipients
+  bulkSend: (payload) =>
+    apiFetch(`/api/whatsapp/bulk`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    }),
+
+  // Manually run reminders for current merchant
+  runReminders: () =>
+    apiFetch(`/api/whatsapp/reminders/run`, { method: "POST" }),
+
+  // Listing
   list: (params = {}) => {
     const qs = new URLSearchParams(params).toString();
     return apiFetch(`/api/whatsapp${qs ? `?${qs}` : ""}`);
