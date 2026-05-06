@@ -49,6 +49,20 @@ const ProductDetailPage           = React.lazy(() => import("./dashboard/product
 const ServicesPage                = React.lazy(() => import("./dashboard/products/ServicesPage"));
 const StockMovementsPage          = React.lazy(() => import("./dashboard/products/StockMovementsPage"));
 const StockReportsPage            = React.lazy(() => import("./dashboard/products/StockReportsPage"));
+
+// Phase 4 — E-Invoicing & Tax Compliance (lazy-loaded)
+const OutgoingEFaturasPage        = React.lazy(() => import("./dashboard/efatura/OutgoingEFaturasPage"));
+const EFaturaCreatePage           = React.lazy(() => import("./dashboard/efatura/EFaturaCreatePage"));
+const EFaturaDetailPage           = React.lazy(() => import("./dashboard/efatura/EFaturaDetailPage"));
+const IncomingEFaturasPage        = React.lazy(() => import("./dashboard/efatura/IncomingEFaturasPage"));
+const EArchivePage                = React.lazy(() => import("./dashboard/efatura/EArchivePage"));
+const RecurringInvoicesPage       = React.lazy(() => import("./dashboard/efatura/RecurringInvoicesPage"));
+const RecurringInvoiceCreatePage  = React.lazy(() => import("./dashboard/efatura/RecurringInvoiceCreatePage"));
+const TaxAutopilotPage            = React.lazy(() => import("./dashboard/tax/TaxAutopilotPage"));
+const TaxCalendarV2Page           = React.lazy(() => import("./dashboard/tax/TaxCalendarPage"));
+const VatReportPage               = React.lazy(() => import("./dashboard/tax/VatReportPage"));
+const MaliMusavirPanelPage        = React.lazy(() => import("./dashboard/tax/MaliMusavirPanelPage"));
+const ComplianceWatcherPage       = React.lazy(() => import("./dashboard/tax/ComplianceWatcherPage"));
 import {
   PALETTE_HUES as DASH_PALETTE_HUES,
   getCardPalette as getDashCardPalette,
@@ -1574,15 +1588,31 @@ const SIDEBAR_GROUPS = [
     ],
   },
   {
+    id: "efatura",
+    label: { TR: "e-Fatura & Vergi", EN: "e-Invoicing & Tax", AR: "الفوترة والضرائب" },
+    paletteId: "wine",
+    items: [
+      { id: "efatura-outgoing",  icon: "📤", label: { TR: "Giden e-Fatura",   EN: "Outgoing e-Inv.",   AR: "صادرة" },        tag: "built" },
+      { id: "efatura-incoming",  icon: "📥", label: { TR: "Gelen e-Fatura",   EN: "Incoming e-Inv.",   AR: "واردة" },        tag: "ai" },
+      { id: "efatura-archive",   icon: "📦", label: { TR: "e-Arşiv",          EN: "e-Archive",         AR: "الأرشيف" },     tag: "built" },
+      { id: "efatura-recurring", icon: "🔁", label: { TR: "Otomatik Faturalar", EN: "Recurring",       AR: "متكررة" },       tag: "built" },
+      { id: "tax-autopilot",     icon: "🤖", label: { TR: "Vergi Otopilotu",   EN: "Tax Autopilot",    AR: "الطيار الضريبي" }, tag: "ai" },
+      { id: "tax-calendar",      icon: "🗓️", label: { TR: "Vergi Takvimi",    EN: "Tax Calendar",     AR: "التقويم الضريبي" }, tag: "built" },
+      { id: "tax-vat",           icon: "📊", label: { TR: "KDV Raporu",       EN: "VAT Report",       AR: "تقرير الضريبة" }, tag: "built" },
+      { id: "tax-musavir",       icon: "🧮", label: { TR: "Mali Müşavir",     EN: "Accountant",       AR: "المحاسب" },     tag: "built" },
+      { id: "tax-compliance",    icon: "🛡️", label: { TR: "Mevzuat Takibi",  EN: "Compliance",       AR: "التشريعات" },    tag: "ai" },
+    ],
+  },
+  {
     id: "money",
     label: { TR: "Para & Finans", EN: "Money & Finance", AR: "المال والمالية" },
     paletteId: "teal",
     items: [
       { id: "invoices",    icon: "📄", label: { TR: "Faturalar",    EN: "Invoices",   AR: "الفواتير" },         tag: "built" },
-      { id: "efatura",     icon: "🧾", label: { TR: "E-Fatura",     EN: "E-Invoice",  AR: "الفاتورة الإلكترونية" }, tag: "ai" },
+      { id: "efatura",     icon: "🧾", label: { TR: "E-Fatura (Eski)", EN: "E-Invoice (Legacy)",  AR: "الفاتورة (سابق)" }, tag: "ai" },
       { id: "banks",       icon: "🏦", label: { TR: "Bankalar",     EN: "Banks",      AR: "البنوك" },           tag: "ai" },
       { id: "factoring",   icon: "💰", label: { TR: "Finansman",    EN: "Factoring",  AR: "التمويل" },          tag: "star" },
-      { id: "recurring",   icon: "🔄", label: { TR: "Oto. Fatura",  EN: "Recurring",  AR: "متكرر" },           tag: "built" },
+      { id: "recurring",   icon: "🔄", label: { TR: "Oto. Fatura (Eski)",  EN: "Recurring (Legacy)",  AR: "متكرر (سابق)" },           tag: "built" },
       { id: "checks",      icon: "📑", label: { TR: "Çek & Senet",  EN: "Checks",     AR: "الشيكات" },          tag: "built" },
       { id: "installments",icon: "📅", label: { TR: "Taksit",       EN: "Installments", AR: "أقساط" },         tag: "built" },
     ],
@@ -2633,6 +2663,78 @@ export default function CustomerDashboard() {
           {page === "prod-reports" && (
             <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
               <StockReportsPage />
+            </React.Suspense>
+          )}
+
+          {/* ═══ Phase 4 PAGES — E-Invoicing & Tax ════════════ */}
+          {page === "efatura-outgoing" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <OutgoingEFaturasPage onNavigate={navigate} />
+            </React.Suspense>
+          )}
+          {page === "efatura-new" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <EFaturaCreatePage onNavigate={navigate} archive={false} />
+            </React.Suspense>
+          )}
+          {page === "efatura-detail" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <EFaturaDetailPage invoiceId={pageParams.id} onNavigate={navigate} archive={false} />
+            </React.Suspense>
+          )}
+          {page === "efatura-incoming" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <IncomingEFaturasPage />
+            </React.Suspense>
+          )}
+          {page === "efatura-archive" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <EArchivePage onNavigate={navigate} />
+            </React.Suspense>
+          )}
+          {page === "efatura-archive-new" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <EFaturaCreatePage onNavigate={navigate} archive={true} />
+            </React.Suspense>
+          )}
+          {page === "efatura-archive-detail" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <EFaturaDetailPage invoiceId={pageParams.id} onNavigate={navigate} archive={true} />
+            </React.Suspense>
+          )}
+          {page === "efatura-recurring" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <RecurringInvoicesPage onNavigate={navigate} />
+            </React.Suspense>
+          )}
+          {page === "efatura-recurring-new" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <RecurringInvoiceCreatePage onNavigate={navigate} />
+            </React.Suspense>
+          )}
+          {page === "tax-autopilot" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <TaxAutopilotPage />
+            </React.Suspense>
+          )}
+          {page === "tax-calendar" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <TaxCalendarV2Page />
+            </React.Suspense>
+          )}
+          {page === "tax-vat" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <VatReportPage />
+            </React.Suspense>
+          )}
+          {page === "tax-musavir" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <MaliMusavirPanelPage />
+            </React.Suspense>
+          )}
+          {page === "tax-compliance" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <ComplianceWatcherPage onNavigate={navigate} />
             </React.Suspense>
           )}
 
