@@ -119,6 +119,7 @@ export default function FooterV2() {
     { label: "مركز المساعدة", href: "/contact", route: true },
     { label: "الندوات الإلكترونية", href: "#", route: false },
     { label: "حالات نجاح", href: "/case-studies", route: true },
+    { label: "خريطة الموقع", href: "/sitemap", route: true },
   ] : lang === "EN" ? [
     { label: "Blog", href: "/blog", route: true },
     { label: "User Guide", href: "/how-it-works", route: true },
@@ -126,6 +127,7 @@ export default function FooterV2() {
     { label: "Help Center", href: "/contact", route: true },
     { label: "Webinars", href: "#", route: false },
     { label: "Success Stories", href: "/case-studies", route: true },
+    { label: "Site Map", href: "/sitemap", route: true },
   ] : [
     { label: "Blog", href: "/blog", route: true },
     { label: "Kullanım Kılavuzu", href: "/how-it-works", route: true },
@@ -133,6 +135,7 @@ export default function FooterV2() {
     { label: "Yardım Merkezi", href: "/contact", route: true },
     { label: "Webinarlar", href: "#", route: false },
     { label: "Başarı Hikayeleri", href: "/case-studies", route: true },
+    { label: "Site Haritası", href: "/sitemap", route: true },
   ];
 
   const companyLinks = lang === "AR" ? [
@@ -174,92 +177,6 @@ export default function FooterV2() {
     { label: "Çerez Politikası", href: "/privacy", route: true },
     { label: "GDPR", href: "/privacy", route: true },
   ];
-
-  // ---------- Sitemap (all public routes grouped) ----------
-  const sitemapLinks = lang === "AR" ? [
-    { group: "المنتج", links: [
-      { label: "المميزات", href: "/features" },
-      { label: "كيف يعمل", href: "/how-it-works" },
-      { label: "الأسعار", href: "/pricing" },
-      { label: "تحليل AI", href: "/ai-analysis" },
-      { label: "التكاملات", href: "/integrations" },
-    ]},
-    { group: "الحلول", links: [
-      { label: "القطاعات", href: "/sectors" },
-      { label: "قصص النجاح", href: "/case-studies" },
-      { label: "البدء", href: "/onboarding" },
-    ]},
-    { group: "الشركة", links: [
-      { label: "من نحن", href: "/about" },
-      { label: "اتصل بنا", href: "/contact" },
-      { label: "المدونة", href: "/blog" },
-    ]},
-    { group: "قانوني", links: [
-      { label: "الخصوصية", href: "/privacy" },
-      { label: "الشروط", href: "/terms" },
-      { label: "الأمان", href: "/security" },
-    ]},
-    { group: "الحساب", links: [
-      { label: "تسجيل الدخول", href: "/login" },
-      { label: "تسجيل جديد", href: "/register" },
-    ]},
-  ] : lang === "EN" ? [
-    { group: "Product", links: [
-      { label: "Features", href: "/features" },
-      { label: "How It Works", href: "/how-it-works" },
-      { label: "Pricing", href: "/pricing" },
-      { label: "AI Analysis", href: "/ai-analysis" },
-      { label: "Integrations", href: "/integrations" },
-    ]},
-    { group: "Solutions", links: [
-      { label: "Sectors", href: "/sectors" },
-      { label: "Case Studies", href: "/case-studies" },
-      { label: "Onboarding", href: "/onboarding" },
-    ]},
-    { group: "Company", links: [
-      { label: "About Us", href: "/about" },
-      { label: "Contact", href: "/contact" },
-      { label: "Blog", href: "/blog" },
-    ]},
-    { group: "Legal", links: [
-      { label: "Privacy", href: "/privacy" },
-      { label: "Terms", href: "/terms" },
-      { label: "Security", href: "/security" },
-    ]},
-    { group: "Account", links: [
-      { label: "Sign In", href: "/login" },
-      { label: "Sign Up", href: "/register" },
-    ]},
-  ] : [
-    { group: "Ürün", links: [
-      { label: "Özellikler", href: "/features" },
-      { label: "Nasıl Çalışır", href: "/how-it-works" },
-      { label: "Fiyatlandırma", href: "/pricing" },
-      { label: "AI Analizi", href: "/ai-analysis" },
-      { label: "Entegrasyonlar", href: "/integrations" },
-    ]},
-    { group: "Çözümler", links: [
-      { label: "Sektörler", href: "/sectors" },
-      { label: "Vaka Çalışmaları", href: "/case-studies" },
-      { label: "Başlangıç", href: "/onboarding" },
-    ]},
-    { group: "Şirket", links: [
-      { label: "Hakkımızda", href: "/about" },
-      { label: "İletişim", href: "/contact" },
-      { label: "Blog", href: "/blog" },
-    ]},
-    { group: "Hukuki", links: [
-      { label: "Gizlilik", href: "/privacy" },
-      { label: "Koşullar", href: "/terms" },
-      { label: "Güvenlik", href: "/security" },
-    ]},
-    { group: "Hesap", links: [
-      { label: "Giriş Yap", href: "/login" },
-      { label: "Kayıt Ol", href: "/register" },
-    ]},
-  ];
-
-  const sitemapTitle = lang === "AR" ? "خريطة الموقع" : lang === "EN" ? "Site Map" : "Site Haritası";
 
   const socialLinks = [
     { name: "LinkedIn", url: "https://www.linkedin.com/company/zyrixpaymentgateway/", icon: <><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-4 0v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></> },
@@ -424,57 +341,8 @@ export default function FooterV2() {
             <span>{t("lv2.footer.with")}</span>
           </div>
         </div>
-
-        {/* SITEMAP SECTION */}
-        <div style={{
-          paddingTop: isMobile ? 24 : 40,
-          paddingBottom: isMobile ? 16 : 24,
-          borderTop: "1px solid rgba(255, 255, 255, 0.08)",
-        }}>
-          <h4 style={{
-            fontFamily: "monospace", fontSize: isMobile ? 13 : 15,
-            fontWeight: 700, letterSpacing: "0.18em",
-            color: "rgba(255,255,255,0.85)",
-            marginBottom: isMobile ? 16 : 24, marginTop: 0,
-            textTransform: "uppercase",
-          }}>
-            {sitemapTitle}
-          </h4>
-          <div style={{
-            display: "grid",
-            gridTemplateColumns: isMobile
-              ? "repeat(2, minmax(0, 1fr))"
-              : "repeat(5, minmax(0, 1fr))",
-            gap: isMobile ? "20px 16px" : 32,
-          }}>
-            {sitemapLinks.map((g, gi) => (
-              <div key={gi}>
-                <div style={{
-                  fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.55)",
-                  textTransform: "uppercase", letterSpacing: "0.1em",
-                  marginBottom: 10,
-                }}>{g.group}</div>
-                <ul style={{ listStyle: "none", padding: 0, margin: 0,
-                  display: "flex", flexDirection: "column", gap: 8 }}>
-                  {g.links.map((l, li) => (
-                    <li key={li}>
-                      <Link to={l.href}
-                        style={{
-                          color: "rgba(255,255,255,0.6)",
-                          textDecoration: "none", fontSize: 12,
-                          transition: "color 0.2s",
-                        }}
-                        onMouseEnter={(e) => e.target.style.color = "white"}
-                        onMouseLeave={(e) => e.target.style.color = "rgba(255,255,255,0.6)"}>
-                        {l.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </div>
+      </div>
+    
 
       {/* COUNTRY / REGION SELECTOR (dynamic compliance) */}
       <div style={{
@@ -530,7 +398,6 @@ export default function FooterV2() {
           <span>·</span>
           <span>✓ {taxName} {taxRate}%</span>
         </div>
-      </div>
       </div>
     </footer>
   );
