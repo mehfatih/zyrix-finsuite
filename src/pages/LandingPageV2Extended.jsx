@@ -22,6 +22,14 @@ import { WhyUsSection, SectorsSection, IntegrationsSection, FAQSection, WhatsApp
 import { useCountry } from "../hooks/useCountry.jsx";
 import { formatCurrency } from "../utils/formatCurrency.js";
 import { useIsMobile } from "../hooks/useIsMobile";
+import {
+  PLAN_IDS,
+  PLAN_PRICING,
+  PLAN_META,
+  PLAN_FEATURES,
+  TIER_LABELS,
+  CTA_LABELS,
+} from "../utils/planCatalog.js";
 
 // ── Color palette ────────────────────────────────────────────
 const C = {
@@ -1101,80 +1109,81 @@ function CashflowCTA() {
   );
 }
 
-// ── PRICING ───────────────────────────────────────────────────
+// PRICING - SOURCED FROM planCatalog.js (single source of truth)
 function Pricing() {
   const { t, lang, isRTL } = useI18n();
   const { profile } = useCountry();
   const isMobile = useIsMobile();
   const isSaudi = lang === "AR";
-  // Country-specific pricing (matches /pricing page exactly)
-  const COUNTRY_PRICING_LANDING = {
-    TR: { starter: 199, growth: 499 },
-    SA: { starter: 69,  growth: 179 },
-    AE: { starter: 69,  growth: 179 },
-    EG: { starter: 299, growth: 799 },
-    KW: { starter: 5,   growth: 15  },
-    QA: { starter: 69,  growth: 179 },
-    BH: { starter: 7,   growth: 18  },
-    OM: { starter: 7,   growth: 18  },
-    JO: { starter: 13,  growth: 35  },
-    US: { starter: 19,  growth: 49  },
-  };
-  const cp = COUNTRY_PRICING_LANDING[profile?.code] || COUNTRY_PRICING_LANDING.TR;
-  const P = {
-    starter: formatCurrency(cp.starter, profile, lang),
-    growth:  formatCurrency(cp.growth,  profile, lang),
-  };
-  const plans = [
-    {
-      name: "Starter", price: P.starter, popular: false, isCustom: false,
-      desc: t("lv2.price.starterDesc"),
-      features: [t("lv2.price.s1"), t("lv2.price.s2"), t("lv2.price.s3"), t("lv2.price.s4"), t("lv2.price.s5")],
-      btn: t("lv2.cta.startFree"),
-    },
-    {
-      name: "Growth", price: P.growth, popular: true, isCustom: false,
-      desc: t("lv2.price.businessDesc"),
-      features: [t("lv2.price.b1"), t("lv2.price.b2"), t("lv2.price.b3"), t("lv2.price.b4"), t("lv2.price.b5"), t("lv2.price.b6")],
-      btn: t("lv2.cta.startFree"),
-    },
-    {
-      name: "Scale", price: "Custom", popular: false, isCustom: true,
-      desc: t("lv2.price.proDesc"),
-      features: [t("lv2.price.p1"), t("lv2.price.p2"), t("lv2.price.p3"), t("lv2.price.p4"), t("lv2.price.p5"), t("lv2.price.p6")],
-      btn: t("lv2.price.contact"),
-    },
-  ];
 
+  const lng = lang === "TR" ? "TR" : (lang === "AR" ? "AR" : "EN");
+  const countryCode = (profile && profile.code) || "TR";
+  const pricing = PLAN_PRICING[countryCode] || PLAN_PRICING.TR;
+
+  // Build the 3 cards from the catalog
+  const planIds = ["eDonusum", "onMuhasebe", "pro"];
+  const plans = planIds.map((pid) => {
+    const meta = PLAN_META[pid];
+    const features = PLAN_FEATURES[pid];
+    const price = pricing[pid].monthly;
+    const isPro = pid === "pro";
+    return {
+      id: pid,
+      name: meta.name[lng],
+      tagline: meta.tagline[lng],
+      price: price,
+      popular: isPro,
+      badge: meta.badge ? meta.badge[lng] : null,
+      // Show top 7 features (logoFeatures + zyrixExclusive combined)
+      features: [
+        ...(features.logoFeatures[lng] || []).slice(0, 5),
+        ...(features.zyrixExclusive[lng] || []).slice(0, 2),
+      ],
+      cta: CTA_LABELS.activate[lng],
+    };
+  });
+
+  // Localized currency formatting
+  const fmtPrice = (amt) => {
+    const curr = profile && profile.currencySymbol ? profile.currencySymbol : "₺";
+    return curr + amt;
+  };
+
+  // Localized labels
+  const eyebrowLabel = lng === "TR" ? "FIYATLAR" : (lng === "AR" ? "الأسعار" : "PRICING");
+  const titleLine1 = lng === "TR" ? "Isletmenize uygun" : (lng === "AR" ? "اختر الخطة" : "Choose the plan");
+  const titleLine2 = lng === "TR" ? "plani secin" : (lng === "AR" ? "المناسبة لعملك" : "that fits your business");
+  const subText = lng === "TR" ? "Tum planlar 14 gun ucretsiz dener. Gizli ucret yok. Istediginiz zaman iptal edin." : (lng === "AR" ? "كل الخطط تبدأ بتجربة مجانية 14 يوم. لا رسوم خفية. ألغِ في أي وقت." : "All plans start with a 14-day free trial. No hidden fees. Cancel anytime.");
+  const monthLabel = lng === "TR" ? "/ay" : (lng === "AR" ? "/شهر" : "/mo");
+  const viewMoreLabel = lng === "TR" ? "Tum detaylari ve karsilastirmayi gor →" : (lng === "AR" ? "عرض كل التفاصيل والمقارنة ←" : "View full pricing & comparison →");
 
   return (
     <section id="pricing" style={{ background: "white", padding: isMobile ? "64px 16px" : "120px 32px" }}>
       <div style={{ maxWidth: 1280, margin: "0 auto" }}>
-        <div style={{ textAlign: "center", maxWidth: 700, margin: isMobile ? "0 auto 36px" : "0 auto 64px" }}>
+        <div style={{ textAlign: "center", maxWidth: 720, margin: isMobile ? "0 auto 36px" : "0 auto 64px" }}>
           <span style={{
             display: "inline-flex", alignItems: "center", gap: 8,
-            fontFamily: "monospace", fontSize: isMobile ? 13 : 18, fontWeight: 700,
-            letterSpacing: isMobile ? "0.12em" : "0.18em", textTransform: "uppercase", color: isSaudi ? SA.green : C.red,
+            fontFamily: "monospace", fontSize: isMobile ? 13 : 16, fontWeight: 700,
+            letterSpacing: "0.18em", textTransform: "uppercase", color: isSaudi ? SA.green : C.red,
           }}>
-            <span style={{ width: isMobile ? 18 : 24, height: 1, background: isSaudi ? SA.green : C.red }} />
-            {t("lv2.price.eyebrow")}
+            <span style={{ width: 24, height: 1, background: isSaudi ? SA.green : C.red }} />
+            {eyebrowLabel}
           </span>
           <h2 style={{
             fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-            fontSize: "clamp(34px, 4vw, 50px)", fontWeight: 800,
+            fontSize: "clamp(32px, 4vw, 48px)", fontWeight: 800,
             letterSpacing: "-0.03em", lineHeight: 1.1,
             margin: "16px 0 18px", color: C.ink,
           }}>
-            <span>{t("lv2.price.title1")}</span>{" "}
+            <span>{titleLine1}</span>{" "}
             <span style={{
               backgroundImage: isSaudi
                 ? `linear-gradient(135deg, ${SA.green} 0%, ${SA.greenDeep} 100%)`
                 : `linear-gradient(135deg, ${C.red} 0%, ${C.redDeep} 100%)`,
-              WebkitBackgroundClip: "text", backgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-            }}>{t("lv2.price.title2")}</span>
+              WebkitBackgroundClip: "text", backgroundClip: "text", WebkitTextFillColor: "transparent",
+            }}>{titleLine2}</span>
           </h2>
-          <p style={{ fontSize: isMobile ? 14 : 17, color: C.muted, lineHeight: 1.6 }}>{t("lv2.price.sub")}</p>
+          <p style={{ fontSize: isMobile ? 14 : 17, color: C.muted, lineHeight: 1.6 }}>{subText}</p>
         </div>
 
         <div style={{
@@ -1182,7 +1191,7 @@ function Pricing() {
           gap: isMobile ? 16 : 24, maxWidth: 1180, margin: "0 auto", alignItems: "stretch",
         }}>
           {plans.map((plan, i) => (
-            <div key={i} style={{
+            <div key={plan.id} style={{
               background: plan.popular
                 ? (isSaudi ? `linear-gradient(135deg, ${SA.green900} 0%, ${SA.green950} 100%)` : `linear-gradient(135deg, ${C.wine900} 0%, ${C.wine950} 100%)`)
                 : "white",
@@ -1190,19 +1199,15 @@ function Pricing() {
               border: plan.popular ? "none" : `1px solid ${isSaudi ? SA.hairline : C.hairline}`,
               borderRadius: isMobile ? 20 : 28,
               padding: isMobile ? "28px 22px" : "36px 32px",
-              display: "flex",
-              flexDirection: "column",
-              position: "relative",
+              display: "flex", flexDirection: "column", position: "relative",
               transform: plan.popular && !isMobile ? "scale(1.04)" : "none",
               boxShadow: plan.popular
-                ? (isMobile
-                    ? (isSaudi ? "0 14px 32px rgba(0, 25, 12, 0.40)" : "0 14px 32px rgba(42, 3, 6, 0.40)")
-                    : (isSaudi ? "0 24px 60px rgba(0, 25, 12, 0.45)" : "0 24px 60px rgba(42, 3, 6, 0.45)"))
+                ? (isSaudi ? "0 24px 60px rgba(0, 25, 12, 0.45)" : "0 24px 60px rgba(42, 3, 6, 0.45)")
                 : "none",
               transition: "all 0.4s cubic-bezier(0.16, 1, 0.3, 1)",
               overflow: "visible",
             }}>
-              {plan.popular && (
+              {plan.popular && plan.badge && (
                 <>
                   <div style={{
                     position: "absolute", inset: 0, borderRadius: isMobile ? 20 : 28,
@@ -1229,43 +1234,41 @@ function Pricing() {
                       ? "0 16px 40px rgba(0, 108, 53, 0.25)"
                       : "0 16px 40px rgba(227, 10, 23, 0.25)",
                     whiteSpace: "nowrap",
-                  }}>{t("lv2.price.popular")}</div>
+                  }}>{plan.badge}</div>
                 </>
               )}
 
               <div style={{ position: "relative" }}>
                 <div style={{
-                  fontSize: isMobile ? 16 : 18, fontWeight: 800, letterSpacing: "-0.02em",
+                  fontSize: isMobile ? 17 : 20, fontWeight: 800, letterSpacing: "-0.02em",
                   fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-                  marginBottom: 6, color: plan.popular ? "white" : C.ink,
+                  marginBottom: 8, color: plan.popular ? "white" : C.ink, lineHeight: 1.25,
                 }}>{plan.name}</div>
 
                 <div style={{
-                  fontSize: isMobile ? 12.5 : 13, marginBottom: isMobile ? 20 : 28,
-                  color: plan.popular ? "rgba(255, 255, 255, 0.65)" : C.muted,
-                }}>{plan.desc}</div>
+                  fontSize: isMobile ? 12.5 : 13, marginBottom: isMobile ? 22 : 28,
+                  color: plan.popular ? "rgba(255, 255, 255, 0.65)" : C.muted, lineHeight: 1.5,
+                }}>{plan.tagline}</div>
 
-                <div style={{ display: "flex", alignItems: "baseline", gap: 4, marginBottom: isMobile ? 20 : 28 }}>
+                <div style={{ display: "flex", alignItems: "baseline", gap: 4, marginBottom: isMobile ? 22 : 28 }}>
                   <strong style={{
                     fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-                    fontSize: isMobile ? 36 : 48, fontWeight: 800, letterSpacing: "-0.04em", lineHeight: 1,
-                  }}>{plan.price}</strong>
-                  {!plan.isCustom && (
-                    <span style={{
-                      fontSize: isMobile ? 13 : 14, fontWeight: 500,
-                      color: plan.popular ? "rgba(255,255,255,0.65)" : C.muted,
-                    }}>{t("lv2.price.month")}</span>
-                  )}
+                    fontSize: isMobile ? 36 : 44, fontWeight: 800, letterSpacing: "-0.04em", lineHeight: 1,
+                  }}>{fmtPrice(plan.price)}</strong>
+                  <span style={{
+                    fontSize: isMobile ? 13 : 14, fontWeight: 500,
+                    color: plan.popular ? "rgba(255,255,255,0.65)" : C.muted,
+                  }}>{monthLabel}</span>
                 </div>
 
                 <ul style={{ listStyle: "none", display: "flex", flexDirection: "column", gap: isMobile ? 10 : 12, marginBottom: isMobile ? 22 : 32, padding: 0, flexGrow: 1 }}>
                   {plan.features.map((f, j) => (
                     <li key={j} style={{
                       display: "flex", alignItems: "flex-start", gap: 10,
-                      fontSize: 14, fontWeight: 500,
-                      color: plan.popular ? "rgba(255, 255, 255, 0.92)" : C.inkSoft,
+                      fontSize: isMobile ? 13 : 13.5, fontWeight: 500,
+                      color: plan.popular ? "rgba(255, 255, 255, 0.92)" : C.inkSoft, lineHeight: 1.5,
                     }}>
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={plan.popular ? C.emeraldSoft : C.emerald} strokeWidth="3" style={{ flexShrink: 0, marginTop: 2 }}>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={plan.popular ? C.emeraldSoft : C.emerald} strokeWidth="3" style={{ flexShrink: 0, marginTop: 3 }}>
                         <polyline points="20 6 9 17 4 12" />
                       </svg>
                       <span>{f}</span>
@@ -1288,7 +1291,7 @@ function Pricing() {
                     : "none",
                   transition: "all 0.3s",
                 }}>
-                  <span>{plan.btn}</span>
+                  <span>{plan.cta}</span>
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ transform: isRTL ? "scaleX(-1)" : "none" }}>
                     <path d="M5 12h14M12 5l7 7-7 7" />
                   </svg>
@@ -1297,6 +1300,7 @@ function Pricing() {
             </div>
           ))}
         </div>
+
         <div style={{ textAlign: "center", marginTop: isMobile ? 32 : 48 }}>
           <a href="/pricing" style={{
             display: "inline-flex", alignItems: "center", gap: 8,
@@ -1305,13 +1309,9 @@ function Pricing() {
             color: isSaudi ? SA.greenDeep : C.redDeep,
             background: "transparent",
             border: "1.5px solid " + (isSaudi ? SA.green100 : C.wine100),
-            borderRadius: 12, textDecoration: "none",
-            transition: "all 0.2s",
+            borderRadius: 12, textDecoration: "none", transition: "all 0.2s",
           }}>
-            <span>{lang === "AR" ? "عرض كل التفاصيل والمقارنة" : lang === "TR" ? "Tüm detayları ve karşılaştırmayı gör" : "View full pricing & comparison"}</span>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ transform: isRTL ? "scaleX(-1)" : "none" }}>
-              <path d="M5 12h14M12 5l7 7-7 7" />
-            </svg>
+            <span>{viewMoreLabel}</span>
           </a>
         </div>
       </div>
