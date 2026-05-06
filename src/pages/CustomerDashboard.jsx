@@ -63,6 +63,18 @@ const TaxCalendarV2Page           = React.lazy(() => import("./dashboard/tax/Tax
 const VatReportPage               = React.lazy(() => import("./dashboard/tax/VatReportPage"));
 const MaliMusavirPanelPage        = React.lazy(() => import("./dashboard/tax/MaliMusavirPanelPage"));
 const ComplianceWatcherPage       = React.lazy(() => import("./dashboard/tax/ComplianceWatcherPage"));
+
+// Phase 5 — Cash, Bank & AI Finance (lazy-loaded)
+const CashAccountsPage            = React.lazy(() => import("./dashboard/cash/CashAccountsPage"));
+const CashAccountDetailPage       = React.lazy(() => import("./dashboard/cash/CashAccountDetailPage"));
+const BankReconciliationPage      = React.lazy(() => import("./dashboard/cash/BankReconciliationPage"));
+const ChequesPage                 = React.lazy(() => import("./dashboard/cash/ChequesPage"));
+const ChequeDetailPage            = React.lazy(() => import("./dashboard/cash/ChequeDetailPage"));
+const AICfoV2Page                 = React.lazy(() => import("./dashboard/ai-finance/AICfoPage"));
+const CashflowForecastPage        = React.lazy(() => import("./dashboard/ai-finance/CashflowForecastPage"));
+const CashCrisisAlertsPage        = React.lazy(() => import("./dashboard/ai-finance/CashCrisisAlertsPage"));
+const RealProfitPage              = React.lazy(() => import("./dashboard/ai-finance/RealProfitPage"));
+
 import {
   PALETTE_HUES as DASH_PALETTE_HUES,
   getCardPalette as getDashCardPalette,
@@ -1604,16 +1616,37 @@ const SIDEBAR_GROUPS = [
     ],
   },
   {
-    id: "money",
-    label: { TR: "Para & Finans", EN: "Money & Finance", AR: "المال والمالية" },
+    id: "cash",
+    label: { TR: "Nakit & Banka", EN: "Cash & Bank", AR: "النقد والبنك" },
     paletteId: "teal",
+    items: [
+      { id: "cash-accounts",      icon: "💼", label: { TR: "Kasa Hesapları",  EN: "Cash Accounts",      AR: "حسابات النقد" },     tag: "built" },
+      { id: "cash-reconciliation",icon: "🔄", label: { TR: "Banka Mutabakatı",EN: "Bank Reconciliation",AR: "المطابقة البنكية" }, tag: "ai" },
+      { id: "cash-cheques",       icon: "📑", label: { TR: "Çek & Senet",     EN: "Cheques",            AR: "الشيكات" },         tag: "built" },
+    ],
+  },
+  {
+    id: "aifin",
+    label: { TR: "AI Finans", EN: "AI Finance", AR: "المالية AI" },
+    paletteId: "purple",
+    items: [
+      { id: "af-cfo",         icon: "🤖", label: { TR: "AI CFO",            EN: "AI CFO",            AR: "المدير المالي AI" },   tag: "ai" },
+      { id: "af-forecast",    icon: "🔮", label: { TR: "Nakit Tahmini",     EN: "Cashflow Forecast", AR: "توقع التدفق" },         tag: "ai" },
+      { id: "af-crisis",      icon: "🚨", label: { TR: "Kriz Uyarıları",    EN: "Crisis Alerts",     AR: "تنبيهات الأزمة" },     tag: "ai" },
+      { id: "af-real-profit", icon: "📉", label: { TR: "Reel Kâr",          EN: "Real Profit",       AR: "الربح الحقيقي" },       tag: "star" },
+    ],
+  },
+  {
+    id: "money",
+    label: { TR: "Para & Finans (Eski)", EN: "Money & Finance (Legacy)", AR: "المال والمالية (سابق)" },
+    paletteId: "indigo",
     items: [
       { id: "invoices",    icon: "📄", label: { TR: "Faturalar",    EN: "Invoices",   AR: "الفواتير" },         tag: "built" },
       { id: "efatura",     icon: "🧾", label: { TR: "E-Fatura (Eski)", EN: "E-Invoice (Legacy)",  AR: "الفاتورة (سابق)" }, tag: "ai" },
-      { id: "banks",       icon: "🏦", label: { TR: "Bankalar",     EN: "Banks",      AR: "البنوك" },           tag: "ai" },
+      { id: "banks",       icon: "🏦", label: { TR: "Bankalar (Eski)", EN: "Banks (Legacy)",      AR: "البنوك (سابق)" },     tag: "ai" },
       { id: "factoring",   icon: "💰", label: { TR: "Finansman",    EN: "Factoring",  AR: "التمويل" },          tag: "star" },
       { id: "recurring",   icon: "🔄", label: { TR: "Oto. Fatura (Eski)",  EN: "Recurring (Legacy)",  AR: "متكرر (سابق)" },           tag: "built" },
-      { id: "checks",      icon: "📑", label: { TR: "Çek & Senet",  EN: "Checks",     AR: "الشيكات" },          tag: "built" },
+      { id: "checks",      icon: "📑", label: { TR: "Çek (Eski)",  EN: "Checks (Legacy)",     AR: "الشيكات (سابق)" },          tag: "built" },
       { id: "installments",icon: "📅", label: { TR: "Taksit",       EN: "Installments", AR: "أقساط" },         tag: "built" },
     ],
   },
@@ -2735,6 +2768,53 @@ export default function CustomerDashboard() {
           {page === "tax-compliance" && (
             <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
               <ComplianceWatcherPage onNavigate={navigate} />
+            </React.Suspense>
+          )}
+
+          {/* ═══ Phase 5 PAGES — Cash, Bank & AI Finance ════════ */}
+          {page === "cash-accounts" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <CashAccountsPage onNavigate={navigate} />
+            </React.Suspense>
+          )}
+          {page === "cash-account-detail" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <CashAccountDetailPage accountId={pageParams.id} onNavigate={navigate} />
+            </React.Suspense>
+          )}
+          {page === "cash-reconciliation" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <BankReconciliationPage />
+            </React.Suspense>
+          )}
+          {page === "cash-cheques" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <ChequesPage onNavigate={navigate} />
+            </React.Suspense>
+          )}
+          {page === "cash-cheque-detail" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <ChequeDetailPage chequeId={pageParams.id} onNavigate={navigate} />
+            </React.Suspense>
+          )}
+          {page === "af-cfo" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <AICfoV2Page onNavigate={navigate} />
+            </React.Suspense>
+          )}
+          {page === "af-forecast" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <CashflowForecastPage onNavigate={navigate} />
+            </React.Suspense>
+          )}
+          {page === "af-crisis" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <CashCrisisAlertsPage />
+            </React.Suspense>
+          )}
+          {page === "af-real-profit" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <RealProfitPage />
             </React.Suspense>
           )}
 
