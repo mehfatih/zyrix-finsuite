@@ -92,6 +92,15 @@ const HiddenRevenuePage           = React.lazy(() => import("./dashboard/intelli
 const SmartPricingPage            = React.lazy(() => import("./dashboard/intelligence/SmartPricingPage"));
 const DiscountOptimizerPage       = React.lazy(() => import("./dashboard/intelligence/DiscountOptimizerPage"));
 
+// Phase 8 — Predictive Intelligence (lazy-loaded)
+const BusinessDeathPredictorPage  = React.lazy(() => import("./dashboard/predictive/BusinessDeathPredictorPage"));
+const CustomerDnaPage             = React.lazy(() => import("./dashboard/predictive/CustomerDnaPage"));
+const CustomerScoreV2Page         = React.lazy(() => import("./dashboard/predictive/CustomerScorePage"));
+const ChurnPredictionPage         = React.lazy(() => import("./dashboard/predictive/ChurnPredictionPage"));
+const TimeLoopSimulatorPage       = React.lazy(() => import("./dashboard/predictive/TimeLoopSimulatorPage"));
+const InventoryForecastPage       = React.lazy(() => import("./dashboard/predictive/InventoryForecastPage"));
+const CashflowStressTestPage      = React.lazy(() => import("./dashboard/predictive/CashflowStressTestPage"));
+
 import {
   PALETTE_HUES as DASH_PALETTE_HUES,
   getCardPalette as getDashCardPalette,
@@ -1670,6 +1679,20 @@ const SIDEBAR_GROUPS = [
     ],
   },
   {
+    id: "predictive",
+    label: { TR: "★ Tahmin & DNA", EN: "★ Predictive & DNA", AR: "★ التنبؤ والحمض" },
+    paletteId: "violet",
+    items: [
+      { id: "pr-death",     icon: "❤️", label: { TR: "İş Sağlığı",          EN: "Business Health",     AR: "صحة العمل" },          tag: "star" },
+      { id: "pr-dna",       icon: "🧬", label: { TR: "Müşteri DNA",         EN: "Customer DNA",        AR: "حمض العميل" },         tag: "star" },
+      { id: "pr-score",     icon: "🎓", label: { TR: "Müşteri Skor (A-F)",  EN: "Customer Score",      AR: "نقاط العميل" },         tag: "ai" },
+      { id: "pr-churn",     icon: "📉", label: { TR: "Churn Tahmini",       EN: "Churn Prediction",    AR: "توقع الانسحاب" },       tag: "ai" },
+      { id: "pr-timeloop",  icon: "⏳", label: { TR: "Zaman Döngüsü",       EN: "Time-Loop Simulator", AR: "محاكي الزمن" },         tag: "star" },
+      { id: "pr-inventory", icon: "📦", label: { TR: "Stok Tahmini",        EN: "Inventory Forecast",  AR: "توقع المخزون" },        tag: "ai" },
+      { id: "pr-stress",    icon: "🧪", label: { TR: "Stres Testi",         EN: "Stress Test",         AR: "اختبار الضغط" },        tag: "ai" },
+    ],
+  },
+  {
     id: "aifin",
     label: { TR: "AI Finans", EN: "AI Finance", AR: "المالية AI" },
     paletteId: "violet",
@@ -2928,6 +2951,43 @@ export default function CustomerDashboard() {
           {page === "in-discount" && (
             <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
               <DiscountOptimizerPage />
+            </React.Suspense>
+          )}
+
+          {/* ═══ Phase 8 PAGES — Predictive Intelligence ════════ */}
+          {page === "pr-death" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <BusinessDeathPredictorPage />
+            </React.Suspense>
+          )}
+          {page === "pr-dna" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <CustomerDnaPage />
+            </React.Suspense>
+          )}
+          {page === "pr-score" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <CustomerScoreV2Page />
+            </React.Suspense>
+          )}
+          {page === "pr-churn" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <ChurnPredictionPage />
+            </React.Suspense>
+          )}
+          {page === "pr-timeloop" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <TimeLoopSimulatorPage />
+            </React.Suspense>
+          )}
+          {page === "pr-inventory" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <InventoryForecastPage />
+            </React.Suspense>
+          )}
+          {page === "pr-stress" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <CashflowStressTestPage />
             </React.Suspense>
           )}
 
