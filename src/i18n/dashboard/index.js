@@ -24,12 +24,27 @@ import salesTr from "./sales.tr.json";
 import salesEn from "./sales.en.json";
 import salesAr from "./sales.ar.json";
 
+import purchasesTr from "./purchases.tr.json";
+import purchasesEn from "./purchases.en.json";
+import purchasesAr from "./purchases.ar.json";
+
+import productsTr from "./products.tr.json";
+import productsEn from "./products.en.json";
+import productsAr from "./products.ar.json";
+
+import stockTr from "./stock.tr.json";
+import stockEn from "./stock.en.json";
+import stockAr from "./stock.ar.json";
+
 const NAMESPACES = {
-  home:          { TR: homeTr,    EN: homeEn,    AR: homeAr },
-  profile:       { TR: profileTr, EN: profileEn, AR: profileAr },
-  company:       { TR: companyTr, EN: companyEn, AR: companyAr },
-  notifications: { TR: notifTr,   EN: notifEn,   AR: notifAr },
-  sales:         { TR: salesTr,   EN: salesEn,   AR: salesAr },
+  home:          { TR: homeTr,      EN: homeEn,      AR: homeAr },
+  profile:       { TR: profileTr,   EN: profileEn,   AR: profileAr },
+  company:       { TR: companyTr,   EN: companyEn,   AR: companyAr },
+  notifications: { TR: notifTr,     EN: notifEn,     AR: notifAr },
+  sales:         { TR: salesTr,     EN: salesEn,     AR: salesAr },
+  purchases:     { TR: purchasesTr, EN: purchasesEn, AR: purchasesAr },
+  products:      { TR: productsTr,  EN: productsEn,  AR: productsAr },
+  stock:         { TR: stockTr,     EN: stockEn,     AR: stockAr },
 };
 
 export function useDashboardI18n(namespace) {
