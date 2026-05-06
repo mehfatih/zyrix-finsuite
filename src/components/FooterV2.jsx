@@ -344,7 +344,8 @@ export default function FooterV2() {
       </div>
     
 
-      {/* COUNTRY / REGION SELECTOR (dynamic compliance) */}
+      {/* COUNTRY / REGION SELECTOR (HIDDEN - auto-detect via IP) */}
+      {false && (
       <div style={{
         borderTop: "1px solid " + (isSaudi ? SA.hairline : C.hairline),
         padding: "20px 0",
@@ -399,6 +400,7 @@ export default function FooterV2() {
           <span>✓ {taxName} {taxRate}%</span>
         </div>
       </div>
+      )}
     </footer>
   );
 }

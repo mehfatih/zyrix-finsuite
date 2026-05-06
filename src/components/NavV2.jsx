@@ -133,7 +133,7 @@ export default function NavV2() {
           {!isMobile && (
             <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
               <div style={{ display: "inline-flex", marginRight: 4 }}>
-                <CountrySelectorPill mode="dark" compact={false} />
+                {false && <CountrySelectorPill mode="dark" compact={false} />}
               </div>
 
               <div ref={langRef} style={{ position: "relative" }}>
@@ -315,7 +315,7 @@ export default function NavV2() {
             <div style={{ height: 1, background: "rgba(255, 255, 255, 0.1)", marginBottom: 20 }} />
 
             <div style={{ marginBottom: 16 }}>
-              <CountrySelectorPill mode="dark" compact={false} />
+              {false && <CountrySelectorPill mode="dark" compact={false} />}
             </div>
 
             <div style={{ marginBottom: 24 }}>
