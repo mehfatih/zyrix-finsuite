@@ -561,9 +561,9 @@ export default function IntegrationsPage() {
             {/* SVG pipeline */}
             <div style={{ position: "relative", width: "100%", overflow: "hidden" }}>
               <svg
-                viewBox="0 0 1200 200"
+                viewBox="0 0 1200 220"
                 width="100%"
-                height="200"
+                height="220"
                 preserveAspectRatio="xMidYMid meet"
                 style={{ display: "block", overflow: "visible" }}
               >
@@ -610,7 +610,7 @@ export default function IntegrationsPage() {
                   return (
                     <g key={n.id} style={{ cursor: "pointer" }} onClick={() => setActiveNode(n.id)}>
                       <circle
-                        cx={cx} cy={100} r={isActive ? 28 : 22}
+                        cx={cx} cy={100} r={isActive ? 36 : 30}
                         fill={isActive ? themeColor : "#fff"}
                         stroke={isActive ? themeDeep : T.hairline}
                         strokeWidth={isActive ? 3 : 1.5}
@@ -622,9 +622,9 @@ export default function IntegrationsPage() {
                         }}
                       />
                       <text
-                        x={cx} y={106}
+                        x={cx} y={108}
                         textAnchor="middle"
-                        fontSize="13"
+                        fontSize="22"
                         fontWeight="950"
                         fontFamily="'Inter Tight', system-ui, sans-serif"
                         fill={isActive ? "#fff" : themeColor}
@@ -632,9 +632,9 @@ export default function IntegrationsPage() {
                         {String(i + 1).padStart(2, "0")}
                       </text>
                       <text
-                        x={cx} y={158}
+                        x={cx} y={170}
                         textAnchor="middle"
-                        fontSize="14"
+                        fontSize="26"
                         fontWeight="900"
                         fill={T.ink}
                       >
@@ -703,7 +703,7 @@ export default function IntegrationsPage() {
 
             <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 18 }}>
               {catList.map((cat) => (
-                <div key={cat.id} style={{ ...cardBase, padding: 28 }}>
+                <div key={cat.id} style={{ ...cardBase, padding: 28, textAlign: "center" }}>
                   <div
                     style={{
                       width: 52,
@@ -714,6 +714,7 @@ export default function IntegrationsPage() {
                       background: "rgba(" + themeGlowRGB + ",.08)",
                       color: themeColor,
                       marginBottom: 18,
+                      marginInline: "auto",
                     }}
                   >
                     {renderCatIcon(cat.id, themeColor)}
