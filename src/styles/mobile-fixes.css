@@ -254,3 +254,30 @@ html, body {
     gap: 18px !important;
   }
 }
+
+
+/* ============================================================
+   ADDITIONAL GRID PATTERNS - flatten on mobile
+   The original mobile-fixes block missed these specific
+   gridTemplateColumns patterns used in FeaturesPage and PricingPage:
+     - ".9fr 1.1fr"
+     - "0.9fr 1.1fr"
+     - "1fr .75fr"
+     - "1fr 0.75fr"
+     - "repeat(3, 1fr)" with a space (already handled but make explicit)
+   These caused horizontal overflow because the rule above only matches
+   exact substrings.
+   ============================================================ */
+@media (max-width: 768px) {
+  body:not(.landing-page) [style*=".9fr 1.1fr"],
+  body:not(.landing-page) [style*="0.9fr 1.1fr"],
+  body:not(.landing-page) [style*="1fr .75fr"],
+  body:not(.landing-page) [style*="1fr 0.75fr"],
+  body:not(.landing-page) [style*="1.1fr .9fr"],
+  body:not(.landing-page) [style*="1.1fr 0.9fr"],
+  body:not(.landing-page) [style*=".75fr 1fr"],
+  body:not(.landing-page) [style*="0.75fr 1fr"] {
+    grid-template-columns: 1fr !important;
+    gap: 18px !important;
+  }
+}
