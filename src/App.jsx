@@ -72,6 +72,11 @@ const MigrationHistoryPage      = React.lazy(() => import("./pages/migration/Mig
 const ExportCenterPage          = React.lazy(() => import("./pages/migration/ExportCenterPage.jsx"));
 const MigrationConciergePage    = React.lazy(() => import("./pages/migration/MigrationConciergePage.jsx"));
 
+// ── Lazy: Phase 14 admin operations ────────────────────────────
+const AdminLoginPage     = React.lazy(() => import("./pages/admin/AdminLoginPage.jsx"));
+const AdminLayout        = React.lazy(() => import("./components/admin/AdminLayout.jsx"));
+const AdminDashboardPage = React.lazy(() => import("./pages/admin/AdminDashboardPage.jsx"));
+
 // ── Lazy: Phase 13 trust + security ────────────────────────────
 const TrustCenterPage             = React.lazy(() => import("./pages/trust/TrustCenterPage.jsx"));
 const SecurityWhitepaperPage      = React.lazy(() => import("./pages/trust/SecurityWhitepaperPage.jsx"));
@@ -119,7 +124,14 @@ export default function App() {
             <Route path="/register"     element={<RegisterPage />} />
             <Route path="/dashboard/*"  element={<RequireAuth><CustomerDashboard /></RequireAuth>} />
             <Route path="/payment"      element={<RequireAuth><PaymentPage /></RequireAuth>} />
-            <Route path="/admin/*"      element={<RequireAuth role="admin"><AdminPanel /></RequireAuth>} />
+            {/* Phase 14 — Admin Operations Center (separate auth) */}
+            <Route path="/admin/login"  element={<AdminLoginPage />} />
+            <Route path="/admin"        element={<AdminLayout />}>
+              <Route index            element={<AdminDashboardPage />} />
+              <Route path="dashboard" element={<AdminDashboardPage />} />
+            </Route>
+            {/* Legacy customer-side admin panel — kept for now */}
+            <Route path="/admin-legacy/*" element={<RequireAuth role="admin"><AdminPanel /></RequireAuth>} />
             <Route path="/team"         element={<RequireAuth><TeamPage /></RequireAuth>} />
             <Route path="/campaigns"    element={<RequireAuth><CampaignsPage /></RequireAuth>} />
             <Route path="/invite/:token" element={<InviteAcceptPage />} />

@@ -615,47 +615,69 @@ export default function LoginPage() {
                   </div>
                 </form>
 
-                <div
-                  style={{
-                    marginTop: 16,
-                    display: "grid",
-                    gridTemplateColumns: "1fr 1fr",
-                    gap: 10,
-                  }}
-                >
-                  <Link
-                    to="/login/otp"
-                    style={{
-                      borderRadius: 14,
-                      padding: "13px 14px",
-                      color: T.ink,
-                      background: "#fff",
-                      border: "1px solid " + T.hairline,
-                      textDecoration: "none",
-                      textAlign: "center",
-                      fontSize: 13,
-                      fontWeight: 900,
-                    }}
-                  >
-                    {t.secondaryOtp}
-                  </Link>
-
+                {/* Phase 14 — Highly visible signup CTA */}
+                <div style={{ marginTop: 22, paddingTop: 20, borderTop: "1px solid " + T.hairline, textAlign: "center" }}>
+                  <p style={{ fontSize: 13, color: T.muted, fontWeight: 700, margin: "0 0 12px" }}>
+                    {lang === "AR" ? "ليس لديك حساب؟" : lang === "EN" ? "Don't have an account?" : "Hesabın yok mu?"}
+                  </p>
                   <Link
                     to="/register"
                     style={{
+                      display: "block",
+                      width: "100%",
+                      padding: "16px 20px",
+                      background: "linear-gradient(135deg, " + T.red + ", " + T.redDeep + ")",
+                      color: "#fff",
                       borderRadius: 14,
-                      padding: "13px 14px",
-                      color: T.ink,
-                      background: "#fff",
-                      border: "1px solid " + T.hairline,
-                      textDecoration: "none",
-                      textAlign: "center",
-                      fontSize: 13,
+                      fontSize: 15,
                       fontWeight: 900,
+                      textDecoration: "none",
+                      boxShadow: "0 12px 28px " + T.red + "40",
+                      letterSpacing: "0.01em",
+                      marginBottom: 12,
                     }}
                   >
-                    {t.secondaryRegister}
+                    🚀 {lang === "AR" ? "أنشئ حساباً — ابدأ النسخة المجانية" : lang === "EN" ? "Sign Up — Start Free Trial" : "Kayıt Ol — Ücretsiz Dene"}
                   </Link>
+                  <Link
+                    to="/register"
+                    style={{
+                      display: "inline-block",
+                      fontSize: 13,
+                      color: T.red,
+                      textDecoration: "underline",
+                      fontWeight: 700,
+                      marginBottom: 14,
+                    }}
+                  >
+                    {lang === "AR" ? "أنشئ حساباً جديداً / سجّل" : lang === "EN" ? "Create New Account / Register" : "Yeni Hesap Aç / Kayıt"}
+                  </Link>
+                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginTop: 10 }}>
+                    <Link
+                      to="/login/otp"
+                      style={{
+                        borderRadius: 12, padding: "10px 12px",
+                        color: T.ink, background: "#fff",
+                        border: "1px solid " + T.hairline,
+                        textDecoration: "none", textAlign: "center",
+                        fontSize: 12, fontWeight: 700,
+                      }}
+                    >
+                      📱 {t.secondaryOtp}
+                    </Link>
+                    <Link
+                      to="/login/forgot"
+                      style={{
+                        borderRadius: 12, padding: "10px 12px",
+                        color: T.muted, background: "#fff",
+                        border: "1px solid " + T.hairline,
+                        textDecoration: "none", textAlign: "center",
+                        fontSize: 12, fontWeight: 700,
+                      }}
+                    >
+                      🔑 {lang === "AR" ? "نسيت كلمة المرور؟" : lang === "EN" ? "Forgot Password?" : "Şifremi Unuttum?"}
+                    </Link>
+                  </div>
                 </div>
               </div>
 
