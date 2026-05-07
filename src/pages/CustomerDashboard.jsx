@@ -101,6 +101,16 @@ const TimeLoopSimulatorPage       = React.lazy(() => import("./dashboard/predict
 const InventoryForecastPage       = React.lazy(() => import("./dashboard/predictive/InventoryForecastPage"));
 const CashflowStressTestPage      = React.lazy(() => import("./dashboard/predictive/CashflowStressTestPage"));
 
+// Phase 9 — Cognitive Companion (lazy-loaded)
+const NegotiationCoachPage        = React.lazy(() => import("./dashboard/cognitive/NegotiationCoachPage"));
+const DecisionManagerPage         = React.lazy(() => import("./dashboard/cognitive/DecisionManagerPage"));
+const WellnessIndexPage           = React.lazy(() => import("./dashboard/cognitive/WellnessIndexPage"));
+const FutureSelfPage              = React.lazy(() => import("./dashboard/cognitive/FutureSelfPage"));
+const PredictiveCalendarPage      = React.lazy(() => import("./dashboard/cognitive/PredictiveCalendarPage"));
+const ARStorefrontPage            = React.lazy(() => import("./dashboard/cognitive/ARStorefrontPage"));
+const ARReceiptPage               = React.lazy(() => import("./dashboard/cognitive/ARReceiptPage"));
+const FraudDetectionPage          = React.lazy(() => import("./dashboard/cognitive/FraudDetectionPage"));
+
 import {
   PALETTE_HUES as DASH_PALETTE_HUES,
   getCardPalette as getDashCardPalette,
@@ -1693,6 +1703,21 @@ const SIDEBAR_GROUPS = [
     ],
   },
   {
+    id: "cognitive",
+    label: { TR: "★ Bilişsel Yoldaş", EN: "★ Cognitive Companion", AR: "★ الرفيق المعرفي" },
+    paletteId: "purple",
+    items: [
+      { id: "co-coach",     icon: "🎙", label: { TR: "Müzakere Koçu",      EN: "Negotiation Coach",   AR: "مدرّب التفاوض" },        tag: "star" },
+      { id: "co-decisions", icon: "🧠", label: { TR: "Karar Yöneticisi",   EN: "Decision Manager",    AR: "مدير القرارات" },        tag: "star" },
+      { id: "co-wellness",  icon: "💚", label: { TR: "İş Wellness",        EN: "Wellness Index",      AR: "صحة العمل" },           tag: "ai" },
+      { id: "co-future",    icon: "🔮", label: { TR: "Gelecek Sen",        EN: "Future Self",         AR: "أنت في المستقبل" },     tag: "star" },
+      { id: "co-calendar",  icon: "📅", label: { TR: "AI Takvim",          EN: "AI Calendar",         AR: "تقويم AI" },             tag: "ai" },
+      { id: "co-ar-store",  icon: "📷", label: { TR: "AR Mağaza",          EN: "AR Storefront",       AR: "متجر AR" },              tag: "star" },
+      { id: "co-ar-receipt",icon: "📸", label: { TR: "AR Fiş Tarayıcı",    EN: "AR Receipt Scanner",  AR: "ماسح AR" },              tag: "star" },
+      { id: "co-fraud",     icon: "🛡", label: { TR: "Dolandırıcılık AI", EN: "Fraud Detection",     AR: "كشف الاحتيال" },         tag: "ai" },
+    ],
+  },
+  {
     id: "aifin",
     label: { TR: "AI Finans", EN: "AI Finance", AR: "المالية AI" },
     paletteId: "violet",
@@ -2988,6 +3013,48 @@ export default function CustomerDashboard() {
           {page === "pr-stress" && (
             <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
               <CashflowStressTestPage />
+            </React.Suspense>
+          )}
+
+          {/* ═══ Phase 9 PAGES — Cognitive Companion ════════════ */}
+          {page === "co-coach" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <NegotiationCoachPage />
+            </React.Suspense>
+          )}
+          {page === "co-decisions" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <DecisionManagerPage />
+            </React.Suspense>
+          )}
+          {page === "co-wellness" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <WellnessIndexPage />
+            </React.Suspense>
+          )}
+          {page === "co-future" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <FutureSelfPage />
+            </React.Suspense>
+          )}
+          {page === "co-calendar" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <PredictiveCalendarPage />
+            </React.Suspense>
+          )}
+          {page === "co-ar-store" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <ARStorefrontPage />
+            </React.Suspense>
+          )}
+          {page === "co-ar-receipt" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <ARReceiptPage />
+            </React.Suspense>
+          )}
+          {page === "co-fraud" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <FraudDetectionPage />
             </React.Suspense>
           )}
 
