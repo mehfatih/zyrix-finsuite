@@ -52,6 +52,19 @@ const KnowledgeBasePage   = React.lazy(() => import("./pages/help/KnowledgeBaseP
 const KeyboardShortcutsPage = React.lazy(() => import("./pages/help/KeyboardShortcutsPage.jsx"));
 const WhatsNewPage        = React.lazy(() => import("./pages/help/WhatsNewPage.jsx"));
 
+// ── Lazy: Phase 13 support center ──────────────────────────────
+const SupportHomePage           = React.lazy(() => import("./pages/support/SupportHomePage.jsx"));
+const SupportKnowledgeBasePage  = React.lazy(() => import("./pages/support/KnowledgeBasePage.jsx"));
+const ArticleDetailPage         = React.lazy(() => import("./pages/support/ArticleDetailPage.jsx"));
+const TicketSubmitPage          = React.lazy(() => import("./pages/support/TicketSubmitPage.jsx"));
+const MyTicketsPage             = React.lazy(() => import("./pages/support/MyTicketsPage.jsx"));
+const TicketDetailPage          = React.lazy(() => import("./pages/support/TicketDetailPage.jsx"));
+const ContactSupportPage        = React.lazy(() => import("./pages/support/ContactSupportPage.jsx"));
+const AdminTicketsPage          = React.lazy(() => import("./pages/admin/support/AdminTicketsPage.jsx"));
+const AdminTicketDetail         = React.lazy(() => import("./pages/admin/support/AdminTicketDetail.jsx"));
+const KnowledgeBaseAdmin        = React.lazy(() => import("./pages/admin/support/KnowledgeBaseAdmin.jsx"));
+const SupportAnalyticsPage      = React.lazy(() => import("./pages/admin/support/SupportAnalyticsPage.jsx"));
+
 function HomeRedirect() {
   const { user, loading } = useAuth();
   if (loading) return null;
@@ -105,6 +118,20 @@ export default function App() {
             <Route path="/help"           element={<RequireAuth><KnowledgeBasePage /></RequireAuth>} />
             <Route path="/help/shortcuts" element={<RequireAuth><KeyboardShortcutsPage /></RequireAuth>} />
             <Route path="/help/whats-new" element={<RequireAuth><WhatsNewPage /></RequireAuth>} />
+
+            {/* Support center (Phase 13) — public KB + ticketing */}
+            <Route path="/support"                   element={<SupportHomePage />} />
+            <Route path="/destek"                    element={<SupportHomePage />} />
+            <Route path="/support/kb"                element={<SupportKnowledgeBasePage />} />
+            <Route path="/support/article/:slug"     element={<ArticleDetailPage />} />
+            <Route path="/support/contact"           element={<ContactSupportPage />} />
+            <Route path="/support/tickets/new"       element={<RequireAuth><TicketSubmitPage /></RequireAuth>} />
+            <Route path="/support/tickets"           element={<RequireAuth><MyTicketsPage /></RequireAuth>} />
+            <Route path="/support/tickets/:id"       element={<RequireAuth><TicketDetailPage /></RequireAuth>} />
+            <Route path="/admin/support"             element={<RequireAuth role="admin"><AdminTicketsPage /></RequireAuth>} />
+            <Route path="/admin/support/tickets/:id" element={<RequireAuth role="admin"><AdminTicketDetail /></RequireAuth>} />
+            <Route path="/admin/support/kb"          element={<RequireAuth role="admin"><KnowledgeBaseAdmin /></RequireAuth>} />
+            <Route path="/admin/support/analytics"   element={<RequireAuth role="admin"><SupportAnalyticsPage /></RequireAuth>} />
 
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/privacy" element={<PrivacyPage />} />
