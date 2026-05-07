@@ -135,6 +135,7 @@ const InfluencerTrackingPage      = React.lazy(() => import("./dashboard/ecosyst
 
 import SkeletonScreen from "../components/dashboard/SkeletonScreen";
 import SupportChatWidget from "../components/dashboard/SupportChatWidget";
+import TrustFooterStrip from "../components/trust/TrustFooterStrip";
 
 import {
   PALETTE_HUES as DASH_PALETTE_HUES,
@@ -1906,6 +1907,30 @@ const SIDEBAR_GROUPS = [
     ],
   },
   {
+    id: "phase13-support",
+    label: { TR: "Destek & Veri", EN: "Support & Data", AR: "الدعم والبيانات" },
+    paletteId: "wine",
+    items: [
+      { id: "p13-support",   icon: "💬", label: { TR: "Destek Merkezi", EN: "Support Center",  AR: "مركز الدعم" },     href: "/support",            tag: "built" },
+      { id: "p13-tickets",   icon: "🎫", label: { TR: "Taleplerim",     EN: "My Tickets",      AR: "تذاكري" },          href: "/support/tickets",    tag: "built" },
+      { id: "p13-migration", icon: "📦", label: { TR: "Veri Aktarımı",  EN: "Migration",       AR: "نقل البيانات" },    href: "/migration",          tag: "built" },
+      { id: "p13-export",    icon: "📤", label: { TR: "Veri İhracı",    EN: "Export Center",   AR: "مركز التصدير" },    href: "/migration/export",   tag: "built" },
+    ],
+  },
+  {
+    id: "phase13-security",
+    label: { TR: "★ Güvenlik & Güven", EN: "★ Security & Trust", AR: "★ الأمان والثقة" },
+    paletteId: "indigo",
+    items: [
+      { id: "p13-trust",      icon: "🛡", label: { TR: "Güven Merkezi",     EN: "Trust Center",     AR: "مركز الثقة" },           href: "/trust",                  tag: "star" },
+      { id: "p13-2fa",        icon: "🔐", label: { TR: "2FA Ayarı",         EN: "Two-Factor Auth",  AR: "المصادقة الثنائية" },    href: "/settings/2fa",           tag: "star" },
+      { id: "p13-sessions",   icon: "💻", label: { TR: "Aktif Oturumlar",   EN: "Active Sessions",  AR: "الجلسات النشطة" },       href: "/settings/sessions",      tag: "built" },
+      { id: "p13-audit",      icon: "📋", label: { TR: "Denetim Günlüğü",   EN: "Audit Log",        AR: "سجل التدقيق" },          href: "/settings/audit-log",     tag: "built" },
+      { id: "p13-dsr",        icon: "📥", label: { TR: "KVKK / GDPR İhraç", EN: "KVKK/GDPR Export", AR: "تصدير KVKK/GDPR" },     href: "/settings/data-export",   tag: "built" },
+      { id: "p13-residency",  icon: "🌐", label: { TR: "Veri Konumu",       EN: "Data Residency",   AR: "موقع البيانات" },        href: "/settings/residency",     tag: "built" },
+    ],
+  },
+  {
     id: "account",
     label: { TR: "Hesap", EN: "Account", AR: "الحساب" },
     paletteId: "wine",
@@ -2057,7 +2082,12 @@ function Sidebar({ page, setPage, user, logout, unreadCount, onNotifClick, onSet
                       <button
                         key={item.id}
                         onClick={() => {
-                          setPage(item.id);
+                          if (item.href) {
+                            // External-route sidebar items (Phase 13: support, migration, security)
+                            if (typeof window !== "undefined") window.location.href = item.href;
+                          } else {
+                            setPage(item.id);
+                          }
                           onMobileClose?.();
                         }}
                         style={{
@@ -3211,6 +3241,7 @@ export default function CustomerDashboard() {
 
         </main>
       </div>
+      <TrustFooterStrip />
       <SupportChatWidget />
     </>
   );
