@@ -80,6 +80,10 @@ import marketingTr from "./marketing.tr.json";
 import marketingEn from "./marketing.en.json";
 import marketingAr from "./marketing.ar.json";
 
+import ecosystemTr from "./ecosystem.tr.json";
+import ecosystemEn from "./ecosystem.en.json";
+import ecosystemAr from "./ecosystem.ar.json";
+
 const NAMESPACES = {
   home:          { TR: homeTr,         EN: homeEn,         AR: homeAr },
   profile:       { TR: profileTr,      EN: profileEn,      AR: profileAr },
@@ -100,6 +104,7 @@ const NAMESPACES = {
   cognitive:     { TR: cognitiveTr,    EN: cognitiveEn,    AR: cognitiveAr },
   "voice-cx":    { TR: voiceCxTr,      EN: voiceCxEn,      AR: voiceCxAr },
   marketing:     { TR: marketingTr,    EN: marketingEn,    AR: marketingAr },
+  ecosystem:     { TR: ecosystemTr,    EN: ecosystemEn,    AR: ecosystemAr },
 };
 
 export function useDashboardI18n(namespace) {
