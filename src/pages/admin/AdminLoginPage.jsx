@@ -4,7 +4,7 @@
 // white inputs, gold focus, dark-navy CTA, force-password + 2FA gates.
 // Trilingual (TR / EN / AR) with RTL support.
 // ================================================================
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { adminLogin, setAdminToken, setAdminUser, changeAdminPassword, setupAdmin2FA, verifyAdmin2FA } from "../../utils/admin/adminApi";
 import { ADMIN_BRAND, CRITICAL_RED } from "../../utils/admin/adminPalette";
@@ -99,51 +99,134 @@ function ZyrixLogo() {
 
 function LanguageSwitcher({ isRTL }) {
   const { lang, setLang, t } = useI18n();
+  const [open, setOpen] = useState(false);
+  const wrapRef = useRef(null);
+
+  const current = SUPPORTED_LANGS.find((l) => l.code === lang) || SUPPORTED_LANGS[0];
+  const others  = SUPPORTED_LANGS.filter((l) => l.code !== current.code);
+
+  // Close on outside click + Escape key
+  useEffect(() => {
+    if (!open) return;
+    const onDocClick = (e) => {
+      if (wrapRef.current && !wrapRef.current.contains(e.target)) setOpen(false);
+    };
+    const onKey = (e) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("mousedown", onDocClick);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDocClick);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  const sideKey = isRTL ? "left" : "right";
+
   return (
     <div
+      ref={wrapRef}
       aria-label={t("adminLogin.langSwitcher")}
       style={{
         position: "absolute",
         top: 18,
-        [isRTL ? "left" : "right"]: 18,
-        display: "flex",
-        gap: 6,
-        background: "rgba(255,255,255,0.10)",
-        border: "1px solid rgba(255,255,255,0.20)",
-        backdropFilter: "blur(10px)",
-        WebkitBackdropFilter: "blur(10px)",
-        borderRadius: 999,
-        padding: 4,
+        [sideKey]: 18,
+        width: 110,
         zIndex: 20,
       }}
     >
-      {SUPPORTED_LANGS.map((l) => {
-        const active = l.code === lang;
-        return (
-          <button
-            key={l.code}
-            type="button"
-            onClick={() => setLang(l.code)}
-            aria-pressed={active}
-            style={{
-              border: "none",
-              cursor: "pointer",
-              padding: "6px 10px",
-              borderRadius: 999,
-              fontSize: 12,
-              fontWeight: 800,
-              letterSpacing: "0.04em",
-              background: active ? GOLD : "transparent",
-              color: active ? NAVY_DEEP : "rgba(255,255,255,0.92)",
-              display: "flex", alignItems: "center", gap: 4,
-              transition: "background 160ms ease, color 160ms ease",
-            }}
-          >
-            <span aria-hidden="true">{l.flag}</span>
-            <span>{l.code}</span>
-          </button>
-        );
-      })}
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        style={{
+          width: "100%",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: 8,
+          padding: "8px 12px",
+          border: "1px solid rgba(255,255,255,0.22)",
+          background: "rgba(255,255,255,0.10)",
+          backdropFilter: "blur(10px)",
+          WebkitBackdropFilter: "blur(10px)",
+          borderRadius: 999,
+          color: "#fff",
+          fontSize: 13,
+          fontWeight: 800,
+          letterSpacing: "0.04em",
+          cursor: "pointer",
+          boxShadow: "0 4px 14px rgba(0,0,0,0.20)",
+          transition: "background 160ms ease, border-color 160ms ease",
+        }}
+      >
+        <span style={{ display: "flex", alignItems: "center", gap: 6 }}>
+          <span aria-hidden="true" style={{ fontSize: 16, lineHeight: 1 }}>{current.flag}</span>
+          <span>{current.code}</span>
+        </span>
+        <span aria-hidden="true" style={{
+          fontSize: 10,
+          opacity: 0.85,
+          transform: open ? "rotate(180deg)" : "rotate(0deg)",
+          transition: "transform 180ms ease",
+        }}>▼</span>
+      </button>
+
+      {open && (
+        <div
+          role="listbox"
+          className="admin-login-lang-menu"
+          style={{
+            position: "absolute",
+            top: "calc(100% + 6px)",
+            [sideKey]: 0,
+            width: "100%",
+            background: "rgba(20, 5, 8, 0.78)",
+            backdropFilter: "blur(14px)",
+            WebkitBackdropFilter: "blur(14px)",
+            border: "1px solid rgba(255,255,255,0.22)",
+            borderRadius: 14,
+            padding: 4,
+            boxShadow: "0 18px 44px rgba(0,0,0,0.45)",
+            display: "flex",
+            flexDirection: "column",
+            gap: 2,
+          }}
+        >
+          {others.map((l) => (
+            <button
+              key={l.code}
+              type="button"
+              role="option"
+              aria-selected={false}
+              onClick={() => { setLang(l.code); setOpen(false); }}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: 8,
+                padding: "8px 12px",
+                border: "none",
+                background: "transparent",
+                color: "#fff",
+                fontSize: 13,
+                fontWeight: 700,
+                letterSpacing: "0.03em",
+                borderRadius: 10,
+                cursor: "pointer",
+                textAlign: isRTL ? "right" : "left",
+                transition: "background 140ms ease",
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255,255,255,0.12)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
+            >
+              <span aria-hidden="true" style={{ fontSize: 16, lineHeight: 1 }}>{l.flag}</span>
+              <span>{l.code}</span>
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -315,8 +398,31 @@ export default function AdminLoginPage() {
           50%  { box-shadow: 0 14px 34px rgba(0,0,0,0.45), 0 0 0 8px rgba(255, 215, 0, 0); }
           100% { box-shadow: 0 12px 28px rgba(0,0,0,0.35), 0 0 0 0 rgba(255, 215, 0, 0); }
         }
+        @keyframes adminLoginShake {
+          0%, 100% { transform: translateX(0); }
+          15%      { transform: translateX(-8px); }
+          30%      { transform: translateX(7px); }
+          45%      { transform: translateX(-5px); }
+          60%      { transform: translateX(4px); }
+          75%      { transform: translateX(-2px); }
+          90%      { transform: translateX(1px); }
+        }
+        @keyframes adminLoginErrorGlow {
+          0%   { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.55), 0 8px 24px rgba(220, 38, 38, 0.35); }
+          50%  { box-shadow: 0 0 0 6px rgba(220, 38, 38, 0.0),  0 8px 24px rgba(220, 38, 38, 0.45); }
+          100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.0),    0 8px 24px rgba(220, 38, 38, 0.35); }
+        }
         .admin-login-card { animation: adminLoginCardIn 500ms ease-out; }
         .admin-login-btn:not(:disabled) { animation: adminLoginButtonGlow 2.6s ease-in-out infinite; }
+        .admin-login-error {
+          animation: adminLoginShake 0.4s cubic-bezier(.36,.07,.19,.97) both,
+                     adminLoginErrorGlow 2.2s ease-in-out infinite 0.4s;
+          will-change: transform, box-shadow;
+        }
+        .admin-login-lang-menu {
+          animation: adminLoginCardIn 180ms ease-out;
+          transform-origin: top right;
+        }
         .admin-login-flag { animation-name: adminLoginFloat; animation-iteration-count: infinite; animation-timing-function: ease-in-out; will-change: transform; }
         .admin-login-particle { animation-name: adminLoginParticle; animation-iteration-count: infinite; animation-timing-function: ease-in-out; }
         .admin-login-pulse { animation: adminLoginPulseRadial 15s ease-in-out infinite; }
@@ -404,17 +510,33 @@ export default function AdminLoginPage() {
         </div>
 
         {hasSubmitted && error && !isNoiseError(error) && (
-          <div role="alert" style={{
-            padding: "10px 14px",
-            background: `${crit.base}30`,
-            border: `1px solid ${crit.base}60`,
-            borderRadius: 10,
-            color: "#fff",
-            fontSize: 12,
-            fontWeight: 700,
-            marginBottom: 16,
-          }}>
-            ⚠ {error}
+          <div
+            key={error}
+            role="alert"
+            aria-live="assertive"
+            className="admin-login-error"
+            style={{
+              padding: "14px 16px",
+              background: "#DC2626",
+              border: "2px solid #FCA5A5",
+              borderRadius: 12,
+              color: "#fff",
+              fontSize: 13,
+              fontWeight: 800,
+              letterSpacing: "0.01em",
+              marginBottom: 18,
+              display: "flex",
+              alignItems: "center",
+              gap: 12,
+            }}
+          >
+            <span aria-hidden="true" style={{
+              fontSize: 24,
+              lineHeight: 1,
+              filter: "drop-shadow(0 1px 2px rgba(0,0,0,0.35))",
+              flexShrink: 0,
+            }}>⚠️</span>
+            <span style={{ flex: 1, lineHeight: 1.4 }}>{error}</span>
           </div>
         )}
 
