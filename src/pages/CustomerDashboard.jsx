@@ -121,6 +121,18 @@ const ReviewOptimizerPage         = React.lazy(() => import("./dashboard/voice-c
 const EmailMarketingPage          = React.lazy(() => import("./dashboard/voice-cx/EmailMarketingPage"));
 const VoiceCxCampaignsPage        = React.lazy(() => import("./dashboard/voice-cx/CampaignsPage"));
 
+// Phase 11 — Ecosystem Plays (lazy-loaded)
+const CoFounderModePage           = React.lazy(() => import("./dashboard/ecosystem/CoFounderModePage"));
+const ZyrixTwinPage               = React.lazy(() => import("./dashboard/ecosystem/ZyrixTwinPage"));
+const B2BMarketplacePage          = React.lazy(() => import("./dashboard/ecosystem/B2BMarketplacePage"));
+const CapitalPage                 = React.lazy(() => import("./dashboard/ecosystem/CapitalPage"));
+const InsurancePage               = React.lazy(() => import("./dashboard/ecosystem/InsurancePage"));
+const EducationPage               = React.lazy(() => import("./dashboard/ecosystem/EducationPage"));
+const NetworkIntelligencePage     = React.lazy(() => import("./dashboard/ecosystem/NetworkIntelligencePage"));
+const SupplierHealthPage          = React.lazy(() => import("./dashboard/ecosystem/SupplierHealthPage"));
+const OpenBankingAIPage           = React.lazy(() => import("./dashboard/ecosystem/OpenBankingAIPage"));
+const InfluencerTrackingPage      = React.lazy(() => import("./dashboard/ecosystem/InfluencerTrackingPage"));
+
 import {
   PALETTE_HUES as DASH_PALETTE_HUES,
   getCardPalette as getDashCardPalette,
@@ -1743,6 +1755,23 @@ const SIDEBAR_GROUPS = [
     ],
   },
   {
+    id: "ecosystem",
+    label: { TR: "★ Ekosistem", EN: "★ Ecosystem", AR: "★ النظام البيئي" },
+    paletteId: "wine",
+    items: [
+      { id: "eco-cofounder",  icon: "🤖", label: { TR: "AI Kurucu Ortak",  EN: "AI Co-Founder",     AR: "المؤسس الشريك AI" }, tag: "star" },
+      { id: "eco-twin",       icon: "🌐", label: { TR: "Zyrix Twin",       EN: "Zyrix Twin",        AR: "Zyrix Twin" },        tag: "star" },
+      { id: "eco-b2b",        icon: "🤝", label: { TR: "B2B Pazaryeri",    EN: "B2B Marketplace",   AR: "سوق B2B" },           tag: "star" },
+      { id: "eco-capital",    icon: "🏦", label: { TR: "Zyrix Capital",    EN: "Zyrix Capital",     AR: "Zyrix Capital" },     tag: "star" },
+      { id: "eco-insurance",  icon: "🛡", label: { TR: "Sigorta Pazaryeri",EN: "Insurance",         AR: "التأمين" },           tag: "star" },
+      { id: "eco-education",  icon: "🎓", label: { TR: "Üniversite",       EN: "University",        AR: "الجامعة" },           tag: "star" },
+      { id: "eco-network",    icon: "📡", label: { TR: "Pazaryeri Zekâsı", EN: "Network Intel",     AR: "شبكة الذكاء" },        tag: "star" },
+      { id: "eco-supplier",   icon: "🏭", label: { TR: "Tedarikçi Sağlık", EN: "Supplier Health",   AR: "صحة الموردين" },      tag: "star" },
+      { id: "eco-banking",    icon: "💱", label: { TR: "Açık Bankacılık", EN: "Open Banking AI",   AR: "Open Banking AI" },   tag: "star" },
+      { id: "eco-influencer", icon: "📣", label: { TR: "Influencer ROI",   EN: "Influencer ROI",    AR: "ROI المؤثرين" },      tag: "star" },
+    ],
+  },
+  {
     id: "aifin",
     label: { TR: "AI Finans", EN: "AI Finance", AR: "المالية AI" },
     paletteId: "violet",
@@ -3122,6 +3151,58 @@ export default function CustomerDashboard() {
           {page === "vc-campaigns" && (
             <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
               <VoiceCxCampaignsPage />
+            </React.Suspense>
+          )}
+
+          {/* ═══ Phase 11 PAGES — Ecosystem Plays ════════════ */}
+          {page === "eco-cofounder" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <CoFounderModePage />
+            </React.Suspense>
+          )}
+          {page === "eco-twin" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <ZyrixTwinPage />
+            </React.Suspense>
+          )}
+          {page === "eco-b2b" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <B2BMarketplacePage />
+            </React.Suspense>
+          )}
+          {page === "eco-capital" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <CapitalPage />
+            </React.Suspense>
+          )}
+          {page === "eco-insurance" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <InsurancePage />
+            </React.Suspense>
+          )}
+          {page === "eco-education" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <EducationPage />
+            </React.Suspense>
+          )}
+          {page === "eco-network" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <NetworkIntelligencePage />
+            </React.Suspense>
+          )}
+          {page === "eco-supplier" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <SupplierHealthPage />
+            </React.Suspense>
+          )}
+          {page === "eco-banking" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <OpenBankingAIPage />
+            </React.Suspense>
+          )}
+          {page === "eco-influencer" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <InfluencerTrackingPage />
             </React.Suspense>
           )}
 
