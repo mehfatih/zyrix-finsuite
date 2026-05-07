@@ -133,6 +133,8 @@ const SupplierHealthPage          = React.lazy(() => import("./dashboard/ecosyst
 const OpenBankingAIPage           = React.lazy(() => import("./dashboard/ecosystem/OpenBankingAIPage"));
 const InfluencerTrackingPage      = React.lazy(() => import("./dashboard/ecosystem/InfluencerTrackingPage"));
 
+import SkeletonScreen from "../components/dashboard/SkeletonScreen";
+
 import {
   PALETTE_HUES as DASH_PALETTE_HUES,
   getCardPalette as getDashCardPalette,
@@ -2487,7 +2489,7 @@ export default function CustomerDashboard() {
 
         <div style={{ width:230, flexShrink:0 }} className="dash-sidebar" />
 
-        <main style={{ flex:1, padding:"28px 32px", overflow:"auto", animation:"fadeIn 0.35s ease" }}>
+        <main id="main-content" tabIndex={-1} role="main" style={{ flex:1, padding:"28px 32px", overflow:"auto", animation:"fadeIn 0.35s ease" }}>
           {/* Mobile header */}
           <div className="dash-mobile-btn" style={{ display:"none", alignItems:"center", justifyContent:"space-between", marginBottom:20, background:P.card, borderRadius:14, padding:"12px 16px", border:`1.5px solid ${P.border}` }}>
             <div style={{ display:"flex", alignItems:"center", gap:8 }}>
@@ -2696,512 +2698,512 @@ export default function CustomerDashboard() {
 
           {/* ═══ Phase 1 PAGES ═══════════════════════════════ */}
           {page === "home" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <DashboardHome />
             </React.Suspense>
           )}
           {page === "profile" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <ProfilePage />
             </React.Suspense>
           )}
           {page === "company" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <CompanySettingsPage />
             </React.Suspense>
           )}
           {page === "notifications" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <NotificationsPage />
             </React.Suspense>
           )}
 
           {/* ═══ Phase 2 PAGES — Sales Cluster ════════════════ */}
           {page === "sales-invoices" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <SalesInvoicesListPage onNavigate={navigate} />
             </React.Suspense>
           )}
           {page === "sales-invoice-new" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <SalesInvoiceCreatePage onNavigate={navigate} initial={pageParams} />
             </React.Suspense>
           )}
           {page === "sales-invoice-detail" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <SalesInvoiceDetailPage invoiceId={pageParams.id} onNavigate={navigate} />
             </React.Suspense>
           )}
           {page === "sales-invoice-edit" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <SalesInvoiceEditPage invoiceId={pageParams.id} onNavigate={navigate} />
             </React.Suspense>
           )}
           {page === "sales-orders" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <SalesOrdersPage onNavigate={navigate} />
             </React.Suspense>
           )}
           {page === "sales-quotes" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <QuotesPage onNavigate={navigate} />
             </React.Suspense>
           )}
           {page === "sales-quote-detail" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <QuoteDetailPage quoteId={pageParams.id} onNavigate={navigate} />
             </React.Suspense>
           )}
           {page === "sales-tradesman" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <TradesmanInvoicePage onNavigate={navigate} />
             </React.Suspense>
           )}
           {page === "sales-customers" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <CustomersListPage onNavigate={navigate} />
             </React.Suspense>
           )}
           {page === "sales-customer-detail" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <CustomerDetailPage customerId={pageParams.id} onNavigate={navigate} />
             </React.Suspense>
           )}
           {page === "sales-pipeline" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <SalesPipelinePage onNavigate={navigate} />
             </React.Suspense>
           )}
 
           {/* ═══ Phase 3 PAGES — Purchases & Stock ════════════ */}
           {page === "purch-invoices" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <PurchaseInvoicesListPage onNavigate={navigate} />
             </React.Suspense>
           )}
           {page === "purch-invoice-new" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <PurchaseInvoiceCreatePage onNavigate={navigate} />
             </React.Suspense>
           )}
           {page === "purch-invoice-detail" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <PurchaseInvoiceDetailPage invoiceId={pageParams.id} onNavigate={navigate} />
             </React.Suspense>
           )}
           {page === "purch-orders" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <PurchaseOrdersPage onNavigate={navigate} />
             </React.Suspense>
           )}
           {page === "purch-services" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <ServicePurchaseInvoicePage onNavigate={navigate} />
             </React.Suspense>
           )}
           {page === "purch-suppliers" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <SuppliersListPage onNavigate={navigate} />
             </React.Suspense>
           )}
           {page === "purch-supplier-detail" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <SupplierDetailPage supplierId={pageParams.id} onNavigate={navigate} />
             </React.Suspense>
           )}
           {page === "purch-expenses" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <ExpensesPage />
             </React.Suspense>
           )}
           {page === "prod-list" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <ProductsListPage onNavigate={navigate} />
             </React.Suspense>
           )}
           {page === "prod-new" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <ProductCreatePage onNavigate={navigate} />
             </React.Suspense>
           )}
           {page === "prod-detail" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <ProductDetailPage productId={pageParams.id} onNavigate={navigate} />
             </React.Suspense>
           )}
           {page === "prod-services" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <ServicesPage />
             </React.Suspense>
           )}
           {page === "prod-movements" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <StockMovementsPage />
             </React.Suspense>
           )}
           {page === "prod-reports" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <StockReportsPage />
             </React.Suspense>
           )}
 
           {/* ═══ Phase 4 PAGES — E-Invoicing & Tax ════════════ */}
           {page === "efatura-outgoing" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <OutgoingEFaturasPage onNavigate={navigate} />
             </React.Suspense>
           )}
           {page === "efatura-new" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <EFaturaCreatePage onNavigate={navigate} archive={false} />
             </React.Suspense>
           )}
           {page === "efatura-detail" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <EFaturaDetailPage invoiceId={pageParams.id} onNavigate={navigate} archive={false} />
             </React.Suspense>
           )}
           {page === "efatura-incoming" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <IncomingEFaturasPage />
             </React.Suspense>
           )}
           {page === "efatura-archive" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <EArchivePage onNavigate={navigate} />
             </React.Suspense>
           )}
           {page === "efatura-archive-new" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <EFaturaCreatePage onNavigate={navigate} archive={true} />
             </React.Suspense>
           )}
           {page === "efatura-archive-detail" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <EFaturaDetailPage invoiceId={pageParams.id} onNavigate={navigate} archive={true} />
             </React.Suspense>
           )}
           {page === "efatura-recurring" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <RecurringInvoicesPage onNavigate={navigate} />
             </React.Suspense>
           )}
           {page === "efatura-recurring-new" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <RecurringInvoiceCreatePage onNavigate={navigate} />
             </React.Suspense>
           )}
           {page === "tax-autopilot" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <TaxAutopilotPage />
             </React.Suspense>
           )}
           {page === "tax-calendar" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <TaxCalendarV2Page />
             </React.Suspense>
           )}
           {page === "tax-vat" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <VatReportPage />
             </React.Suspense>
           )}
           {page === "tax-musavir" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <MaliMusavirPanelPage />
             </React.Suspense>
           )}
           {page === "tax-compliance" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <ComplianceWatcherPage onNavigate={navigate} />
             </React.Suspense>
           )}
 
           {/* ═══ Phase 5 PAGES — Cash, Bank & AI Finance ════════ */}
           {page === "cash-accounts" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <CashAccountsPage onNavigate={navigate} />
             </React.Suspense>
           )}
           {page === "cash-account-detail" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <CashAccountDetailPage accountId={pageParams.id} onNavigate={navigate} />
             </React.Suspense>
           )}
           {page === "cash-reconciliation" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <BankReconciliationPage />
             </React.Suspense>
           )}
           {page === "cash-cheques" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <ChequesPage onNavigate={navigate} />
             </React.Suspense>
           )}
           {page === "cash-cheque-detail" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <ChequeDetailPage chequeId={pageParams.id} onNavigate={navigate} />
             </React.Suspense>
           )}
           {page === "af-cfo" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <AICfoV2Page onNavigate={navigate} />
             </React.Suspense>
           )}
           {page === "af-forecast" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <CashflowForecastPage onNavigate={navigate} />
             </React.Suspense>
           )}
           {page === "af-crisis" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <CashCrisisAlertsPage />
             </React.Suspense>
           )}
           {page === "af-real-profit" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <RealProfitPage />
             </React.Suspense>
           )}
 
           {/* ═══ Phase 6 PAGES — AI Autopilots ════════════════ */}
           {page === "ap-invoice" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <InvoiceAutopilotPage onNavigate={navigate} />
             </React.Suspense>
           )}
           {page === "ap-recon" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <ReconciliationAutopilotPage />
             </React.Suspense>
           )}
           {page === "ap-whatsapp" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <WhatsAppAgentPage />
             </React.Suspense>
           )}
           {page === "ap-inbox" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <MultiChannelInboxPage />
             </React.Suspense>
           )}
           {page === "ap-vault" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <DocumentVaultPage />
             </React.Suspense>
           )}
           {page === "ap-filing" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <DocumentAutoFilingPage />
             </React.Suspense>
           )}
           {page === "ap-recurring" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <RecurringSetupPage onNavigate={navigate} />
             </React.Suspense>
           )}
 
           {/* ═══ Phase 7 PAGES — Hidden Money & Briefings ════════ */}
           {page === "in-hidden-cash" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <HiddenCashPage />
             </React.Suspense>
           )}
           {page === "in-briefing" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <DailyBriefingPage />
             </React.Suspense>
           )}
           {page === "in-monthly" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <MonthlyReportPage />
             </React.Suspense>
           )}
           {page === "in-hidden-rev" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <HiddenRevenuePage onNavigate={navigate} />
             </React.Suspense>
           )}
           {page === "in-pricing" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <SmartPricingPage />
             </React.Suspense>
           )}
           {page === "in-discount" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <DiscountOptimizerPage />
             </React.Suspense>
           )}
 
           {/* ═══ Phase 8 PAGES — Predictive Intelligence ════════ */}
           {page === "pr-death" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <BusinessDeathPredictorPage />
             </React.Suspense>
           )}
           {page === "pr-dna" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <CustomerDnaPage />
             </React.Suspense>
           )}
           {page === "pr-score" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <CustomerScoreV2Page />
             </React.Suspense>
           )}
           {page === "pr-churn" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <ChurnPredictionPage />
             </React.Suspense>
           )}
           {page === "pr-timeloop" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <TimeLoopSimulatorPage />
             </React.Suspense>
           )}
           {page === "pr-inventory" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <InventoryForecastPage />
             </React.Suspense>
           )}
           {page === "pr-stress" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <CashflowStressTestPage />
             </React.Suspense>
           )}
 
           {/* ═══ Phase 9 PAGES — Cognitive Companion ════════════ */}
           {page === "co-coach" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <NegotiationCoachPage />
             </React.Suspense>
           )}
           {page === "co-decisions" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <DecisionManagerPage />
             </React.Suspense>
           )}
           {page === "co-wellness" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <WellnessIndexPage />
             </React.Suspense>
           )}
           {page === "co-future" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <FutureSelfPage />
             </React.Suspense>
           )}
           {page === "co-calendar" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <PredictiveCalendarPage />
             </React.Suspense>
           )}
           {page === "co-ar-store" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <ARStorefrontPage />
             </React.Suspense>
           )}
           {page === "co-ar-receipt" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <ARReceiptPage />
             </React.Suspense>
           )}
           {page === "co-fraud" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <FraudDetectionPage />
             </React.Suspense>
           )}
 
           {/* ═══ Phase 10 PAGES — Voice & Customer Experience ════════════ */}
           {page === "vc-voice" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <VoiceModePage />
             </React.Suspense>
           )}
           {page === "vc-portals" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <CustomerPortalsPage />
             </React.Suspense>
           )}
           {page === "vc-nudge" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <PaymentNudgePage />
             </React.Suspense>
           )}
           {page === "vc-loyalty" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <LoyaltyAIPage />
             </React.Suspense>
           )}
           {page === "vc-birthday" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <BirthdayMarketingPage />
             </React.Suspense>
           )}
           {page === "vc-review" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <ReviewOptimizerPage />
             </React.Suspense>
           )}
           {page === "vc-email" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <EmailMarketingPage />
             </React.Suspense>
           )}
           {page === "vc-campaigns" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <VoiceCxCampaignsPage />
             </React.Suspense>
           )}
 
           {/* ═══ Phase 11 PAGES — Ecosystem Plays ════════════ */}
           {page === "eco-cofounder" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <CoFounderModePage />
             </React.Suspense>
           )}
           {page === "eco-twin" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <ZyrixTwinPage />
             </React.Suspense>
           )}
           {page === "eco-b2b" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <B2BMarketplacePage />
             </React.Suspense>
           )}
           {page === "eco-capital" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <CapitalPage />
             </React.Suspense>
           )}
           {page === "eco-insurance" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <InsurancePage />
             </React.Suspense>
           )}
           {page === "eco-education" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <EducationPage />
             </React.Suspense>
           )}
           {page === "eco-network" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <NetworkIntelligencePage />
             </React.Suspense>
           )}
           {page === "eco-supplier" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <SupplierHealthPage />
             </React.Suspense>
           )}
           {page === "eco-banking" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <OpenBankingAIPage />
             </React.Suspense>
           )}
           {page === "eco-influencer" && (
-            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+            <React.Suspense fallback={<SkeletonScreen />}>
               <InfluencerTrackingPage />
             </React.Suspense>
           )}
