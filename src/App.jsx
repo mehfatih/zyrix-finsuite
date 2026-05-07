@@ -65,6 +65,13 @@ const AdminTicketDetail         = React.lazy(() => import("./pages/admin/support
 const KnowledgeBaseAdmin        = React.lazy(() => import("./pages/admin/support/KnowledgeBaseAdmin.jsx"));
 const SupportAnalyticsPage      = React.lazy(() => import("./pages/admin/support/SupportAnalyticsPage.jsx"));
 
+// ── Lazy: Phase 13 migration engine ────────────────────────────
+const MigrationHomePage         = React.lazy(() => import("./pages/migration/MigrationHomePage.jsx"));
+const MigrationWizard           = React.lazy(() => import("./pages/migration/MigrationWizard.jsx"));
+const MigrationHistoryPage      = React.lazy(() => import("./pages/migration/MigrationHistoryPage.jsx"));
+const ExportCenterPage          = React.lazy(() => import("./pages/migration/ExportCenterPage.jsx"));
+const MigrationConciergePage    = React.lazy(() => import("./pages/migration/MigrationConciergePage.jsx"));
+
 function HomeRedirect() {
   const { user, loading } = useAuth();
   if (loading) return null;
@@ -132,6 +139,13 @@ export default function App() {
             <Route path="/admin/support/tickets/:id" element={<RequireAuth role="admin"><AdminTicketDetail /></RequireAuth>} />
             <Route path="/admin/support/kb"          element={<RequireAuth role="admin"><KnowledgeBaseAdmin /></RequireAuth>} />
             <Route path="/admin/support/analytics"   element={<RequireAuth role="admin"><SupportAnalyticsPage /></RequireAuth>} />
+
+            {/* Migration engine (Phase 13) — auth required */}
+            <Route path="/migration"           element={<RequireAuth><MigrationHomePage /></RequireAuth>} />
+            <Route path="/migration/wizard"    element={<RequireAuth><MigrationWizard /></RequireAuth>} />
+            <Route path="/migration/history"   element={<RequireAuth><MigrationHistoryPage /></RequireAuth>} />
+            <Route path="/migration/export"    element={<RequireAuth><ExportCenterPage /></RequireAuth>} />
+            <Route path="/migration/concierge" element={<RequireAuth><MigrationConciergePage /></RequireAuth>} />
 
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/privacy" element={<PrivacyPage />} />

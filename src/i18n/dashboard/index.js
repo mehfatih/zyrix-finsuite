@@ -96,6 +96,10 @@ import supportTr from "./support.tr.json";
 import supportEn from "./support.en.json";
 import supportAr from "./support.ar.json";
 
+import migrationTr from "./migration.tr.json";
+import migrationEn from "./migration.en.json";
+import migrationAr from "./migration.ar.json";
+
 const NAMESPACES = {
   home:          { TR: homeTr,         EN: homeEn,         AR: homeAr },
   profile:       { TR: profileTr,      EN: profileEn,      AR: profileAr },
@@ -120,6 +124,7 @@ const NAMESPACES = {
   onboarding:    { TR: onboardingTr,   EN: onboardingEn,   AR: onboardingAr },
   help:          { TR: helpTr,         EN: helpEn,         AR: helpAr },
   support:       { TR: supportTr,      EN: supportEn,      AR: supportAr },
+  migration:     { TR: migrationTr,    EN: migrationEn,    AR: migrationAr },
 };
 
 export function useDashboardI18n(namespace) {
