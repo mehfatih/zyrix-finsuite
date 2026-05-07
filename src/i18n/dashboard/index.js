@@ -72,6 +72,14 @@ import cognitiveTr from "./cognitive.tr.json";
 import cognitiveEn from "./cognitive.en.json";
 import cognitiveAr from "./cognitive.ar.json";
 
+import voiceCxTr from "./voice-cx.tr.json";
+import voiceCxEn from "./voice-cx.en.json";
+import voiceCxAr from "./voice-cx.ar.json";
+
+import marketingTr from "./marketing.tr.json";
+import marketingEn from "./marketing.en.json";
+import marketingAr from "./marketing.ar.json";
+
 const NAMESPACES = {
   home:          { TR: homeTr,         EN: homeEn,         AR: homeAr },
   profile:       { TR: profileTr,      EN: profileEn,      AR: profileAr },
@@ -90,6 +98,8 @@ const NAMESPACES = {
   intelligence:  { TR: intelligenceTr, EN: intelligenceEn, AR: intelligenceAr },
   predictive:    { TR: predictiveTr,   EN: predictiveEn,   AR: predictiveAr },
   cognitive:     { TR: cognitiveTr,    EN: cognitiveEn,    AR: cognitiveAr },
+  "voice-cx":    { TR: voiceCxTr,      EN: voiceCxEn,      AR: voiceCxAr },
+  marketing:     { TR: marketingTr,    EN: marketingEn,    AR: marketingAr },
 };
 
 export function useDashboardI18n(namespace) {
