@@ -84,6 +84,10 @@ import ecosystemTr from "./ecosystem.tr.json";
 import ecosystemEn from "./ecosystem.en.json";
 import ecosystemAr from "./ecosystem.ar.json";
 
+import onboardingTr from "./onboarding.tr.json";
+import onboardingEn from "./onboarding.en.json";
+import onboardingAr from "./onboarding.ar.json";
+
 const NAMESPACES = {
   home:          { TR: homeTr,         EN: homeEn,         AR: homeAr },
   profile:       { TR: profileTr,      EN: profileEn,      AR: profileAr },
@@ -105,6 +109,7 @@ const NAMESPACES = {
   "voice-cx":    { TR: voiceCxTr,      EN: voiceCxEn,      AR: voiceCxAr },
   marketing:     { TR: marketingTr,    EN: marketingEn,    AR: marketingAr },
   ecosystem:     { TR: ecosystemTr,    EN: ecosystemEn,    AR: ecosystemAr },
+  onboarding:    { TR: onboardingTr,   EN: onboardingEn,   AR: onboardingAr },
 };
 
 export function useDashboardI18n(namespace) {

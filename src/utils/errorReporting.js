@@ -15,8 +15,10 @@ export async function initErrorReporting() {
   if (initialized || !DSN || typeof window === "undefined") return;
   initialized = true;
   try {
-    // dynamic import keeps Sentry out of the build until DSN is configured
-    SentryRef = await import(/* @vite-ignore */ "@sentry/browser").catch(() => null);
+    // Hide the import from Vite's static analyser so the bundle stays clean
+    // when @sentry/browser isn't installed. Build can ship without the dep.
+    const dynImport = new Function("specifier", "return import(specifier)");
+    SentryRef = await dynImport("@sentry/browser").catch(() => null);
     if (!SentryRef?.init) return;
     SentryRef.init({
       dsn: DSN,
