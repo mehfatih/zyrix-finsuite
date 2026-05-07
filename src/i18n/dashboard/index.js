@@ -88,6 +88,10 @@ import onboardingTr from "./onboarding.tr.json";
 import onboardingEn from "./onboarding.en.json";
 import onboardingAr from "./onboarding.ar.json";
 
+import helpTr from "./help.tr.json";
+import helpEn from "./help.en.json";
+import helpAr from "./help.ar.json";
+
 const NAMESPACES = {
   home:          { TR: homeTr,         EN: homeEn,         AR: homeAr },
   profile:       { TR: profileTr,      EN: profileEn,      AR: profileAr },
@@ -110,6 +114,7 @@ const NAMESPACES = {
   marketing:     { TR: marketingTr,    EN: marketingEn,    AR: marketingAr },
   ecosystem:     { TR: ecosystemTr,    EN: ecosystemEn,    AR: ecosystemAr },
   onboarding:    { TR: onboardingTr,   EN: onboardingEn,   AR: onboardingAr },
+  help:          { TR: helpTr,         EN: helpEn,         AR: helpAr },
 };
 
 export function useDashboardI18n(namespace) {

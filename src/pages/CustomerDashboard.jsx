@@ -134,6 +134,7 @@ const OpenBankingAIPage           = React.lazy(() => import("./dashboard/ecosyst
 const InfluencerTrackingPage      = React.lazy(() => import("./dashboard/ecosystem/InfluencerTrackingPage"));
 
 import SkeletonScreen from "../components/dashboard/SkeletonScreen";
+import SupportChatWidget from "../components/dashboard/SupportChatWidget";
 
 import {
   PALETTE_HUES as DASH_PALETTE_HUES,
@@ -3210,6 +3211,7 @@ export default function CustomerDashboard() {
 
         </main>
       </div>
+      <SupportChatWidget />
     </>
   );
 }
