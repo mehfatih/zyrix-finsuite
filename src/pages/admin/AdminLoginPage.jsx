@@ -6,7 +6,7 @@
 // ================================================================
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { adminLogin, setAdminToken, setAdminUser, changeAdminPassword, setupAdmin2FA, verifyAdmin2FA } from "../../utils/admin/adminApi";
+import { adminLogin, setAdminToken, setAdminUser, changeAdminPassword } from "../../utils/admin/adminApi";
 import { ADMIN_BRAND, CRITICAL_RED } from "../../utils/admin/adminPalette";
 import { useI18n, SUPPORTED_LANGS } from "../../i18n/i18n";
 
@@ -237,14 +237,11 @@ export default function AdminLoginPage() {
   const brand = ADMIN_BRAND;
   const crit = CRITICAL_RED;
 
-  const [stage, setStage] = useState("login"); // login | 2fa | changePassword | setup2FA
+  const [stage, setStage] = useState("login"); // login | 2fa | changePassword
   const [form, setForm] = useState({ email: "", password: "", totp: "" });
   const [newPwd, setNewPwd] = useState({ current: "", next: "", confirm: "" });
-  const [twoFASetup, setTwoFASetup] = useState(null);
-  const [twoFACode, setTwoFACode] = useState("");
   const [error, setError] = useState(null);
   const [busy, setBusy] = useState(false);
-  const [pending, setPending] = useState(null);
   const [focusedField, setFocusedField] = useState(null);
   const [hasSubmitted, setHasSubmitted] = useState(false);
   const [btnHover, setBtnHover] = useState(false);
@@ -276,13 +273,9 @@ export default function AdminLoginPage() {
     }
     setAdminToken(r.data.token);
     setAdminUser(r.data.admin);
-    setPending(r.data.admin);
+    // 2FA enrolment is opt-in via /admin/settings/security — never forced at login.
     if (r.data.admin.mustChangePassword) {
       setStage("changePassword");
-    } else if (!r.data.admin.twoFactorEnabled) {
-      setStage("setup2FA");
-      const setupRes = await setupAdmin2FA();
-      if (setupRes.success) setTwoFASetup(setupRes.data);
     } else {
       navigate("/admin/dashboard");
     }
@@ -298,23 +291,7 @@ export default function AdminLoginPage() {
     const r = await changeAdminPassword({ currentPassword: form.password, newPassword: newPwd.next });
     setBusy(false);
     if (!r.success) { safeSetError(r.error || t("adminLogin.errorPwdChange")); return; }
-    if (!pending?.twoFactorEnabled) {
-      setStage("setup2FA");
-      const setupRes = await setupAdmin2FA();
-      if (setupRes.success) setTwoFASetup(setupRes.data);
-    } else {
-      navigate("/admin/dashboard");
-    }
-  };
-
-  const onVerify2FA = async (e) => {
-    e?.preventDefault?.();
-    setHasSubmitted(true);
-    setError(null);
-    setBusy(true);
-    const r = await verifyAdmin2FA(twoFACode);
-    setBusy(false);
-    if (!r.success) { safeSetError(r.error || t("adminLogin.errorInvalidCode")); return; }
+    // 2FA enrolment is opt-in via /admin/settings/security — never forced at first login.
     navigate("/admin/dashboard");
   };
 
@@ -664,41 +641,6 @@ export default function AdminLoginPage() {
           </form>
         )}
 
-        {stage === "setup2FA" && (
-          <form onSubmit={onVerify2FA}>
-            <p style={{ fontSize: 13, color: "rgba(255,255,255,0.85)", margin: "0 0 18px", textAlign: "center" }}>
-              ⚠ {t("adminLogin.setup2FAPrompt")}
-            </p>
-            <div style={{ background: "#fff", borderRadius: 14, padding: 18, marginBottom: 14, textAlign: "center" }}>
-              <div style={{ width: 140, height: 140, background: NAVY_DEEP, color: "#fff", margin: "0 auto 10px", display: "grid", placeItems: "center", fontSize: 50, borderRadius: 10 }}>▦</div>
-              <div style={{ fontSize: 11, color: "#64748B", marginBottom: 4 }}>{t("adminLogin.scan")}</div>
-              <code style={{ display: "block", fontSize: 9, color: "#94A3B8", wordBreak: "break-all" }}>
-                {twoFASetup?.provisioningUri || t("common.loading")}
-              </code>
-            </div>
-            <Field label={t("adminLogin.code6")}>
-              <input
-                type="text" inputMode="numeric" required autoFocus
-                value={twoFACode}
-                onChange={(e) => setTwoFACode(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                onFocus={() => setFocusedField("verify2fa")}
-                onBlur={() => setFocusedField(null)}
-                maxLength={6}
-                style={inputStyle("verify2fa", true)}
-              />
-            </Field>
-            <button
-              type="submit"
-              disabled={busy || twoFACode.length < 6}
-              className="admin-login-btn"
-              style={primaryBtn(busy || twoFACode.length < 6)}
-              onMouseEnter={() => setBtnHover(true)}
-              onMouseLeave={() => setBtnHover(false)}
-            >
-              {busy ? t("adminLogin.signingIn") : t("adminLogin.verifyEnable")}
-            </button>
-          </form>
-        )}
       </div>
     </div>
   );

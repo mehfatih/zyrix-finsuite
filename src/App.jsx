@@ -146,6 +146,7 @@ const AdminDeployments      = React.lazy(() => import("./pages/admin/system/Depl
 const AdminFeatureFlags     = React.lazy(() => import("./pages/admin/system/FeatureFlagsPage.jsx"));
 const AdminMaintenance      = React.lazy(() => import("./pages/admin/system/MaintenancePage.jsx"));
 const AdminSecurityScanner  = React.lazy(() => import("./pages/admin/system/SecurityScannerPage.jsx"));
+const AdminAccountSecurity  = React.lazy(() => import("./pages/admin/settings/AccountSecurityPage.jsx"));
 // Cluster H — Marketing
 const AdminReviewsManager      = React.lazy(() => import("./pages/admin/marketing/ReviewsManagerPage.jsx"));
 const AdminLandingEditor       = React.lazy(() => import("./pages/admin/marketing/LandingEditorPage.jsx"));
@@ -295,6 +296,9 @@ export default function App() {
               <Route path="system/flags"       element={<AdminFeatureFlags />} />
               <Route path="system/maintenance" element={<AdminMaintenance />} />
               <Route path="system/security"    element={<AdminSecurityScanner />} />
+
+              {/* Admin account settings — opt-in 2FA, password, etc. */}
+              <Route path="settings/security"  element={<AdminAccountSecurity />} />
 
               {/* Cluster H — Marketing */}
               <Route path="marketing/reviews"    element={<AdminReviewsManager />} />

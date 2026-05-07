@@ -43,6 +43,8 @@ export default function AdminDashboardPage() {
     { label: "System uptime",    value: "99.98%",  delta: 0.02,  icon: "❤️", palette: PALETTES.success },
   ];
 
+  const twoFAOn = !!admin?.twoFactorEnabled;
+
   return (
     <div style={{ padding: "32px 28px" }}>
       <div style={{ marginBottom: 28 }}>
@@ -53,6 +55,56 @@ export default function AdminDashboardPage() {
           Operations Center · {new Date().toLocaleDateString(undefined, { weekday: "long", year: "numeric", month: "long", day: "numeric" })}
         </p>
       </div>
+
+      {!twoFAOn && (
+        <div
+          role="status"
+          style={{
+            marginBottom: 22,
+            display: "flex",
+            alignItems: "center",
+            gap: 14,
+            padding: "14px 18px",
+            background: "linear-gradient(135deg, #FFF7ED 0%, #FEF3C7 100%)",
+            border: "1.5px solid #FCD34D",
+            borderRadius: 14,
+            boxShadow: "0 2px 8px rgba(245,158,11,0.15)",
+            flexWrap: "wrap",
+          }}
+        >
+          <div style={{
+            width: 44, height: 44, borderRadius: 12,
+            background: "#FFFFFF", border: "1px solid #FDE68A",
+            display: "grid", placeItems: "center", fontSize: 22,
+            flexShrink: 0,
+          }}>🔐</div>
+          <div style={{ flex: 1, minWidth: 220 }}>
+            <div style={{ fontSize: 14, fontWeight: 800, color: "#92400E", marginBottom: 2 }}>
+              Recommended: Enable two-factor authentication
+            </div>
+            <div style={{ fontSize: 12, color: "#78350F", lineHeight: 1.5 }}>
+              Adds a 6-digit code at sign-in so a stolen password can't get in. Takes about 2 minutes.
+            </div>
+          </div>
+          <Link
+            to="/admin/settings/security"
+            style={{
+              padding: "10px 16px",
+              background: "#0F172A",
+              color: "#fff",
+              borderRadius: 10,
+              fontSize: 12,
+              fontWeight: 800,
+              letterSpacing: "0.04em",
+              textDecoration: "none",
+              boxShadow: "0 4px 12px rgba(15,23,42,0.25)",
+              whiteSpace: "nowrap",
+            }}
+          >
+            Set up now →
+          </Link>
+        </div>
+      )}
 
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 14, marginBottom: 28 }}>
         {kpis.map((k) => <AdminKpiCard key={k.label} {...k} />)}
