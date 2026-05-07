@@ -108,14 +108,29 @@ export default function AdminLoginPage() {
   const [busy, setBusy] = useState(false);
   const [pending, setPending] = useState(null);
   const [focusedField, setFocusedField] = useState(null);
+  // Only render error banners after the user has attempted submit at least once.
+  // Guarantees no API-layer noise leaks onto the page on initial load even if
+  // some upstream caller (or stale cached bundle) tries to set an error.
+  const [hasSubmitted, setHasSubmitted] = useState(false);
 
   // Ensure no stale error / no half-validated token surfaces on initial render
   useEffect(() => {
     setError(null);
+    setHasSubmitted(false);
   }, []);
+
+  // Defensive guard — never surface "no token" style messages, regardless of source.
+  const isNoiseError = (msg) =>
+    typeof msg === "string" && /no\s*token|missing\s*token|invalid\s*token|token\s*expired|unauthori[sz]ed/i.test(msg);
+
+  const safeSetError = (msg) => {
+    if (!msg || isNoiseError(msg)) { setError(null); return; }
+    setError(msg);
+  };
 
   const onLogin = async (e) => {
     e?.preventDefault?.();
+    setHasSubmitted(true);
     setError(null);
     setBusy(true);
     const r = await adminLogin({ email: form.email.trim().toLowerCase(), password: form.password, totpCode: form.totp });
@@ -125,7 +140,7 @@ export default function AdminLoginPage() {
         setStage("2fa");
         return;
       }
-      setError(r.error || "Login failed");
+      safeSetError(r.error || "Login failed");
       return;
     }
     setAdminToken(r.data.token);
@@ -144,13 +159,14 @@ export default function AdminLoginPage() {
 
   const onChangePassword = async (e) => {
     e?.preventDefault?.();
+    setHasSubmitted(true);
     setError(null);
-    if (newPwd.next.length < 10) { setError("New password must be at least 10 characters"); return; }
-    if (newPwd.next !== newPwd.confirm) { setError("Passwords do not match"); return; }
+    if (newPwd.next.length < 10) { safeSetError("New password must be at least 10 characters"); return; }
+    if (newPwd.next !== newPwd.confirm) { safeSetError("Passwords do not match"); return; }
     setBusy(true);
     const r = await changeAdminPassword({ currentPassword: form.password, newPassword: newPwd.next });
     setBusy(false);
-    if (!r.success) { setError(r.error || "Password change failed"); return; }
+    if (!r.success) { safeSetError(r.error || "Password change failed"); return; }
     if (!pending?.twoFactorEnabled) {
       setStage("setup2FA");
       const setupRes = await setupAdmin2FA();
@@ -162,11 +178,12 @@ export default function AdminLoginPage() {
 
   const onVerify2FA = async (e) => {
     e?.preventDefault?.();
+    setHasSubmitted(true);
     setError(null);
     setBusy(true);
     const r = await verifyAdmin2FA(twoFACode);
     setBusy(false);
-    if (!r.success) { setError(r.error || "Invalid code"); return; }
+    if (!r.success) { safeSetError(r.error || "Invalid code"); return; }
     navigate("/admin/dashboard");
   };
 
@@ -312,7 +329,7 @@ export default function AdminLoginPage() {
           </h1>
         </div>
 
-        {error && (
+        {hasSubmitted && error && !isNoiseError(error) && (
           <div role="alert" style={{
             padding: "10px 14px",
             background: `${crit.base}30`,

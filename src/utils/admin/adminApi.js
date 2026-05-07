@@ -27,6 +27,16 @@ export function setAdminUser(user) {
   try { user ? localStorage.setItem(ADMIN_USER_KEY, JSON.stringify(user)) : localStorage.removeItem(ADMIN_USER_KEY); } catch {}
 }
 
+// Errors that should never surface to the UI — they describe a missing or
+// expired session, which the login page can't act on and shouldn't render as
+// a red banner. We match on message only (NOT on bare 401) so that real login
+// failures like "Invalid credentials" still reach the user.
+const SILENT_AUTH_ERROR_RX = /no\s*token\s*provided|missing\s*token|invalid\s*token|jwt\s*expired|token\s*expired/i;
+
+function isSilentAuthError(message) {
+  return typeof message === "string" && SILENT_AUTH_ERROR_RX.test(message);
+}
+
 export async function adminApi(path, opts = {}) {
   const token = getAdminToken();
   try {
@@ -40,11 +50,23 @@ export async function adminApi(path, opts = {}) {
     });
     if (!res.ok) {
       const body = await res.json().catch(() => ({}));
-      return { success: false, error: body.error || `HTTP ${res.status}`, requires2FA: body.requires2FA, status: res.status };
+      const rawError = body.error || `HTTP ${res.status}`;
+      const silent = isSilentAuthError(rawError);
+      return {
+        success: false,
+        // Suppress "No token provided" / "token expired" noise so the UI layer
+        // never renders it. Real failures (Invalid credentials, etc.) pass through.
+        error: silent ? null : rawError,
+        rawError,
+        silent,
+        requires2FA: body.requires2FA,
+        status: res.status,
+      };
     }
     return await res.json();
   } catch (err) {
-    return { success: false, error: err.message };
+    const silent = isSilentAuthError(err?.message);
+    return { success: false, error: silent ? null : err.message, rawError: err?.message, silent, status: 0 };
   }
 }
 
