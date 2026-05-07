@@ -68,6 +68,10 @@ import predictiveTr from "./predictive.tr.json";
 import predictiveEn from "./predictive.en.json";
 import predictiveAr from "./predictive.ar.json";
 
+import cognitiveTr from "./cognitive.tr.json";
+import cognitiveEn from "./cognitive.en.json";
+import cognitiveAr from "./cognitive.ar.json";
+
 const NAMESPACES = {
   home:          { TR: homeTr,         EN: homeEn,         AR: homeAr },
   profile:       { TR: profileTr,      EN: profileEn,      AR: profileAr },
@@ -85,6 +89,7 @@ const NAMESPACES = {
   inbox:         { TR: inboxTr,        EN: inboxEn,        AR: inboxAr },
   intelligence:  { TR: intelligenceTr, EN: intelligenceEn, AR: intelligenceAr },
   predictive:    { TR: predictiveTr,   EN: predictiveEn,   AR: predictiveAr },
+  cognitive:     { TR: cognitiveTr,    EN: cognitiveEn,    AR: cognitiveAr },
 };
 
 export function useDashboardI18n(namespace) {
