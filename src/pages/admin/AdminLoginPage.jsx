@@ -1,15 +1,20 @@
 // ================================================================
 // /admin/login — Admin login (separate from customer /login)
 // Wine Red base + animated Turkish flag pattern, glass-morphism card,
-// white inputs, gold focus, force-password + 2FA gates.
+// white inputs, gold focus, dark-navy CTA, force-password + 2FA gates.
+// Trilingual (TR / EN / AR) with RTL support.
 // ================================================================
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { adminLogin, setAdminToken, setAdminUser, changeAdminPassword, setupAdmin2FA, verifyAdmin2FA } from "../../utils/admin/adminApi";
-import { ADMIN_BRAND, TRUST_BLUE, CRITICAL_RED } from "../../utils/admin/adminPalette";
+import { ADMIN_BRAND, CRITICAL_RED } from "../../utils/admin/adminPalette";
+import { useI18n, SUPPORTED_LANGS } from "../../i18n/i18n";
 
 const GOLD = "#FFD700";
+const GOLD_SOFT = "#FFE066";
 const NAVY = "#1A1A2E";
+const NAVY_DEEP = "#0F172A";
+const NAVY_HOVER = "#1E293B";
 const CREAM = "#FFF8F8";
 
 // Deterministic but varied flag-element layout — avoids the central card area
@@ -59,44 +64,94 @@ function StarSVG({ size }) {
 function ZyrixLogo() {
   return (
     <div style={{
-      width: 72, height: 72, borderRadius: "50%",
+      width: 84, height: 84, borderRadius: "50%",
       background: "#fff",
       border: `2px solid ${GOLD}`,
       display: "grid", placeItems: "center",
       margin: "0 auto 14px",
       boxShadow: `0 12px 32px rgba(255, 215, 0, 0.35), 0 0 0 6px rgba(255,255,255,0.06)`,
-      position: "relative",
+      overflow: "hidden",
     }}>
-      <svg width="44" height="44" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <defs>
-          <linearGradient id="zyrixZ" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%"   stopColor={GOLD} />
-            <stop offset="55%"  stopColor="#FFA500" />
-            <stop offset="100%" stopColor="#A8081A" />
-          </linearGradient>
-          <filter id="zyrixGlow">
-            <feGaussianBlur stdDeviation="0.6" result="b" />
-            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
-          </filter>
-        </defs>
-        <path
-          d="M14 12 H50 L20 50 H50"
-          stroke="url(#zyrixZ)"
-          strokeWidth="7"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          fill="none"
-          filter="url(#zyrixGlow)"
-        />
-      </svg>
+      <img
+        src="/images/zyrix-logo-square.png"
+        alt="Zyrix"
+        width={64}
+        height={64}
+        style={{ width: 64, height: 64, objectFit: "contain", display: "block" }}
+        onError={(e) => {
+          // Fallback to a styled "Z" if the image fails to load
+          e.currentTarget.style.display = "none";
+          if (e.currentTarget.nextSibling) e.currentTarget.nextSibling.style.display = "block";
+        }}
+      />
+      <span style={{
+        display: "none",
+        fontSize: 36, fontWeight: 900,
+        background: `linear-gradient(135deg, ${GOLD}, #FFA500, #A8081A)`,
+        WebkitBackgroundClip: "text",
+        WebkitTextFillColor: "transparent",
+        backgroundClip: "text",
+        color: "#A8081A",
+      }}>Z</span>
+    </div>
+  );
+}
+
+function LanguageSwitcher({ isRTL }) {
+  const { lang, setLang, t } = useI18n();
+  return (
+    <div
+      aria-label={t("adminLogin.langSwitcher")}
+      style={{
+        position: "absolute",
+        top: 18,
+        [isRTL ? "left" : "right"]: 18,
+        display: "flex",
+        gap: 6,
+        background: "rgba(255,255,255,0.10)",
+        border: "1px solid rgba(255,255,255,0.20)",
+        backdropFilter: "blur(10px)",
+        WebkitBackdropFilter: "blur(10px)",
+        borderRadius: 999,
+        padding: 4,
+        zIndex: 20,
+      }}
+    >
+      {SUPPORTED_LANGS.map((l) => {
+        const active = l.code === lang;
+        return (
+          <button
+            key={l.code}
+            type="button"
+            onClick={() => setLang(l.code)}
+            aria-pressed={active}
+            style={{
+              border: "none",
+              cursor: "pointer",
+              padding: "6px 10px",
+              borderRadius: 999,
+              fontSize: 12,
+              fontWeight: 800,
+              letterSpacing: "0.04em",
+              background: active ? GOLD : "transparent",
+              color: active ? NAVY_DEEP : "rgba(255,255,255,0.92)",
+              display: "flex", alignItems: "center", gap: 4,
+              transition: "background 160ms ease, color 160ms ease",
+            }}
+          >
+            <span aria-hidden="true">{l.flag}</span>
+            <span>{l.code}</span>
+          </button>
+        );
+      })}
     </div>
   );
 }
 
 export default function AdminLoginPage() {
   const navigate = useNavigate();
+  const { t, isRTL } = useI18n();
   const brand = ADMIN_BRAND;
-  const trust = TRUST_BLUE;
   const crit = CRITICAL_RED;
 
   const [stage, setStage] = useState("login"); // login | 2fa | changePassword | setup2FA
@@ -108,18 +163,14 @@ export default function AdminLoginPage() {
   const [busy, setBusy] = useState(false);
   const [pending, setPending] = useState(null);
   const [focusedField, setFocusedField] = useState(null);
-  // Only render error banners after the user has attempted submit at least once.
-  // Guarantees no API-layer noise leaks onto the page on initial load even if
-  // some upstream caller (or stale cached bundle) tries to set an error.
   const [hasSubmitted, setHasSubmitted] = useState(false);
+  const [btnHover, setBtnHover] = useState(false);
 
-  // Ensure no stale error / no half-validated token surfaces on initial render
   useEffect(() => {
     setError(null);
     setHasSubmitted(false);
   }, []);
 
-  // Defensive guard — never surface "no token" style messages, regardless of source.
   const isNoiseError = (msg) =>
     typeof msg === "string" && /no\s*token|missing\s*token|invalid\s*token|token\s*expired|unauthori[sz]ed/i.test(msg);
 
@@ -136,11 +187,8 @@ export default function AdminLoginPage() {
     const r = await adminLogin({ email: form.email.trim().toLowerCase(), password: form.password, totpCode: form.totp });
     setBusy(false);
     if (!r.success) {
-      if (r.requires2FA) {
-        setStage("2fa");
-        return;
-      }
-      safeSetError(r.error || "Login failed");
+      if (r.requires2FA) { setStage("2fa"); return; }
+      safeSetError(r.error || t("adminLogin.errorLoginFailed"));
       return;
     }
     setAdminToken(r.data.token);
@@ -161,12 +209,12 @@ export default function AdminLoginPage() {
     e?.preventDefault?.();
     setHasSubmitted(true);
     setError(null);
-    if (newPwd.next.length < 10) { safeSetError("New password must be at least 10 characters"); return; }
-    if (newPwd.next !== newPwd.confirm) { safeSetError("Passwords do not match"); return; }
+    if (newPwd.next.length < 10) { safeSetError(t("adminLogin.errorPwdLen")); return; }
+    if (newPwd.next !== newPwd.confirm) { safeSetError(t("adminLogin.errorPwdMatch")); return; }
     setBusy(true);
     const r = await changeAdminPassword({ currentPassword: form.password, newPassword: newPwd.next });
     setBusy(false);
-    if (!r.success) { safeSetError(r.error || "Password change failed"); return; }
+    if (!r.success) { safeSetError(r.error || t("adminLogin.errorPwdChange")); return; }
     if (!pending?.twoFactorEnabled) {
       setStage("setup2FA");
       const setupRes = await setupAdmin2FA();
@@ -183,7 +231,7 @@ export default function AdminLoginPage() {
     setBusy(true);
     const r = await verifyAdmin2FA(twoFACode);
     setBusy(false);
-    if (!r.success) { safeSetError(r.error || "Invalid code"); return; }
+    if (!r.success) { safeSetError(r.error || t("adminLogin.errorInvalidCode")); return; }
     navigate("/admin/dashboard");
   };
 
@@ -198,7 +246,8 @@ export default function AdminLoginPage() {
     fontFamily: monospace ? "ui-monospace, SFMono-Regular, Menlo, monospace" : "inherit",
     fontWeight: monospace ? 800 : 500,
     letterSpacing: monospace ? "0.5em" : "normal",
-    textAlign: monospace ? "center" : "left",
+    textAlign: monospace ? "center" : (isRTL ? "right" : "left"),
+    direction: isRTL ? "rtl" : "ltr",
     boxSizing: "border-box",
     outline: "none",
     boxShadow: focusedField === name
@@ -207,16 +256,39 @@ export default function AdminLoginPage() {
     transition: "border-color 160ms ease, box-shadow 160ms ease, background 160ms ease",
   });
 
+  const primaryBtn = (disabled) => ({
+    width: "100%",
+    background: disabled
+      ? "rgba(15, 23, 42, 0.5)"
+      : btnHover
+        ? `linear-gradient(135deg, ${NAVY_HOVER}, #243049)`
+        : `linear-gradient(135deg, ${NAVY_DEEP}, ${NAVY})`,
+    color: disabled ? "rgba(255,215,0,0.5)" : GOLD,
+    border: `1px solid ${disabled ? "rgba(255,215,0,0.2)" : "rgba(255,215,0,0.45)"}`,
+    padding: "14px 18px",
+    borderRadius: 12,
+    fontSize: 14,
+    fontWeight: 900,
+    cursor: disabled ? "not-allowed" : "pointer",
+    marginTop: 8,
+    letterSpacing: "0.04em",
+    textTransform: "uppercase",
+    transition: "background 160ms ease, color 160ms ease, transform 160ms ease",
+  });
+
   return (
-    <div style={{
-      minHeight: "100vh",
-      background: `linear-gradient(135deg, ${brand.dark} 0%, ${brand.base} 50%, #2D0507 100%)`,
-      display: "grid", placeItems: "center",
-      padding: 24,
-      fontFamily: "system-ui, -apple-system, sans-serif",
-      position: "relative",
-      overflow: "hidden",
-    }}>
+    <div
+      dir={isRTL ? "rtl" : "ltr"}
+      style={{
+        minHeight: "100vh",
+        background: `linear-gradient(135deg, ${brand.dark} 0%, ${brand.base} 50%, #2D0507 100%)`,
+        display: "grid", placeItems: "center",
+        padding: 24,
+        fontFamily: "system-ui, -apple-system, sans-serif",
+        position: "relative",
+        overflow: "hidden",
+      }}
+    >
       <style>{`
         @keyframes adminLoginFloat {
           0%   { transform: translateY(0px) rotate(0deg); }
@@ -233,16 +305,17 @@ export default function AdminLoginPage() {
           50%  { opacity: 0.7;  transform: translateY(-12px); }
           100% { opacity: 0.15; transform: translateY(0px); }
         }
+        /* Card stays fully visible at all times — animation only adds a subtle lift */
         @keyframes adminLoginCardIn {
-          0%   { opacity: 0; transform: translateY(14px) scale(0.985); }
-          100% { opacity: 1; transform: translateY(0) scale(1); }
+          0%   { transform: translateY(14px); }
+          100% { transform: translateY(0); }
         }
         @keyframes adminLoginButtonGlow {
-          0%   { box-shadow: 0 12px 28px rgba(255,255,255,0.18), 0 0 0 0 rgba(255, 215, 0, 0.55); }
-          50%  { box-shadow: 0 14px 34px rgba(255,255,255,0.28), 0 0 0 8px rgba(255, 215, 0, 0); }
-          100% { box-shadow: 0 12px 28px rgba(255,255,255,0.18), 0 0 0 0 rgba(255, 215, 0, 0); }
+          0%   { box-shadow: 0 12px 28px rgba(0,0,0,0.35), 0 0 0 0 rgba(255, 215, 0, 0.55); }
+          50%  { box-shadow: 0 14px 34px rgba(0,0,0,0.45), 0 0 0 8px rgba(255, 215, 0, 0); }
+          100% { box-shadow: 0 12px 28px rgba(0,0,0,0.35), 0 0 0 0 rgba(255, 215, 0, 0); }
         }
-        .admin-login-card { animation: adminLoginCardIn 500ms ease-out both; }
+        .admin-login-card { animation: adminLoginCardIn 500ms ease-out; }
         .admin-login-btn:not(:disabled) { animation: adminLoginButtonGlow 2.6s ease-in-out infinite; }
         .admin-login-flag { animation-name: adminLoginFloat; animation-iteration-count: infinite; animation-timing-function: ease-in-out; will-change: transform; }
         .admin-login-particle { animation-name: adminLoginParticle; animation-iteration-count: infinite; animation-timing-function: ease-in-out; }
@@ -250,18 +323,20 @@ export default function AdminLoginPage() {
         .admin-login-back-link:hover { color: #fff !important; border-bottom-color: #fff !important; }
       `}</style>
 
-      {/* Pulsing radial gradient */}
+      <LanguageSwitcher isRTL={isRTL} />
+
+      {/* Pulsing radial gradient — sits at z=0 */}
       <div
         className="admin-login-pulse"
         style={{
-          position: "absolute", inset: 0,
+          position: "absolute", inset: 0, zIndex: 0,
           background: "radial-gradient(circle at 50% 50%, rgba(255,255,255,0.10), transparent 55%), radial-gradient(circle at 80% 80%, rgba(0,0,0,0.4), transparent 50%)",
           pointerEvents: "none",
         }}
       />
 
-      {/* Turkish flag pattern — crescents + stars */}
-      <div style={{ position: "absolute", inset: 0, pointerEvents: "none", overflow: "hidden" }} aria-hidden="true">
+      {/* Turkish flag pattern + particles — z=1 (still below the card) */}
+      <div style={{ position: "absolute", inset: 0, pointerEvents: "none", overflow: "hidden", zIndex: 1 }} aria-hidden="true">
         {FLAG_ELEMENTS.map((el, i) => (
           <div
             key={i}
@@ -279,8 +354,6 @@ export default function AdminLoginPage() {
             {el.kind === "crescent" ? <CrescentSVG size={el.size} /> : <StarSVG size={el.size} />}
           </div>
         ))}
-
-        {/* Constellation particles */}
         {PARTICLES.map((p) => (
           <div
             key={p.id}
@@ -301,31 +374,32 @@ export default function AdminLoginPage() {
         ))}
       </div>
 
+      {/* Login card — z=10, opaque enough to read against any backdrop */}
       <div
         className="admin-login-card"
         style={{
           position: "relative",
+          zIndex: 10,
           width: "100%",
           maxWidth: 440,
-          background: "rgba(255, 255, 255, 0.08)",
+          background: "rgba(20, 5, 8, 0.55)",
           backdropFilter: "blur(20px)",
           WebkitBackdropFilter: "blur(20px)",
-          border: "1px solid rgba(255, 255, 255, 0.18)",
+          border: "1px solid rgba(255, 255, 255, 0.20)",
           borderRadius: 24,
           padding: "36px 32px",
-          boxShadow: "0 24px 60px rgba(0, 0, 0, 0.45)",
+          boxShadow: "0 24px 60px rgba(0, 0, 0, 0.55)",
           color: "#fff",
-          zIndex: 1,
+          opacity: 1,
         }}
       >
-        {/* Branding */}
         <div style={{ textAlign: "center", marginBottom: 28 }}>
           <ZyrixLogo />
-          <div style={{ fontSize: 11, fontWeight: 800, color: "rgba(255,255,255,0.75)", textTransform: "uppercase", letterSpacing: "0.18em", marginBottom: 4 }}>
-            ZYRIX FINSUITE
+          <div style={{ fontSize: 11, fontWeight: 800, color: "rgba(255,255,255,0.78)", textTransform: "uppercase", letterSpacing: "0.18em", marginBottom: 4 }}>
+            {t("adminLogin.brand")}
           </div>
           <h1 style={{ fontSize: 22, fontWeight: 900, color: "#fff", margin: 0, letterSpacing: "-0.01em" }}>
-            Admin Operations <span style={{ marginLeft: 6, fontSize: 18 }} aria-hidden="true">🇹🇷</span>
+            {t("adminLogin.title")} <span style={{ marginInlineStart: 6, fontSize: 18 }} aria-hidden="true">🇹🇷</span>
           </h1>
         </div>
 
@@ -346,18 +420,18 @@ export default function AdminLoginPage() {
 
         {stage === "login" && (
           <form onSubmit={onLogin}>
-            <Field label="Email">
+            <Field label={t("adminLogin.email")}>
               <input
                 type="email" required autoFocus
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
                 onFocus={() => setFocusedField("email")}
                 onBlur={() => setFocusedField(null)}
-                placeholder="admin@zyrix.co"
+                placeholder={t("adminLogin.emailPlaceholder")}
                 style={inputStyle("email")}
               />
             </Field>
-            <Field label="Password">
+            <Field label={t("adminLogin.password")}>
               <input
                 type="password" required
                 value={form.password}
@@ -368,8 +442,15 @@ export default function AdminLoginPage() {
                 style={inputStyle("password")}
               />
             </Field>
-            <button type="submit" disabled={busy} className="admin-login-btn" style={primaryBtn(busy)}>
-              {busy ? "…" : "Sign In to Admin"}
+            <button
+              type="submit"
+              disabled={busy}
+              className="admin-login-btn"
+              style={primaryBtn(busy)}
+              onMouseEnter={() => setBtnHover(true)}
+              onMouseLeave={() => setBtnHover(false)}
+            >
+              {busy ? t("adminLogin.signingIn") : t("adminLogin.signIn")}
             </button>
             <div style={{ marginTop: 18, textAlign: "center" }}>
               <Link
@@ -385,7 +466,7 @@ export default function AdminLoginPage() {
                   transition: "color 160ms ease, border-color 160ms ease",
                 }}
               >
-                ← Customer login
+                {t("adminLogin.customerLink")}
               </Link>
             </div>
           </form>
@@ -394,9 +475,9 @@ export default function AdminLoginPage() {
         {stage === "2fa" && (
           <form onSubmit={onLogin}>
             <p style={{ fontSize: 13, color: "rgba(255,255,255,0.85)", margin: "0 0 18px", textAlign: "center" }}>
-              Enter the 6-digit code from your authenticator app
+              {t("adminLogin.twoFAPrompt")}
             </p>
-            <Field label="2FA Code">
+            <Field label={t("adminLogin.twoFALabel")}>
               <input
                 type="text" inputMode="numeric" required autoFocus
                 value={form.totp}
@@ -408,8 +489,15 @@ export default function AdminLoginPage() {
                 style={inputStyle("totp", true)}
               />
             </Field>
-            <button type="submit" disabled={busy || form.totp.length < 6} className="admin-login-btn" style={primaryBtn(busy || form.totp.length < 6)}>
-              {busy ? "…" : "Verify & Sign In"}
+            <button
+              type="submit"
+              disabled={busy || form.totp.length < 6}
+              className="admin-login-btn"
+              style={primaryBtn(busy || form.totp.length < 6)}
+              onMouseEnter={() => setBtnHover(true)}
+              onMouseLeave={() => setBtnHover(false)}
+            >
+              {busy ? t("adminLogin.signingIn") : t("adminLogin.verifySignIn")}
             </button>
           </form>
         )}
@@ -417,9 +505,9 @@ export default function AdminLoginPage() {
         {stage === "changePassword" && (
           <form onSubmit={onChangePassword}>
             <p style={{ fontSize: 13, color: "rgba(255,255,255,0.85)", margin: "0 0 18px", textAlign: "center" }}>
-              ⚠ You must change your temporary password
+              ⚠ {t("adminLogin.changePwdPrompt")}
             </p>
-            <Field label="New Password (min 10 chars)">
+            <Field label={t("adminLogin.newPwd")}>
               <input
                 type="password" required
                 value={newPwd.next}
@@ -430,7 +518,7 @@ export default function AdminLoginPage() {
                 style={inputStyle("newpwd")}
               />
             </Field>
-            <Field label="Confirm Password">
+            <Field label={t("adminLogin.confirmPwd")}>
               <input
                 type="password" required
                 value={newPwd.confirm}
@@ -441,8 +529,15 @@ export default function AdminLoginPage() {
                 style={inputStyle("confirmpwd")}
               />
             </Field>
-            <button type="submit" disabled={busy} className="admin-login-btn" style={primaryBtn(busy)}>
-              {busy ? "…" : "Update Password"}
+            <button
+              type="submit"
+              disabled={busy}
+              className="admin-login-btn"
+              style={primaryBtn(busy)}
+              onMouseEnter={() => setBtnHover(true)}
+              onMouseLeave={() => setBtnHover(false)}
+            >
+              {busy ? t("adminLogin.signingIn") : t("adminLogin.updatePwd")}
             </button>
           </form>
         )}
@@ -450,16 +545,16 @@ export default function AdminLoginPage() {
         {stage === "setup2FA" && (
           <form onSubmit={onVerify2FA}>
             <p style={{ fontSize: 13, color: "rgba(255,255,255,0.85)", margin: "0 0 18px", textAlign: "center" }}>
-              ⚠ 2FA enrollment is mandatory for admin accounts
+              ⚠ {t("adminLogin.setup2FAPrompt")}
             </p>
             <div style={{ background: "#fff", borderRadius: 14, padding: 18, marginBottom: 14, textAlign: "center" }}>
-              <div style={{ width: 140, height: 140, background: "#0F172A", color: "#fff", margin: "0 auto 10px", display: "grid", placeItems: "center", fontSize: 50, borderRadius: 10 }}>▦</div>
-              <div style={{ fontSize: 11, color: "#64748B", marginBottom: 4 }}>Scan with Google Authenticator</div>
+              <div style={{ width: 140, height: 140, background: NAVY_DEEP, color: "#fff", margin: "0 auto 10px", display: "grid", placeItems: "center", fontSize: 50, borderRadius: 10 }}>▦</div>
+              <div style={{ fontSize: 11, color: "#64748B", marginBottom: 4 }}>{t("adminLogin.scan")}</div>
               <code style={{ display: "block", fontSize: 9, color: "#94A3B8", wordBreak: "break-all" }}>
-                {twoFASetup?.provisioningUri || "Loading…"}
+                {twoFASetup?.provisioningUri || t("common.loading")}
               </code>
             </div>
-            <Field label="6-digit code from app">
+            <Field label={t("adminLogin.code6")}>
               <input
                 type="text" inputMode="numeric" required autoFocus
                 value={twoFACode}
@@ -470,8 +565,15 @@ export default function AdminLoginPage() {
                 style={inputStyle("verify2fa", true)}
               />
             </Field>
-            <button type="submit" disabled={busy || twoFACode.length < 6} className="admin-login-btn" style={primaryBtn(busy || twoFACode.length < 6)}>
-              {busy ? "…" : "Verify & Enable 2FA"}
+            <button
+              type="submit"
+              disabled={busy || twoFACode.length < 6}
+              className="admin-login-btn"
+              style={primaryBtn(busy || twoFACode.length < 6)}
+              onMouseEnter={() => setBtnHover(true)}
+              onMouseLeave={() => setBtnHover(false)}
+            >
+              {busy ? t("adminLogin.signingIn") : t("adminLogin.verifyEnable")}
             </button>
           </form>
         )}
@@ -489,20 +591,4 @@ function Field({ label, children }) {
       {children}
     </div>
   );
-}
-
-function primaryBtn(disabled) {
-  return {
-    width: "100%",
-    background: disabled ? "rgba(255,255,255,0.2)" : "linear-gradient(135deg, #fff, #FFE3E5)",
-    color: disabled ? "rgba(255,255,255,0.5)" : "#A8081A",
-    border: "none",
-    padding: "14px 18px",
-    borderRadius: 12,
-    fontSize: 14,
-    fontWeight: 900,
-    cursor: disabled ? "not-allowed" : "pointer",
-    marginTop: 8,
-    letterSpacing: "0.02em",
-  };
 }
