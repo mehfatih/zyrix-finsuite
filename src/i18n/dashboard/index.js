@@ -100,6 +100,10 @@ import migrationTr from "./migration.tr.json";
 import migrationEn from "./migration.en.json";
 import migrationAr from "./migration.ar.json";
 
+import securityTr from "./security.tr.json";
+import securityEn from "./security.en.json";
+import securityAr from "./security.ar.json";
+
 const NAMESPACES = {
   home:          { TR: homeTr,         EN: homeEn,         AR: homeAr },
   profile:       { TR: profileTr,      EN: profileEn,      AR: profileAr },
@@ -125,6 +129,7 @@ const NAMESPACES = {
   help:          { TR: helpTr,         EN: helpEn,         AR: helpAr },
   support:       { TR: supportTr,      EN: supportEn,      AR: supportAr },
   migration:     { TR: migrationTr,    EN: migrationEn,    AR: migrationAr },
+  security:      { TR: securityTr,     EN: securityEn,     AR: securityAr },
 };
 
 export function useDashboardI18n(namespace) {

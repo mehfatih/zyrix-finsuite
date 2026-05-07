@@ -72,6 +72,17 @@ const MigrationHistoryPage      = React.lazy(() => import("./pages/migration/Mig
 const ExportCenterPage          = React.lazy(() => import("./pages/migration/ExportCenterPage.jsx"));
 const MigrationConciergePage    = React.lazy(() => import("./pages/migration/MigrationConciergePage.jsx"));
 
+// ── Lazy: Phase 13 trust + security ────────────────────────────
+const TrustCenterPage             = React.lazy(() => import("./pages/trust/TrustCenterPage.jsx"));
+const SecurityWhitepaperPage      = React.lazy(() => import("./pages/trust/SecurityWhitepaperPage.jsx"));
+const ComplianceCertificationsPage = React.lazy(() => import("./pages/trust/ComplianceCertificationsPage.jsx"));
+const PenetrationTestReportsPage  = React.lazy(() => import("./pages/trust/PenetrationTestReportsPage.jsx"));
+const TwoFactorSetupPage          = React.lazy(() => import("./pages/settings/TwoFactorSetupPage.jsx"));
+const ActiveSessionsPage          = React.lazy(() => import("./pages/settings/ActiveSessionsPage.jsx"));
+const AuditLogPage                = React.lazy(() => import("./pages/settings/AuditLogPage.jsx"));
+const DataExportRequestPage       = React.lazy(() => import("./pages/settings/DataExportRequestPage.jsx"));
+const DataResidencyPage           = React.lazy(() => import("./pages/settings/DataResidencyPage.jsx"));
+
 function HomeRedirect() {
   const { user, loading } = useAuth();
   if (loading) return null;
@@ -146,6 +157,20 @@ export default function App() {
             <Route path="/migration/history"   element={<RequireAuth><MigrationHistoryPage /></RequireAuth>} />
             <Route path="/migration/export"    element={<RequireAuth><ExportCenterPage /></RequireAuth>} />
             <Route path="/migration/concierge" element={<RequireAuth><MigrationConciergePage /></RequireAuth>} />
+
+            {/* Trust Center (Phase 13) — public */}
+            <Route path="/trust"             element={<TrustCenterPage />} />
+            <Route path="/guvenlik"          element={<TrustCenterPage />} />
+            <Route path="/trust/whitepaper"  element={<SecurityWhitepaperPage />} />
+            <Route path="/trust/compliance"  element={<ComplianceCertificationsPage />} />
+            <Route path="/trust/pentest"     element={<PenetrationTestReportsPage />} />
+
+            {/* Security settings (Phase 13) — auth required */}
+            <Route path="/settings/2fa"          element={<RequireAuth><TwoFactorSetupPage /></RequireAuth>} />
+            <Route path="/settings/sessions"     element={<RequireAuth><ActiveSessionsPage /></RequireAuth>} />
+            <Route path="/settings/audit-log"    element={<RequireAuth><AuditLogPage /></RequireAuth>} />
+            <Route path="/settings/data-export"  element={<RequireAuth><DataExportRequestPage /></RequireAuth>} />
+            <Route path="/settings/residency"    element={<RequireAuth><DataResidencyPage /></RequireAuth>} />
 
             <Route path="/contact" element={<ContactPage />} />
             <Route path="/privacy" element={<PrivacyPage />} />
