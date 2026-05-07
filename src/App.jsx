@@ -30,6 +30,7 @@ import NotFoundPage from "./pages/NotFoundPage.jsx";
 import BlogPage from "./pages/BlogPage.jsx";
 import SitemapPage from "./pages/SitemapPage.jsx";
 import ScrollToTop from "./components/ScrollToTop.jsx";
+import CustomerPortalView from "./pages/public/CustomerPortalView.jsx";
 function HomeRedirect() {
   const { user, loading } = useAuth();
   if (loading) return null;
@@ -73,6 +74,7 @@ export default function App() {
         <Route path="/privacy" element={<PrivacyPage />} />
         <Route path="/terms" element={<TermsPage />} />
         <Route path="/sitemap"     element={<SitemapPage />} />
+        <Route path="/portal/:slug" element={<CustomerPortalView />} />
           <Route path="/blog"        element={<BlogPage />} />
           <Route path="/security" element={<SecurityPage />} />
         <Route path="/dashboard/security" element={<SecuritySettingsPage />} />
