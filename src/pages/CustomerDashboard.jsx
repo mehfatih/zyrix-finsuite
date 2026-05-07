@@ -111,6 +111,16 @@ const ARStorefrontPage            = React.lazy(() => import("./dashboard/cogniti
 const ARReceiptPage               = React.lazy(() => import("./dashboard/cognitive/ARReceiptPage"));
 const FraudDetectionPage          = React.lazy(() => import("./dashboard/cognitive/FraudDetectionPage"));
 
+// Phase 10 — Voice & Customer Experience (lazy-loaded)
+const VoiceModePage               = React.lazy(() => import("./dashboard/voice-cx/VoiceModePage"));
+const CustomerPortalsPage         = React.lazy(() => import("./dashboard/voice-cx/CustomerPortalsPage"));
+const PaymentNudgePage            = React.lazy(() => import("./dashboard/voice-cx/PaymentNudgePage"));
+const LoyaltyAIPage               = React.lazy(() => import("./dashboard/voice-cx/LoyaltyAIPage"));
+const BirthdayMarketingPage       = React.lazy(() => import("./dashboard/voice-cx/BirthdayMarketingPage"));
+const ReviewOptimizerPage         = React.lazy(() => import("./dashboard/voice-cx/ReviewOptimizerPage"));
+const EmailMarketingPage          = React.lazy(() => import("./dashboard/voice-cx/EmailMarketingPage"));
+const VoiceCxCampaignsPage        = React.lazy(() => import("./dashboard/voice-cx/CampaignsPage"));
+
 import {
   PALETTE_HUES as DASH_PALETTE_HUES,
   getCardPalette as getDashCardPalette,
@@ -1718,6 +1728,21 @@ const SIDEBAR_GROUPS = [
     ],
   },
   {
+    id: "voicecx",
+    label: { TR: "★ Ses & Müşteri Deneyimi", EN: "★ Voice & CX", AR: "★ الصوت وتجربة العملاء" },
+    paletteId: "rose",
+    items: [
+      { id: "vc-voice",     icon: "🎙", label: { TR: "Sesli Mod",          EN: "Voice Mode",         AR: "الوضع الصوتي" },        tag: "star" },
+      { id: "vc-portals",   icon: "🪟", label: { TR: "Müşteri Portalı",    EN: "Customer Portals",   AR: "بوابات العملاء" },      tag: "star" },
+      { id: "vc-nudge",     icon: "💸", label: { TR: "Ödeme Hatırlatma",   EN: "Payment Nudge AI",   AR: "تذكير الدفع" },         tag: "ai" },
+      { id: "vc-loyalty",   icon: "💝", label: { TR: "Sadakat AI",         EN: "Loyalty AI",         AR: "الولاء AI" },           tag: "star" },
+      { id: "vc-birthday",  icon: "🎂", label: { TR: "Özel Gün Pazarlama", EN: "Birthday Marketing", AR: "تسويق المناسبات" },     tag: "ai" },
+      { id: "vc-review",    icon: "⭐", label: { TR: "İnceleme AI",        EN: "Review Optimizer",   AR: "محسّن المراجعات" },     tag: "star" },
+      { id: "vc-email",     icon: "✉",  label: { TR: "E-posta Pazarlama",  EN: "Email Marketing",    AR: "تسويق البريد" },        tag: "built" },
+      { id: "vc-campaigns", icon: "📣", label: { TR: "Kampanyalar",        EN: "Campaigns",          AR: "الحملات" },             tag: "built" },
+    ],
+  },
+  {
     id: "aifin",
     label: { TR: "AI Finans", EN: "AI Finance", AR: "المالية AI" },
     paletteId: "violet",
@@ -3055,6 +3080,48 @@ export default function CustomerDashboard() {
           {page === "co-fraud" && (
             <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
               <FraudDetectionPage />
+            </React.Suspense>
+          )}
+
+          {/* ═══ Phase 10 PAGES — Voice & Customer Experience ════════════ */}
+          {page === "vc-voice" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <VoiceModePage />
+            </React.Suspense>
+          )}
+          {page === "vc-portals" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <CustomerPortalsPage />
+            </React.Suspense>
+          )}
+          {page === "vc-nudge" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <PaymentNudgePage />
+            </React.Suspense>
+          )}
+          {page === "vc-loyalty" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <LoyaltyAIPage />
+            </React.Suspense>
+          )}
+          {page === "vc-birthday" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <BirthdayMarketingPage />
+            </React.Suspense>
+          )}
+          {page === "vc-review" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <ReviewOptimizerPage />
+            </React.Suspense>
+          )}
+          {page === "vc-email" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <EmailMarketingPage />
+            </React.Suspense>
+          )}
+          {page === "vc-campaigns" && (
+            <React.Suspense fallback={<div style={{padding:40,textAlign:"center",color:P.sub}}>Loading…</div>}>
+              <VoiceCxCampaignsPage />
             </React.Suspense>
           )}
 
