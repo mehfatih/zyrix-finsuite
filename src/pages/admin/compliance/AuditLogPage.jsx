@@ -4,8 +4,8 @@
 // ================================================================
 import React, { useEffect, useMemo, useState } from "react";
 import DataTable from "../../../components/admin/DataTable";
-import AdminKpiCard from "../../../components/admin/AdminKpiCard";
-import { ADMIN_BRAND, TRUST_BLUE, CRITICAL_RED, ROLE_PALETTE } from "../../../utils/admin/adminPalette";
+import AuditStatCards from "../../../components/admin/AuditStatCards";
+import { TRUST_BLUE } from "../../../utils/admin/adminPalette";
 import { listAdminAudit } from "../../../utils/admin/adminApi";
 import { fmtDateTime, fmtRelativeTime } from "../../../utils/format";
 
@@ -56,9 +56,7 @@ const SEED_AUDIT = Array.from({ length: 35 }).map((_, i) => {
 });
 
 export default function AdminAuditLogPage() {
-  const brand = ADMIN_BRAND;
   const trust = TRUST_BLUE;
-  const crit = CRITICAL_RED;
 
   const [entries, setEntries] = useState([]);
   const [search, setSearch] = useState("");
@@ -143,12 +141,7 @@ export default function AdminAuditLogPage() {
         </button>
       </div>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12, marginBottom: 18 }}>
-        <AdminKpiCard label="Total entries"     value={counts.total}     palette={trust} icon="📜" />
-        <AdminKpiCard label="INFO"              value={counts.info}      palette={{ bg: "#DBEAFE", base: "#1E40AF", dark: "#1E3A8A" }} icon="ℹ" />
-        <AdminKpiCard label="WARNING"           value={counts.warning}   palette={{ bg: "#FEF3C7", base: "#F59E0B", dark: "#B45309" }} icon="⚠" />
-        <AdminKpiCard label="CRITICAL"          value={counts.critical}  palette={crit} icon="🚨" />
-      </div>
+      <AuditStatCards counts={counts} />
 
       {/* Filters */}
       <div style={{ background: "#fff", border: "1px solid #E2E8F0", borderRadius: 12, padding: 14, marginBottom: 14, display: "grid", gridTemplateColumns: "2fr 1fr 1fr auto", gap: 10 }} className="aal-filters">

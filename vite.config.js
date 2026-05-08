@@ -43,9 +43,15 @@ export default defineConfig({
         manualChunks(id) {
           // Vendor splitting — keep React core small + isolated
           if (id.includes("node_modules")) {
-            if (id.includes("react-dom"))         return "react-dom";
-            if (id.includes("react-router"))      return "router";
-            if (id.includes("/react/"))           return "react";
+            if (id.includes("react-dom"))                       return "react-dom";
+            if (id.includes("react-router"))                    return "router";
+            if (id.includes("/react/"))                         return "react";
+            // Heavy admin-only chart deps in their own chunk so the
+            // landing-page critical path doesn't preload them.
+            if (id.includes("/recharts/")
+                || id.includes("/lucide-react/")
+                || id.includes("/d3-")
+                || id.includes("/victory-vendor/")) return "charts";
             return "vendor";
           }
           // Shared dashboard primitives — used by every page

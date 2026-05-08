@@ -147,31 +147,152 @@ export default function AdminDashboardPage() {
 
       <div style={{ background: "#fff", border: "1px solid #E2E8F0", borderRadius: 16, padding: 24, boxShadow: "0 2px 8px rgba(15,23,42,0.04)" }}>
         <h2 style={{ fontSize: 14, fontWeight: 800, color: "#0F172A", margin: "0 0 14px" }}>Recent admin activity</h2>
-        {[
-          { time: "2 min ago",  action: "subscription.refund",   admin: "Mehmet Fatih", target: "Customer #1287",  severity: "WARNING" },
-          { time: "14 min ago", action: "customer.archive",      admin: "Mehmet Fatih", target: "Customer #1156",  severity: "WARNING" },
-          { time: "1 h ago",    action: "feature_flag.toggle",   admin: "Mehmet Fatih", target: "ai_co_founder",   severity: "INFO" },
-          { time: "3 h ago",    action: "admin.login.success",   admin: "Mehmet Fatih", target: "—",                severity: "INFO" },
-          { time: "5 h ago",    action: "coupon.create",         admin: "Mehmet Fatih", target: "SUMMER25",         severity: "INFO" },
-        ].map((row, i) => {
-          const sev = row.severity === "WARNING" ? PALETTES.amber : row.severity === "CRITICAL" ? CRITICAL_RED : TRUST_BLUE;
-          return (
-            <div key={i} style={{ display: "grid", gridTemplateColumns: "auto 1fr auto auto", gap: 12, alignItems: "center", padding: "10px 0", borderBottom: i < 4 ? "1px solid #F1F5F9" : "none" }}>
-              <span style={{ fontSize: 11, color: "#94A3B8", fontFamily: "ui-monospace, monospace", whiteSpace: "nowrap" }}>{row.time}</span>
-              <span style={{ fontSize: 12, fontWeight: 700, color: "#0F172A", overflow: "hidden", textOverflow: "ellipsis" }}>
-                <code style={{ background: "#F1F5F9", padding: "1px 6px", borderRadius: 4, fontSize: 11 }}>{row.action}</code> {row.target}
-              </span>
-              <span style={{ fontSize: 11, color: "#64748B" }}>{row.admin}</span>
-              <span style={{ fontSize: 9, fontWeight: 800, padding: "3px 8px", borderRadius: 999, background: sev.bg, color: sev.dark, textTransform: "uppercase", letterSpacing: "0.06em" }}>{row.severity}</span>
-            </div>
-          );
-        })}
+
+        <div style={{
+          background: "rgba(255, 255, 255, 0.02)",
+          borderRadius: "12px",
+          overflow: "hidden",
+          border: "1px solid rgba(0, 0, 0, 0.06)",
+          marginTop: "16px",
+        }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "14px" }}>
+            <thead>
+              <tr style={{ background: "rgba(0, 0, 0, 0.04)" }}>
+                <th style={thStyle}>WHEN</th>
+                <th style={thStyle}>ACTION</th>
+                <th style={thStyle}>RESOURCE</th>
+                <th style={thStyle}>ADMIN</th>
+                <th style={thStyle}>SEVERITY</th>
+              </tr>
+            </thead>
+            <tbody>
+              {recentActivities.map((row, i) => (
+                <tr
+                  key={row.id}
+                  style={{
+                    background: i % 2 === 0 ? "#FFFFFF" : "#F9FAFB",
+                    transition: "background 200ms ease",
+                    borderBottom: "1px solid rgba(0, 0, 0, 0.04)",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = "rgba(227, 10, 23, 0.04)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = i % 2 === 0 ? "#FFFFFF" : "#F9FAFB";
+                  }}
+                >
+                  <td style={tdStyle}>{row.timeAgo}</td>
+                  <td style={tdStyle}><ActionBadge action={row.action} /></td>
+                  <td style={tdStyle}>{row.resource}</td>
+                  <td style={tdStyle}>{row.adminName}</td>
+                  <td style={tdStyle}><SeverityBadge severity={row.severity} /></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
         <div style={{ marginTop: 14, textAlign: "center" }}>
-          <Link to="/admin/compliance/audit" style={{ fontSize: 12, color: brand.dark, textDecoration: "none", fontWeight: 700, borderBottom: `1px dashed ${brand.dark}50` }}>
-            See full audit log →
+          <Link
+            to="/admin/compliance/audit"
+            className="admin-audit-link"
+            style={{
+              fontSize: 13,
+              color: "#E30A17",
+              textDecoration: "none",
+              fontWeight: 600,
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 4,
+            }}
+          >
+            See full audit log
+            <span className="admin-audit-link__arrow" style={{ display: "inline-block", transition: "transform 200ms ease" }}>→</span>
           </Link>
+          <style>{`
+            .admin-audit-link:hover .admin-audit-link__arrow { transform: translateX(4px); }
+          `}</style>
         </div>
       </div>
     </div>
+  );
+}
+
+// ───────────────────────────────────────────────────────────────
+// Recent activity table — seed rows + cell styles + tiny badges.
+// Action / severity colors mirror AuditLogPage exactly (the
+// well-crafted palette the user explicitly wants preserved).
+// ───────────────────────────────────────────────────────────────
+const recentActivities = [
+  { id: "act-1", timeAgo: "2 min ago",  action: "subscription.refund", resource: "Customer #1287", adminName: "Mehmet Fatih", severity: "WARNING" },
+  { id: "act-2", timeAgo: "14 min ago", action: "customer.archive",    resource: "Customer #1156", adminName: "Mehmet Fatih", severity: "WARNING" },
+  { id: "act-3", timeAgo: "1 h ago",    action: "feature_flag.toggle", resource: "ai_co_founder",  adminName: "Mehmet Fatih", severity: "INFO" },
+  { id: "act-4", timeAgo: "3 h ago",    action: "admin.login.success", resource: "—",               adminName: "Mehmet Fatih", severity: "INFO" },
+  { id: "act-5", timeAgo: "5 h ago",    action: "coupon.create",       resource: "SUMMER25",        adminName: "Mehmet Fatih", severity: "INFO" },
+];
+
+const thStyle = {
+  padding: "12px 16px",
+  textAlign: "start",
+  fontSize: "11px",
+  fontWeight: 700,
+  color: "#6B7280",
+  textTransform: "uppercase",
+  letterSpacing: "0.05em",
+};
+
+const tdStyle = {
+  padding: "14px 16px",
+  color: "#1F2937",
+  fontSize: "14px",
+  fontWeight: 500,
+};
+
+const ACTION_PALETTE = {
+  customer:     { bg: "#EAEDFF", dark: "#3730A3" },
+  subscription: { bg: "#DEFAF6", dark: "#115E59" },
+  invoice:      { bg: "#DCFCE7", dark: "#047857" },
+  coupon:       { bg: "#FFF8E5", dark: "#B45309" },
+  admin:        { bg: "#FFE4E6", dark: "#9F1239" },
+  feature_flag: { bg: "#F3EFFF", dark: "#5B21B6" },
+  data:         { bg: "#DBEAFE", dark: "#1E40AF" },
+  default:      { bg: "#F1F5F9", dark: "#334155" },
+};
+
+const SEVERITY_PILL = {
+  INFO:     { bg: "#DBEAFE", dark: "#1E40AF" },
+  WARNING:  { bg: "#FEF3C7", dark: "#B45309" },
+  CRITICAL: { bg: "#FEE2E2", dark: "#991B1B" },
+};
+
+function ActionBadge({ action }) {
+  const resourceType = (action || "").split(".")[0];
+  const p = ACTION_PALETTE[resourceType] || ACTION_PALETTE.default;
+  return (
+    <code style={{
+      background: p.bg,
+      color: p.dark,
+      padding: "3px 8px",
+      borderRadius: 4,
+      fontSize: 11,
+      fontWeight: 700,
+      fontFamily: "ui-monospace, monospace",
+    }}>{action}</code>
+  );
+}
+
+function SeverityBadge({ severity }) {
+  const p = SEVERITY_PILL[severity] || SEVERITY_PILL.INFO;
+  return (
+    <span style={{
+      fontSize: 9,
+      fontWeight: 800,
+      padding: "3px 8px",
+      borderRadius: 999,
+      background: p.bg,
+      color: p.dark,
+      textTransform: "uppercase",
+      letterSpacing: "0.06em",
+    }}>{severity}</span>
   );
 }

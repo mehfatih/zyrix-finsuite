@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import { I18nProvider } from './i18n/i18n';
 import { CountryProvider } from './hooks/useCountry.jsx';
+import "./index.css";
 import "./styles/mobile-fixes.css";
 import "./styles/a11y.css";
 import { initAnalytics } from "./utils/analytics";
