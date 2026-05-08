@@ -83,30 +83,33 @@ export default function FooterV2() {
   const taxName = (profile.tax && profile.tax.name) || "VAT";
   const taxRate = (profile.tax && profile.tax.rate) || 20;
 
+  // Footer ÜRÜN section. The four priority features (E-Invoice, CRM, AI,
+  // Mobile) now have dedicated landing pages; the remaining four still
+  // share /features until their pages ship in a follow-up.
   const productLinks = lang === "AR" ? [
-    { label: "الفاتورة الإلكترونية", href: "/features", route: true },
-    { label: "إدارة CRM", href: "/features", route: true },
+    { label: "الفاتورة الإلكترونية", href: "/e-fatura", route: true },
+    { label: "إدارة CRM", href: "/crm", route: true },
     { label: "التحصيل الذكي", href: "/features", route: true },
-    { label: "مساعد AI", href: "/ai-analysis", route: true },
-    { label: "تطبيق الجوال", href: "/features", route: true },
+    { label: "مساعد AI", href: "/ai", route: true },
+    { label: "تطبيق الجوال", href: "/mobil", route: true },
     { label: "الأرشيف الإلكتروني", href: "/features", route: true },
     { label: "تقارير ضريبة القيمة المضافة", href: "/features", route: true },
     { label: "API و Webhooks", href: "/integrations", route: true },
   ] : lang === "EN" ? [
-    { label: "E-Invoice", href: "/features", route: true },
-    { label: "CRM Management", href: "/features", route: true },
+    { label: "E-Invoice", href: "/e-fatura", route: true },
+    { label: "CRM Management", href: "/crm", route: true },
     { label: "Smart Collections", href: "/features", route: true },
-    { label: "AI Assistant", href: "/ai-analysis", route: true },
-    { label: "Mobile App", href: "/features", route: true },
+    { label: "AI Assistant", href: "/ai", route: true },
+    { label: "Mobile App", href: "/mobil", route: true },
     { label: "e-Archive Invoice", href: "/features", route: true },
     { label: "VAT Reports", href: "/features", route: true },
     { label: "API & Webhooks", href: "/integrations", route: true },
   ] : [
-    { label: "E-Fatura", href: "/features", route: true },
-    { label: "CRM Yönetimi", href: "/features", route: true },
+    { label: "E-Fatura", href: "/e-fatura", route: true },
+    { label: "CRM Yönetimi", href: "/crm", route: true },
     { label: "Akıllı Tahsilat", href: "/features", route: true },
-    { label: "AI Asistan", href: "/ai-analysis", route: true },
-    { label: "Mobil Uygulama", href: "/features", route: true },
+    { label: "AI Asistan", href: "/ai", route: true },
+    { label: "Mobil Uygulama", href: "/mobil", route: true },
     { label: "e-Arşiv Fatura", href: "/features", route: true },
     { label: "KDV Raporları", href: "/features", route: true },
     { label: "API & Webhooks", href: "/integrations", route: true },

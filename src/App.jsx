@@ -21,6 +21,10 @@ const IntegrationsPage    = React.lazy(() => import("./pages/IntegrationsPage.js
 const SectorsPage         = React.lazy(() => import("./pages/SectorsPage.jsx"));
 const AboutPage           = React.lazy(() => import("./pages/AboutPage.jsx"));
 const ContactPage         = React.lazy(() => import("./pages/ContactPage.jsx"));
+const EFaturaPage         = React.lazy(() => import("./pages/features/EFaturaPage.jsx"));
+const CRMPage             = React.lazy(() => import("./pages/features/CRMPage.jsx"));
+const AIPage              = React.lazy(() => import("./pages/features/AIPage.jsx"));
+const MobilPage           = React.lazy(() => import("./pages/features/MobilPage.jsx"));
 const PrivacyPage         = React.lazy(() => import("./pages/PrivacyPage.jsx"));
 const TermsPage           = React.lazy(() => import("./pages/TermsPage.jsx"));
 const SecurityPage        = React.lazy(() => import("./pages/SecurityPage.jsx"));
@@ -210,6 +214,11 @@ export default function App() {
             <Route path="/pricing" element={<PricingPage />} />
             <Route path="/onboarding" element={<OnboardingPage />} />
             <Route path="/features" element={<FeaturesPage />} />
+            {/* Per-feature dedicated landing pages (P2 — 4 priority features) */}
+            <Route path="/e-fatura" element={<EFaturaPage />} />
+            <Route path="/crm"      element={<CRMPage />} />
+            <Route path="/ai"       element={<AIPage />} />
+            <Route path="/mobil"    element={<MobilPage />} />
             <Route path="/case-studies" element={<CaseStudiesPage />} />
             <Route path="/integrations" element={<IntegrationsPage />} />
             <Route path="/sectors" element={<SectorsPage />} />

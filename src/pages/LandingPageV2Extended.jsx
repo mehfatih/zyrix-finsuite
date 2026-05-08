@@ -2548,9 +2548,11 @@ function AIInvoiceDemoSection() {
       </div>
 
       <div style={{ textAlign: "center", marginTop: 48 }}>
-        <button
+        <Link
+          to="/register"
           className="ai-cmd-cta"
           style={{
+            display: "inline-block",
             padding: "18px 36px",
             background: primaryGradient,
             color: "#fff",
@@ -2561,6 +2563,7 @@ function AIInvoiceDemoSection() {
             cursor: "pointer",
             boxShadow: primaryGlow,
             fontFamily: "inherit",
+            textDecoration: "none",
             transition: "transform .2s, box-shadow .2s",
             animation: "cta-glow 2.4s ease-in-out infinite",
           }}
@@ -2576,7 +2579,7 @@ function AIInvoiceDemoSection() {
           }}
         >
           {c.cta}
-        </button>
+        </Link>
       </div>
 
       <style>{`
