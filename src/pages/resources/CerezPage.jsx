@@ -7,14 +7,11 @@ import { Link } from "react-router-dom";
 import { useI18n } from "../../i18n/i18n.jsx";
 import ResourcePage from "../../components/ResourcePage.jsx";
 
-const LAST_UPDATED = "2026-04-01";
-
 const COPY = {
   TR: {
     eyebrow: "ÇEREZ POLİTİKASI",
     title: "Zyrix'te çerezleri nasıl kullanıyoruz",
     subtitle: "Web sitemizde çerezleri sade ve dürüst bir şekilde — yalnızca işin gerektirdiği kadar — kullanıyoruz. Aşağıda neyin neden olduğunu özetledik.",
-    updated: "Son güncelleme",
     sections: [
       {
         h: "1. Çerez nedir?",
@@ -45,7 +42,6 @@ const COPY = {
     eyebrow: "COOKIE POLICY",
     title: "How we use cookies at Zyrix",
     subtitle: "We use cookies on our website plainly and honestly — only as much as the product needs. Here's what's set and why.",
-    updated: "Last updated",
     sections: [
       {
         h: "1. What is a cookie?",
@@ -76,7 +72,6 @@ const COPY = {
     eyebrow: "سياسة الكوكيز",
     title: "كيف نستخدم الكوكيز في Zyrix",
     subtitle: "نستخدم الكوكيز على موقعنا بشكل بسيط وصادق — بقدر ما يحتاجه المنتج فقط. إليك ما يتم تعيينه ولماذا.",
-    updated: "آخر تحديث",
     sections: [
       {
         h: "1. ما هو الكوكي؟",
@@ -110,10 +105,6 @@ export default function CerezPage() {
   const t = COPY[lang] || COPY.TR;
   return (
     <ResourcePage eyebrow={t.eyebrow} title={t.title} subtitle={t.subtitle}>
-      <div style={{ fontSize: 12, fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase", color: "#5C4F52", marginBottom: 24 }}>
-        {t.updated}: {LAST_UPDATED}
-      </div>
-
       <div style={{
         background: "#fff",
         border: "1px solid rgba(0,0,0,0.08)",

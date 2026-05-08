@@ -7,7 +7,6 @@ import { Link } from "react-router-dom";
 import { useI18n } from "../../i18n/i18n.jsx";
 import ResourcePage from "../../components/ResourcePage.jsx";
 
-const LAST_UPDATED = "2026-04-01";
 const DPO_EMAIL = "dpo@zyrix.co";
 
 const COPY = {
@@ -15,7 +14,6 @@ const COPY = {
     eyebrow: "GDPR UYUMLULUĞU",
     title: "Verileriniz üzerindeki haklarınız",
     subtitle: "Zyrix, hem AB GDPR hem de Türkiye KVKK düzenlemelerine uyumlu çalışır. Aşağıda haklarınızı, taleplerinizi nasıl yapacağınızı ve sürelerimizi özetledik.",
-    updated: "Son güncelleme",
     rightsEyebrow: "VERİ SAHİBİ HAKLARI",
     rightsTitle: "GDPR Madde 15-22 kapsamındaki haklarınız",
     rights: [
@@ -49,7 +47,6 @@ const COPY = {
     eyebrow: "GDPR COMPLIANCE",
     title: "Your rights over your data",
     subtitle: "Zyrix complies with both the EU GDPR and Turkey's KVKK. Below: your rights, how to file a request, and our response timelines.",
-    updated: "Last updated",
     rightsEyebrow: "DATA SUBJECT RIGHTS",
     rightsTitle: "Your rights under GDPR Articles 15-22",
     rights: [
@@ -83,7 +80,6 @@ const COPY = {
     eyebrow: "الامتثال لـ GDPR",
     title: "حقوقك على بياناتك",
     subtitle: "تلتزم Zyrix بكل من GDPR في الاتحاد الأوروبي وKVKK في تركيا. أدناه: حقوقك، كيفية تقديم طلب، ومواعيد الاستجابة.",
-    updated: "آخر تحديث",
     rightsEyebrow: "حقوق صاحب البيانات",
     rightsTitle: "حقوقك بموجب المواد 15-22 من GDPR",
     rights: [
@@ -129,10 +125,6 @@ export default function GdprPage() {
   const t = COPY[lang] || COPY.TR;
   return (
     <ResourcePage eyebrow={t.eyebrow} title={t.title} subtitle={t.subtitle}>
-      <div style={{ fontSize: 12, fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase", color: "#5C4F52", marginBottom: 24 }}>
-        {t.updated}: {LAST_UPDATED}
-      </div>
-
       {/* Rights */}
       <div style={{ marginBottom: 48 }}>
         <div style={{ textAlign: "center", marginBottom: 28 }}>

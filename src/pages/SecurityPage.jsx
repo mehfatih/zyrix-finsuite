@@ -196,9 +196,6 @@ export default function SecurityPage() {
             <h1 style={{ margin: 0, fontSize: 56, lineHeight: 1.06, letterSpacing: "-0.06em", fontWeight: 950 }}>
               {t.title}
             </h1>
-            <div style={{ marginTop: 14, color: T.muted, fontSize: 14, fontWeight: 700 }}>
-              {t.lastUpdated}
-            </div>
             <p style={{ marginTop: 24, color: T.muted, fontSize: 18, lineHeight: 1.85, fontWeight: 650 }}>
               {t.intro}
             </p>
