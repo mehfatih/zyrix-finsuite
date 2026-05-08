@@ -9,8 +9,12 @@ import LoginPage          from "./pages/LoginPage";
 import OtpLogin           from "./pages/OtpLogin";
 import RegisterPage       from "./pages/RegisterPage";
 
+// Landing page is the cold-start route for the vast majority of visitors;
+// pulling it in eagerly avoids a second round-trip after the main bundle
+// loads, so first contentful paint IS the page instead of a blank frame.
+import LandingPageV2Extended from "./pages/LandingPageV2Extended";
+
 // ── Lazy: marketing pages (each ~30-80kb, only one at a time) ──
-const LandingPageV2Extended = React.lazy(() => import("./pages/LandingPageV2Extended"));
 const AIAnalysisPage      = React.lazy(() => import("./pages/AIAnalysisPage"));
 const HowItWorksPage      = React.lazy(() => import("./pages/HowItWorksPage"));
 const PricingPage         = React.lazy(() => import("./pages/PricingPage"));

@@ -38,15 +38,17 @@
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Manrope:wght@400;500;600;700;800;900&family=Inter+Tight:wght@600;700;800;900&display=swap" rel="stylesheet" />
 
     <style>
-      /* Brand-dark default so route-to-route transitions never flash white. */
-      /* Each page's own inline body bg overrides this while it is mounted. */
+      /* Neutral first-paint surface. The landing hero owns its own dark
+         wine background and paints it together with content; using #fff
+         here means mobile users on slow connections see a clean blank
+         frame for the brief HTML-only moment instead of a solid red flash. */
       *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-      html, body { background: #1F0205; }
+      html, body { background: #FFFFFF; }
       body {
         font-family: 'Plus Jakarta Sans', 'Manrope', system-ui, sans-serif;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
-        color: #fff;
+        color: #14060A;
       }
       #root { min-height: 100vh; }
     </style>
