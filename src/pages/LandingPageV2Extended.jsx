@@ -1664,6 +1664,7 @@ function AIInvoiceDemoSection() {
   const isArabic = lang === "AR";
   const T = isArabic ? SA : C;
   const [loading, setLoading] = useState(false);
+  const [progressStep, setProgressStep] = useState(0);
   const [analyzed, setAnalyzed] = useState(false);
   const [pulseDashboard, setPulseDashboard] = useState(false);
   const [visibleMsgs, setVisibleMsgs] = useState([false, false, false]);
@@ -1688,6 +1689,12 @@ function AIInvoiceDemoSection() {
       analyze: "AI ile Analiz Et",
       analyzeSub: "Saniyeler içinde akıllı içgörüler alın",
       analyzing: "Analiz ediliyor...",
+      progressMsgs: [
+        "Verileriniz analiz ediliyor...",
+        "İçgörüler oluşturuluyor...",
+        "Risk modeli çalıştırılıyor...",
+        "Neredeyse tamam...",
+      ],
       stat1: "Nakit Akışı",
       stat2: "Tahsilat Riski",
       stat3: "Öncelikli Takip",
@@ -1713,6 +1720,12 @@ function AIInvoiceDemoSection() {
       analyze: "حلِّل بالذكاء الاصطناعي",
       analyzeSub: "احصل على رؤى ذكية في ثوانٍ",
       analyzing: "جارٍ التحليل...",
+      progressMsgs: [
+        "جارٍ تحليل بياناتك...",
+        "إنشاء الرؤى...",
+        "تشغيل نموذج المخاطر...",
+        "اقتربنا من الانتهاء...",
+      ],
       stat1: "التدفق النقدي",
       stat2: "مخاطر التحصيل",
       stat3: "متابعة بالأولوية",
@@ -1738,6 +1751,12 @@ function AIInvoiceDemoSection() {
       analyze: "Analyze with AI",
       analyzeSub: "Get smart insights in seconds",
       analyzing: "Analyzing...",
+      progressMsgs: [
+        "Analyzing your data...",
+        "Generating insights...",
+        "Running risk model...",
+        "Almost done...",
+      ],
       stat1: "Cashflow",
       stat2: "Collection Risk",
       stat3: "Priority Follow-up",
@@ -1811,20 +1830,20 @@ function AIInvoiceDemoSection() {
   };
 
   const handleAnalyze = async () => {
+    if (loading) return;
     setLoading(true);
     setAnalyzed(false);
     setPulseDashboard(false);
     setAiSuggestion(null);
     setCounts([0, 0, 0, 0]);
-
-    const API = import.meta.env.VITE_API_URL || "http://localhost:3000";
+    setProgressStep(0);
 
     // Local deterministic analysis (no backend call).
     // Math mirrors AIAnalysisPage.computeFromValues:
-    //   cashflow    = volume/50 - delay*0.6 + ops/20  bounded [-30, 60]
-    //   risk        = delay*1.2 + (volume<100 ? 8 : 0) bounded [0, 95]
-    //   priority    = volume/30 + delay/4              bounded [0, 99]
-    //   opportunity = volume*0.35 + ops*0.5 + bizLen*2 bounded [0, 999]
+    //   cashflow    = volume/50 - delay*0.6 + ops/20    bounded [-30, 60]
+    //   risk        = delay*1.2 + (volume<100 ? 8 : 0)  bounded [0, 95]
+    //   priority    = volume/30 + delay/4               bounded [0, 99]
+    //   opportunity = volume*0.35 + ops*0.5 + bizLen*2  bounded [0, 999]
     const _volume = parseFloat(inputValues[1]) || 0;
     const _delay = parseFloat(inputValues[2]) || 0;
     const _ops = parseFloat(inputValues[3]) || 0;
@@ -1834,7 +1853,21 @@ function AIInvoiceDemoSection() {
     const _priority = Math.max(0, Math.min(99, Math.round((_volume/30) + (_delay/4))));
     const _opportunity = Math.max(0, Math.min(999, Math.round((_volume*0.35) + (_ops*0.5) + _bizLen*2)));
     const targets = [_cashflow, _risk, _priority, _opportunity];
-    const suggestion = null;
+
+    // Cycle through progress messages, then reveal the dashboard.
+    const totalSteps = (c.progressMsgs && c.progressMsgs.length) || 4;
+    const stepDelay = 600;
+    const stepInterval = setInterval(() => {
+      setProgressStep((s) => (s < totalSteps - 1 ? s + 1 : s));
+    }, stepDelay);
+
+    setTimeout(() => {
+      clearInterval(stepInterval);
+      setProgressStep(totalSteps - 1);
+      setLoading(false);
+      setAnalyzed(true);
+      animateToTargets(targets);
+    }, totalSteps * stepDelay);
   };
 
   const chatMessages = [c.chat1, c.chat2, c.chat3];
@@ -1987,6 +2020,8 @@ function AIInvoiceDemoSection() {
 
           <button
             onClick={handleAnalyze}
+            disabled={loading}
+            aria-busy={loading}
             style={{
               width: "100%",
               marginTop: "auto",
@@ -1997,28 +2032,32 @@ function AIInvoiceDemoSection() {
               fontSize: 16,
               border: "none",
               borderRadius: 14,
-              cursor: "pointer",
+              cursor: loading ? "wait" : "pointer",
               boxShadow: primaryGlow,
               fontFamily: "inherit",
-              transition: "transform .2s, box-shadow .2s",
+              transition: "transform .2s, box-shadow .2s, opacity .2s",
               display: "flex",
-              flexDirection: "column",
+              flexDirection: loading ? "row" : "column",
               alignItems: "center",
               justifyContent: "center",
-              gap: 4,
+              gap: loading ? 12 : 4,
               lineHeight: 1.3,
+              opacity: loading ? 0.92 : 1,
             }}
             onMouseEnter={(e) => {
+              if (loading) return;
               e.currentTarget.style.transform = "translateY(-2px) scale(1.02)";
               e.currentTarget.style.boxShadow = isArabic
                 ? "0 24px 56px rgba(0,108,53,.45)"
                 : "0 24px 56px rgba(227,10,23,.45)";
             }}
             onMouseLeave={(e) => {
+              if (loading) return;
               e.currentTarget.style.transform = "translateY(0) scale(1)";
               e.currentTarget.style.boxShadow = primaryGlow;
             }}
           >
+            {loading && <span className="ai-spinner-ring" aria-hidden="true" />}
             <span style={{ fontSize: 16, fontWeight: 900 }}>
               {loading ? c.analyzing : c.analyze}
             </span>
@@ -2028,6 +2067,70 @@ function AIInvoiceDemoSection() {
               </span>
             )}
           </button>
+
+          {loading && (
+            <div
+              className="ai-loader-panel"
+              role="status"
+              aria-live="polite"
+              style={{
+                marginTop: 14,
+                padding: "14px 16px",
+                background: isArabic ? "rgba(0,108,53,.06)" : "rgba(227,10,23,.06)",
+                border: "1px solid " + (isArabic ? "rgba(0,108,53,.18)" : "rgba(227,10,23,.18)"),
+                borderRadius: 14,
+                display: "flex",
+                alignItems: "center",
+                gap: 12,
+                fontFamily: "inherit",
+              }}
+            >
+              <span
+                aria-hidden="true"
+                style={{
+                  display: "inline-grid",
+                  placeItems: "center",
+                  width: 36,
+                  height: 36,
+                  borderRadius: "50%",
+                  background: primaryGradient,
+                  color: "#fff",
+                  flexShrink: 0,
+                  boxShadow: primaryGlow,
+                }}
+              >
+                <span className="ai-spinner-ring" style={{ width: 20, height: 20, borderWidth: 2 }} />
+              </span>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div
+                  key={progressStep}
+                  className="ai-loader-msg"
+                  style={{
+                    fontSize: 13,
+                    fontWeight: 800,
+                    color: isArabic ? SA.greenDeep : C.redDeep,
+                    lineHeight: 1.3,
+                  }}
+                >
+                  {(c.progressMsgs && c.progressMsgs[progressStep]) || c.analyzing}
+                </div>
+                <div style={{ marginTop: 6, height: 4, borderRadius: 999, background: "rgba(0,0,0,.06)", overflow: "hidden" }}>
+                  <div
+                    style={{
+                      width:
+                        ((progressStep + 1) /
+                          ((c.progressMsgs && c.progressMsgs.length) || 4)) *
+                          100 +
+                        "%",
+                      height: "100%",
+                      background: primaryGradient,
+                      transition: "width .4s ease",
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* CENTER AI CORE */}
@@ -2473,6 +2576,35 @@ function AIInvoiceDemoSection() {
         @keyframes cta-glow {
           0%, 100% { box-shadow: ${isArabic ? "0 18px 40px rgba(0,108,53,.30)" : "0 18px 40px rgba(227,10,23,.30)"}; }
           50%      { box-shadow: ${isArabic ? "0 22px 56px rgba(0,108,53,.50)" : "0 22px 56px rgba(227,10,23,.50)"}; }
+        }
+        @keyframes ai-spin {
+          0%   { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+        @keyframes ai-msg-fade {
+          0%   { opacity: 0; transform: translateY(4px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes ai-result-fade {
+          0%   { opacity: 0; transform: translateY(8px); }
+          100% { opacity: 1; transform: translateY(0); }
+        }
+        .ai-spinner-ring {
+          width: 28px;
+          height: 28px;
+          border-radius: 50%;
+          border: 3px solid rgba(255,255,255,0.25);
+          border-top-color: #fff;
+          animation: ai-spin 0.9s linear infinite;
+        }
+        .ai-loader-panel {
+          animation: ai-msg-fade 0.35s ease-out;
+        }
+        .ai-loader-msg {
+          animation: ai-msg-fade 0.35s ease-out;
+        }
+        .ai-results-fade {
+          animation: ai-result-fade 0.5s ease-out;
         }
         @media (max-width: 1024px) {
           .ai-cmd-grid { grid-template-columns: 1fr 1fr !important; }

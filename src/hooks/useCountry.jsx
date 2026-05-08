@@ -14,8 +14,14 @@ import {
 //
 // Detection priority (Hybrid: auto + manual override):
 //   1. localStorage "zyrix_country" — explicit user choice
-//   2. IP geolocation via ipapi.co (free, 1000 req/day)
-//   3. Default fallback: TR
+//   2. Timezone-based detection (Intl.DateTimeFormat) — offline, no 3p call
+//   3. Default fallback: TR (or lang-default)
+//
+// Why timezone, not IP:
+//   The previous implementation hit ipwho.is, which now returns 403 from many
+//   client networks and dumps a "Failed to load resource" line into every
+//   visitor's console. Timezone resolution is built into the browser, runs
+//   instantly, and is accurate enough for a soft-launch country chooser.
 //
 // Provides:
 //   { country, profile, setCountry, isLoading, source }
@@ -24,21 +30,49 @@ import {
 //   country  : "TR" | "SA" | "AE" | ... (uppercase code)
 //   profile  : full country object from countryProfiles.js
 //   setCountry(code) : explicit override (saves to localStorage)
-//   isLoading: true while IP geolocation is in flight
-//   source   : "user" | "ip" | "fallback"
-//
-// Usage:
-//   const { country, profile, setCountry } = useCountry();
-//   const taxRate = profile.tax.rate; // e.g. 20 for TR, 15 for SA
-//   const phonePh = profile.phonePlaceholder;
-//   const regions = profile.regions;
+//   isLoading: kept for API compat — always false now
+//   source   : "user" | "tz" | "fallback"
 // ================================================================
 
 const STORAGE_KEY = "zyrix_country";
 const SOURCE_KEY  = "zyrix_country_source";
 
-// Free IP geolocation. ~1000 requests per day per IP, no API key needed.
-const IP_API_URL = "https://ipwho.is/";
+// Map IANA timezone -> ISO country code. Covers the soft-launch markets;
+// anything else falls through to the lang-default.
+const TZ_TO_COUNTRY = {
+  "Europe/Istanbul":         "TR",
+  "Turkey":                  "TR",
+  "Asia/Riyadh":             "SA",
+  "Asia/Dubai":              "AE",
+  "Asia/Abu_Dhabi":          "AE",
+  "Asia/Qatar":              "QA",
+  "Asia/Bahrain":            "BH",
+  "Asia/Kuwait":             "KW",
+  "Asia/Muscat":             "OM",
+  "Asia/Baghdad":            "IQ",
+  "Asia/Amman":              "JO",
+  "Asia/Beirut":             "LB",
+  "Asia/Damascus":           "SY",
+  "Africa/Cairo":            "EG",
+  "Africa/Casablanca":       "MA",
+  "Africa/Algiers":          "DZ",
+  "Africa/Tunis":            "TN",
+  "Africa/Tripoli":          "LY",
+};
+
+function detectFromTimezone() {
+  try {
+    const tz =
+      (typeof Intl !== "undefined" &&
+        Intl.DateTimeFormat &&
+        Intl.DateTimeFormat().resolvedOptions().timeZone) ||
+      "";
+    if (!tz) return null;
+    return TZ_TO_COUNTRY[tz] || null;
+  } catch (e) {
+    return null;
+  }
+}
 
 const CountryContext = createContext({
   country: DEFAULT_COUNTRY,
@@ -77,9 +111,9 @@ export function CountryProvider({ children }) {
     return "fallback";
   });
 
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading] = useState(false);
 
-  // Step 2: if no stored country, do async IP detection
+  // Step 2: if no stored country, run synchronous timezone detection (no network).
   useEffect(() => {
     let stored = null;
     try {
@@ -87,49 +121,21 @@ export function CountryProvider({ children }) {
     } catch (e) {}
 
     // If user already chose a VISIBLE country, never override it.
-    if (stored && isCountryVisible(stored)) {
-      return;
+    if (stored && isCountryVisible(stored)) return;
+
+    const detectedCode = detectFromTimezone();
+    if (!detectedCode) return; // unrecognized tz — keep lang-default
+
+    if (isCountryVisible(detectedCode)) {
+      setCountryState(detectedCode);
+      setSource("tz");
+      try {
+        localStorage.setItem(STORAGE_KEY, detectedCode);
+        localStorage.setItem(SOURCE_KEY, "tz");
+      } catch (e) {}
     }
-
-    // Otherwise, attempt IP detection
-    let cancelled = false;
-    setIsLoading(true);
-
-    fetch(IP_API_URL, { method: "GET", cache: "no-store" })
-      .then((res) => res.ok ? res.json() : null)
-      .then((data) => {
-        if (cancelled || !data) {
-          setIsLoading(false);
-          return;
-        }
-        const detectedCode = (data.country_code || data.country || "").toUpperCase();
-        if (detectedCode && isCountryVisible(detectedCode)) {
-          // Detected country IS in our soft-launch visible list -> use it
-          setCountryState(detectedCode);
-          setSource("ip");
-          try {
-            localStorage.setItem(STORAGE_KEY, detectedCode);
-            localStorage.setItem(SOURCE_KEY, "ip");
-          } catch (e) {}
-        } else if (detectedCode && SUPPORTED_COUNTRIES.indexOf(detectedCode) !== -1) {
-          // Detected country has a profile but is hidden during soft launch
-          // -> stay on lang-default (already set in initial state). Don't persist.
-          console.info("[useCountry] detected hidden country:", detectedCode, "- keeping lang-default");
-        } else if (detectedCode) {
-          // No profile for this country at all
-          console.info("[useCountry] detected unsupported country:", detectedCode);
-        }
-        setIsLoading(false);
-      })
-      .catch((err) => {
-        // Network/CORS/etc error. Stay on default. Don't persist.
-        if (!cancelled) {
-          console.warn("[useCountry] IP detection failed:", err && err.message);
-          setIsLoading(false);
-        }
-      });
-
-    return () => { cancelled = true; };
+    // If detected but hidden during soft launch, stay on lang-default.
+    // Intentionally silent — no console noise for normal visitors.
   }, []); // run once
 
   // Manual override
