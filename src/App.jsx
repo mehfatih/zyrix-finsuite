@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, RequireAuth, useAuth } from "./context/AuthContext";
 import ScrollToTop from "./components/ScrollToTop.jsx";
 import SkeletonScreen from "./components/dashboard/SkeletonScreen.jsx";
+import ImpersonationBanner from "./components/ImpersonationBanner.jsx";
 
 // ── Eagerly loaded (auth + always-on) ──────────────────────────
 import LoginPage          from "./pages/LoginPage";
@@ -225,6 +226,7 @@ export default function App() {
     <AuthProvider>
       <BrowserRouter>
         <ScrollToTop />
+        <ImpersonationBanner />
         <a href="#main-content" className="skip-to-content" style={skipLinkStyle}>Skip to main content</a>
         <Suspense fallback={null}>
           <Routes>
