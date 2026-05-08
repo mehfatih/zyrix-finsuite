@@ -1,251 +1,158 @@
 // ================================================================
-// /admin/customers — Filterable, sortable, exportable customer list
+// /admin/customers — Data Explorer (Bible v2 §17.1)
 // ================================================================
-import React, { useEffect, useMemo, useState } from "react";
-import { useNavigate, useSearchParams, useOutletContext } from "react-router-dom";
-import DataTable from "../../../components/admin/DataTable";
-import BulkActionsBar from "../../../components/admin/BulkActionsBar";
-import DangerActionDialog from "../../../components/admin/DangerActionDialog";
-import { hasPermission, PERMISSIONS } from "../../../utils/admin/permissions";
-import { ADMIN_BRAND, TRUST_BLUE, CRITICAL_RED, ROLE_PALETTE } from "../../../utils/admin/adminPalette";
-import { logAdminAction } from "../../../utils/admin/adminApi";
-import { fmtCurrency, fmtRelativeTime, fmtDate } from "../../../utils/format";
+import { useNavigate } from 'react-router-dom';
+import { Plus } from 'lucide-react';
+import DataExplorer from '@/components/admin/shared/DataExplorer';
 
-// Sample customer dataset — backend will return real data via GET /api/admin/customers
-const SAMPLE_CUSTOMERS = Array.from({ length: 35 }).map((_, i) => {
-  const tiers = ["Lite", "Pro", "Business", "Enterprise"];
-  const statuses = ["active", "trial", "suspended", "archived"];
-  const countries = ["TR", "TR", "TR", "AE", "SA", "EG"];
-  const tier = tiers[i % tiers.length];
-  return {
-    id: `cus-${1000 + i}`,
-    companyName: ["Levana İlaç", "Aydın Ova", "İstanbul Bakery", "Beyoğlu Cafe", "MENA Trading", "Cairo Imports", "Riyadh Tech", "Ankara Logistics"][i % 8] + ` #${i + 1}`,
-    email: `contact${i + 1}@example.com`,
-    phone: `+90 5${String(30 + (i % 50))} ${String(100 + i).slice(-3)} ${String(20 + i).slice(-2)} ${String(40 + i).slice(-2)}`,
-    tier,
-    status: statuses[i % statuses.length],
-    country: countries[i % countries.length],
-    mrr: tier === "Enterprise" ? 4999 : tier === "Business" ? 1499 : tier === "Pro" ? 499 : 99,
-    createdAt: new Date(Date.now() - (i * 11 + 3) * 86400000).toISOString(),
-    lastActiveAt: new Date(Date.now() - (i % 14) * 3600000).toISOString(),
-    riskScore: i % 7 === 0 ? "high" : i % 5 === 0 ? "medium" : "low",
-    tags: i % 3 === 0 ? ["VIP"] : i % 4 === 0 ? ["At-Risk"] : [],
+const StatusDot = ({ status }) => {
+  const c = status === 'active' ? '#10B981' :
+            status === 'trial'  ? '#F59E0B' :
+            status === 'paused' ? '#94A3B8' :
+                                  '#EF4444';
+  return (
+    <span style={{
+      display: 'inline-flex', alignItems: 'center', gap: '6px',
+      fontSize: '12px', fontWeight: 600, color: c,
+      textTransform: 'capitalize'
+    }}>
+      <span style={{
+        width: '7px', height: '7px', borderRadius: '50%', background: c,
+        animation: status === 'trial' ? 'dot-pulse 1.5s ease-in-out infinite' : 'none',
+        boxShadow: `0 0 0 0 ${c}66`
+      }} />
+      {status}
+      <style>{`@keyframes dot-pulse { 0%,100% { box-shadow: 0 0 0 0 ${c}66; } 50% { box-shadow: 0 0 0 5px ${c}00; } }`}</style>
+    </span>
+  );
+};
+
+const Sparkline = ({ data, trend }) => {
+  if (!data) return null;
+  const max = Math.max(...data), min = Math.min(...data);
+  const range = max - min || 1;
+  const pts = data.map((v, i) => `${(i / (data.length - 1)) * 60},${20 - ((v - min) / range) * 20}`).join(' ');
+  const color = trend >= 0 ? '#10B981' : '#EF4444';
+  return <svg width={60} height={20}><polyline points={pts} fill="none" stroke={color} strokeWidth="1.5" /></svg>;
+};
+
+const TierBadge = ({ tier }) => {
+  const colors = {
+    Lite:       '#6B7280',
+    Pro:        '#1A56DB',
+    Business:   '#7C3AED',
+    Enterprise: '#E30A17'
   };
-});
-
-const STATUS_PILL = {
-  active:    { bg: "#DCFCE7", dark: "#047857" },
-  trial:     { bg: "#FEF3C7", dark: "#B45309" },
-  suspended: { bg: "#FFE4E6", dark: "#9F1239" },
-  archived:  { bg: "#F1F5F9", dark: "#475569" },
+  const c = colors[tier] || '#6B7280';
+  return (
+    <span style={{
+      padding: '3px 10px',
+      background: `${c}15`,
+      color: c,
+      borderRadius: '999px',
+      fontSize: '11px',
+      fontWeight: 700,
+      textTransform: 'uppercase',
+      letterSpacing: '0.05em'
+    }}>{tier}</span>
+  );
 };
 
-const TIER_PILL = {
-  Lite:       { bg: "#F1F5F9", dark: "#334155" },
-  Pro:        { bg: "#DBEAFE", dark: "#1E40AF" },
-  Business:   { bg: "#F3EFFF", dark: "#5B21B6" },
-  Enterprise: { bg: "#FEE2E2", dark: "#991B1B" },
-};
+const generateMrrSparkline = (base) =>
+  Array.from({ length: 14 }, () => base + (Math.random() - 0.5) * base * 0.2);
 
-const RISK_PILL = {
-  high:   { bg: "#FEE2E2", dark: "#991B1B", label: "HIGH" },
-  medium: { bg: "#FEF3C7", dark: "#B45309", label: "MED" },
-  low:    { bg: "#DCFCE7", dark: "#047857", label: "LOW" },
-};
+const mockCustomers = [
+  { id: 'cus-1000', name: 'Levana İlaç Holding',  email: 'contact@levana.com.tr',     tier: 'Enterprise', status: 'active',  mrr: 12500, mrrSpark: generateMrrSparkline(12500), trend: 8.4 },
+  { id: 'cus-1001', name: 'Aydın Ova Üretim',     email: 'fatura@aydinova.com.tr',    tier: 'Enterprise', status: 'active',  mrr: 11300, mrrSpark: generateMrrSparkline(11300), trend: 6.2 },
+  { id: 'cus-1002', name: 'Beyoğlu Restoran',     email: 'mali@beyogluresto.com',     tier: 'Business',   status: 'active',  mrr: 10100, mrrSpark: generateMrrSparkline(10100), trend: 12.1 },
+  { id: 'cus-1003', name: 'Cairo Imports',         email: 'finance@cairoimports.eg',   tier: 'Business',   status: 'active',  mrr: 8900,  mrrSpark: generateMrrSparkline(8900), trend: 4.8 },
+  { id: 'cus-1004', name: 'MENA Trading Co',       email: 'billing@mena-trade.ae',     tier: 'Business',   status: 'trial',   mrr: 7700,  mrrSpark: generateMrrSparkline(7700), trend: -2.3 },
+  { id: 'cus-1005', name: 'Marmara Sigorta',       email: 'finans@marmarasigorta.com', tier: 'Business',   status: 'active',  mrr: 6500,  mrrSpark: generateMrrSparkline(6500), trend: 3.4 },
+  { id: 'cus-1006', name: 'Bursa Gıda',            email: 'muhasebe@bursagida.com',    tier: 'Pro',        status: 'paused',  mrr: 580,   mrrSpark: generateMrrSparkline(580), trend: -18.5 },
+  { id: 'cus-1007', name: 'Konya Tekstil',         email: 'fatura@konyatekstil.com',   tier: 'Pro',        status: 'active',  mrr: 320,   mrrSpark: generateMrrSparkline(320), trend: -5.2 },
+  { id: 'cus-1008', name: 'İzmir Cafe',            email: 'cafe@izmircafe.com',        tier: 'Pro',        status: 'active',  mrr: 240,   mrrSpark: generateMrrSparkline(240), trend: 1.8 },
+  { id: 'cus-1009', name: 'Eskişehir IT',          email: 'admin@eskisehir-it.com',    tier: 'Pro',        status: 'trial',   mrr: 410,   mrrSpark: generateMrrSparkline(410), trend: 9.4 },
+  { id: 'cus-1010', name: 'Antalya Tour',          email: 'rez@antalyatour.com',       tier: 'Lite',       status: 'active',  mrr: 180,   mrrSpark: generateMrrSparkline(180), trend: -1.1 },
+  { id: 'cus-1011', name: 'Mersin Logistik',       email: 'op@mersinlog.com',          tier: 'Lite',       status: 'active',  mrr: 290,   mrrSpark: generateMrrSparkline(290), trend: 0.4 },
+  { id: 'cus-1012', name: 'Trabzon Smmm',          email: 'info@trabzonsmmm.com',      tier: 'Lite',       status: 'active',  mrr: 89,    mrrSpark: generateMrrSparkline(89), trend: 14.2 },
+  { id: 'cus-1013', name: 'Adana Tekstil',         email: 'fatura@adanatekstil.com',   tier: 'Lite',       status: 'churned', mrr: 0,     mrrSpark: generateMrrSparkline(50), trend: -100 },
+  { id: 'cus-1014', name: 'Riyadh Holding',        email: 'fin@riyadh-holding.sa',     tier: 'Enterprise', status: 'active',  mrr: 9200,  mrrSpark: generateMrrSparkline(9200), trend: 7.1 },
+  { id: 'cus-1015', name: 'Dubai Ventures',        email: 'cfo@dubai-ventures.ae',     tier: 'Business',   status: 'active',  mrr: 6800,  mrrSpark: generateMrrSparkline(6800), trend: 5.5 },
+  { id: 'cus-1016', name: 'Doha Trading',          email: 'admin@doha-trading.qa',     tier: 'Business',   status: 'active',  mrr: 5200,  mrrSpark: generateMrrSparkline(5200), trend: 11.3 },
+  { id: 'cus-1017', name: 'Alexandria Foods',      email: 'sales@alexfoods.eg',        tier: 'Pro',        status: 'active',  mrr: 480,   mrrSpark: generateMrrSparkline(480), trend: 2.7 },
+  { id: 'cus-1018', name: 'Kayseri Mobilya',       email: 'pazarlama@kayseri.com',     tier: 'Pro',        status: 'active',  mrr: 380,   mrrSpark: generateMrrSparkline(380), trend: 4.1 },
+  { id: 'cus-1019', name: 'Hatay İhracat',         email: 'export@hatayihrac.com',     tier: 'Lite',       status: 'trial',   mrr: 120,   mrrSpark: generateMrrSparkline(120), trend: 0 }
+];
 
 export default function CustomersListPage() {
-  const { admin } = useOutletContext() || {};
   const navigate = useNavigate();
-  const [params, setParams] = useSearchParams();
-  const brand = ADMIN_BRAND;
 
-  const [search, setSearch] = useState(params.get("q") || "");
-  const [tier, setTier] = useState(params.get("tier") || "");
-  const [status, setStatus] = useState(params.get("status") || "");
-  const [selected, setSelected] = useState([]);
-  const [density, setDensity] = useState("comfortable");
-  const [bulkAction, setBulkAction] = useState(null);
-  const [page, setPage] = useState(1);
-  const PAGE_SIZE = 15;
+  const totalMrr = mockCustomers.reduce((s, c) => s + c.mrr, 0);
+  const activeCount = mockCustomers.filter((c) => c.status === 'active').length;
+  const trialCount = mockCustomers.filter((c) => c.status === 'trial').length;
 
-  useEffect(() => {
-    const next = {};
-    if (search) next.q = search;
-    if (tier) next.tier = tier;
-    if (status) next.status = status;
-    setParams(next, { replace: true });
-  }, [search, tier, status, setParams]);
-
-  const filtered = useMemo(() => {
-    return SAMPLE_CUSTOMERS.filter((c) => {
-      if (search) {
-        const t = search.toLowerCase();
-        if (!`${c.companyName} ${c.email} ${c.phone} ${c.id}`.toLowerCase().includes(t)) return false;
-      }
-      if (tier && c.tier !== tier) return false;
-      if (status && c.status !== status) return false;
-      return true;
-    });
-  }, [search, tier, status]);
-
-  const paged = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
-  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
-
-  const exportCsv = () => {
-    const rows = filtered.map((c) => [c.id, c.companyName, c.email, c.tier, c.status, c.mrr, c.country, c.createdAt].join(","));
-    const csv = ["id,company,email,tier,status,mrr,country,createdAt", ...rows].join("\n");
-    const blob = new Blob([csv], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a"); a.href = url; a.download = `customers-${Date.now()}.csv`; a.click();
-    URL.revokeObjectURL(url);
-    logAdminAction({ action: "data.export.bulk", resourceType: "customer", metadata: { count: filtered.length, format: "csv" } });
+  const buildInsight = (rows) => {
+    if (rows.length === 0) return 'No customers match — try clearing filters.';
+    const trialing = rows.filter((r) => r.status === 'trial').length;
+    const paused = rows.filter((r) => r.status === 'paused').length;
+    if (paused > 0) return `${paused} paused account${paused > 1 ? 's' : ''} in this view — review payment status to recover MRR.`;
+    if (trialing > 0) return `${trialing} customer${trialing > 1 ? 's' : ''} in trial — schedule conversion outreach this week.`;
+    return `${rows.length} customers · combined MRR ₺${rows.reduce((s, r) => s + r.mrr, 0).toLocaleString()}`;
   };
-
-  const onConfirmBulk = () => {
-    const action = bulkAction;
-    setBulkAction(null);
-    if (!action) return;
-    logAdminAction({
-      action: `customer.bulk.${action.kind}`,
-      resourceType: "customer",
-      metadata: { ids: selected, count: selected.length },
-      severity: action.kind === "delete" ? "CRITICAL" : "WARNING",
-    });
-    setSelected([]);
-  };
-
-  const columns = [
-    { key: "companyName", label: "Customer", sortable: true,
-      render: (r) => (
-        <div>
-          <div style={{ fontWeight: 800, color: "#0F172A", fontSize: 13 }}>{r.companyName}</div>
-          <div style={{ fontSize: 10, color: "#94A3B8", fontFamily: "ui-monospace, monospace" }}>{r.id}</div>
-        </div>
-      ),
-    },
-    { key: "email", label: "Email", sortable: true,
-      render: (r) => <span style={{ color: "#475569" }}>{r.email}</span> },
-    { key: "tier", label: "Tier", sortable: true,
-      render: (r) => {
-        const p = TIER_PILL[r.tier];
-        return <span style={{ fontSize: 10, fontWeight: 800, padding: "3px 10px", borderRadius: 999, background: p.bg, color: p.dark, textTransform: "uppercase", letterSpacing: "0.06em" }}>{r.tier}</span>;
-      },
-    },
-    { key: "status", label: "Status", sortable: true,
-      render: (r) => {
-        const p = STATUS_PILL[r.status];
-        return <span style={{ fontSize: 10, fontWeight: 800, padding: "3px 10px", borderRadius: 999, background: p.bg, color: p.dark, textTransform: "uppercase", letterSpacing: "0.06em" }}>{r.status}</span>;
-      },
-    },
-    { key: "mrr", label: "MRR", sortable: true, align: "end", mono: true,
-      render: (r) => <strong style={{ color: "#0F172A" }}>{fmtCurrency(r.mrr)}</strong> },
-    { key: "country", label: "Country" },
-    { key: "riskScore", label: "Risk",
-      render: (r) => {
-        const p = RISK_PILL[r.riskScore];
-        return <span style={{ fontSize: 9, fontWeight: 800, padding: "2px 8px", borderRadius: 999, background: p.bg, color: p.dark }}>{p.label}</span>;
-      },
-    },
-    { key: "lastActiveAt", label: "Last active", sortable: true,
-      render: (r) => <span style={{ fontSize: 11, color: "#64748B" }}>{fmtRelativeTime(r.lastActiveAt)}</span> },
-    { key: "createdAt", label: "Created", sortable: true,
-      render: (r) => <span style={{ fontSize: 11, color: "#64748B" }}>{fmtDate(r.createdAt)}</span> },
-  ];
-
-  const canBulk = hasPermission(admin, PERMISSIONS.CUSTOMER_BULK);
 
   return (
-    <div style={{ padding: "28px 24px" }}>
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 22, flexWrap: "wrap", gap: 12 }}>
-        <div>
-          <h1 style={{ fontSize: 24, fontWeight: 900, color: "#0F172A", margin: 0 }}>Customers</h1>
-          <p style={{ fontSize: 12, color: "#64748B", margin: "4px 0 0" }}>{filtered.length} of {SAMPLE_CUSTOMERS.length} matching</p>
-        </div>
-        <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-          <button type="button" onClick={() => setDensity(density === "compact" ? "comfortable" : "compact")} style={ghostBtn()}>
-            {density === "compact" ? "↕ Comfortable" : "↔ Compact"}
-          </button>
-          <button type="button" onClick={exportCsv} style={primaryBtn(brand)}>
-            ↓ Export CSV
-          </button>
-        </div>
-      </div>
-
-      {/* Filters */}
-      <div style={{ background: "#fff", border: "1px solid #E2E8F0", borderRadius: 12, padding: 14, marginBottom: 14, display: "grid", gridTemplateColumns: "2fr 1fr 1fr auto", gap: 10 }} className="acl-filters">
-        <input
-          type="text"
-          value={search}
-          onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-          placeholder="Search company, email, phone, ID…"
-          style={{ padding: "10px 14px", border: "1px solid #E2E8F0", borderRadius: 10, fontSize: 13, fontFamily: "inherit", boxSizing: "border-box" }}
-        />
-        <select value={tier} onChange={(e) => { setTier(e.target.value); setPage(1); }} style={{ padding: "10px 14px", border: "1px solid #E2E8F0", borderRadius: 10, fontSize: 13, fontFamily: "inherit" }}>
-          <option value="">All tiers</option>
-          {["Lite", "Pro", "Business", "Enterprise"].map((t) => <option key={t} value={t}>{t}</option>)}
-        </select>
-        <select value={status} onChange={(e) => { setStatus(e.target.value); setPage(1); }} style={{ padding: "10px 14px", border: "1px solid #E2E8F0", borderRadius: 10, fontSize: 13, fontFamily: "inherit" }}>
-          <option value="">All statuses</option>
-          {["active", "trial", "suspended", "archived"].map((s) => <option key={s} value={s}>{s}</option>)}
-        </select>
-        <button type="button" onClick={() => { setSearch(""); setTier(""); setStatus(""); }} style={ghostBtn()}>
-          ✗ Clear
-        </button>
-        <style>{`@media (max-width: 720px) { .acl-filters { grid-template-columns: 1fr !important; } }`}</style>
-      </div>
-
-      <DataTable
-        columns={columns}
-        rows={paged}
-        rowKey="id"
-        selectable={canBulk}
-        selectedIds={selected}
-        onSelectionChange={setSelected}
-        density={density}
-        onRowClick={(row) => navigate(`/admin/customers/${row.id}`)}
-        empty="No customers match your filters"
-      />
-
-      {/* Pagination */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 14, fontSize: 12 }}>
-        <span style={{ color: "#64748B" }}>Page {page} of {totalPages} · {PAGE_SIZE} per page</span>
-        <div style={{ display: "flex", gap: 6 }}>
-          <button type="button" disabled={page === 1} onClick={() => setPage(page - 1)} style={pageBtn(page === 1)}>← Prev</button>
-          <button type="button" disabled={page === totalPages} onClick={() => setPage(page + 1)} style={pageBtn(page === totalPages)}>Next →</button>
-        </div>
-      </div>
-
-      <BulkActionsBar
-        count={selected.length}
-        onClear={() => setSelected([])}
-        actions={[
-          { label: "Suspend",  icon: "⏸", variant: "primary", onClick: () => setBulkAction({ kind: "suspend" }) },
-          { label: "Tag",      icon: "🏷", variant: "default", onClick: () => setBulkAction({ kind: "tag" }) },
-          { label: "Archive",  icon: "🗃",  variant: "default", onClick: () => setBulkAction({ kind: "archive" }) },
-          { label: "Delete",   icon: "🗑",  variant: "danger",  onClick: () => setBulkAction({ kind: "delete" }) },
+    <div style={{ padding: '20px' }}>
+      <DataExplorer
+        title="Customers"
+        subtitle="Search, filter, and act on accounts"
+        data={mockCustomers}
+        rowKey={(r) => r.id}
+        onRowClick={(r) => navigate(`/admin/customers/${r.id}`)}
+        searchKeys={['name', 'email', 'id']}
+        miniKpis={[
+          { label: 'Total customers', value: mockCustomers.length, color: '#0F172A' },
+          { label: 'Active', value: activeCount, color: '#10B981' },
+          { label: 'In trial', value: trialCount, color: '#F59E0B' },
+          { label: 'Combined MRR', value: `₺${totalMrr.toLocaleString()}`, color: '#1A56DB' }
         ]}
-      />
-
-      <DangerActionDialog
-        open={!!bulkAction}
-        title={bulkAction?.kind === "delete" ? `Permanently delete ${selected.length} customers?` : `Bulk ${bulkAction?.kind} ${selected.length} customers`}
-        message={bulkAction?.kind === "delete" ? "This is irreversible. All customer data, invoices, and history will be permanently erased." : `Apply ${bulkAction?.kind} to ${selected.length} selected customers.`}
-        severity={bulkAction?.kind === "delete" ? "critical" : "warning"}
-        steps={bulkAction?.kind === "delete" ? 5 : 1}
-        confirmWord={bulkAction?.kind === "delete" ? "DELETE" : null}
-        onConfirm={onConfirmBulk}
-        onCancel={() => setBulkAction(null)}
+        filters={[
+          { key: 'tier', label: 'tiers', options: ['Lite', 'Pro', 'Business', 'Enterprise'].map((v) => ({ value: v, label: v })) },
+          { key: 'status', label: 'statuses', options: ['active', 'trial', 'paused', 'churned'].map((v) => ({ value: v, label: v })) }
+        ]}
+        columns={[
+          { key: 'name', label: 'Customer', render: (r) => (
+            <div>
+              <div style={{ fontWeight: 700, color: '#0F172A' }}>{r.name}</div>
+              <div style={{ fontSize: '12px', color: '#64748B', fontFamily: 'monospace' }}>{r.id}</div>
+            </div>
+          )},
+          { key: 'email', label: 'Email', render: (r) => <span style={{ fontFamily: 'monospace', fontSize: '13px', color: '#475569' }}>{r.email}</span> },
+          { key: 'tier', label: 'Tier', render: (r) => <TierBadge tier={r.tier} /> },
+          { key: 'status', label: 'Status', render: (r) => <StatusDot status={r.status} /> },
+          { key: 'mrr', label: 'MRR', render: (r) => (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <Sparkline data={r.mrrSpark} trend={r.trend} />
+              <div style={{ minWidth: '70px', textAlign: 'end' }}>
+                <div style={{ fontWeight: 800, color: '#0F172A', fontSize: '14px' }}>₺{r.mrr.toLocaleString()}</div>
+                <div style={{ fontSize: '11px', color: r.trend >= 0 ? '#10B981' : '#EF4444', fontWeight: 600 }}>
+                  {r.trend > 0 ? '+' : ''}{r.trend}%
+                </div>
+              </div>
+            </div>
+          )}
+        ]}
+        bulkActions={[
+          { label: 'Email selected', icon: '✉', onClick: (ids) => console.log('email', ids) },
+          { label: 'Export', icon: '⬇', onClick: (ids) => console.log('export', ids) },
+          { label: 'Archive', icon: '🗃', onClick: (ids) => console.log('archive', ids), danger: true }
+        ]}
+        primaryCTA={{
+          label: 'Add Customer',
+          icon: <Plus size={14} />,
+          onClick: () => console.log('add')
+        }}
+        aiInsight={buildInsight}
       />
     </div>
   );
-}
-
-function ghostBtn() {
-  return { background: "#fff", color: "#0F172A", border: "1px solid #E2E8F0", padding: "10px 16px", borderRadius: 10, fontSize: 12, fontWeight: 700, cursor: "pointer", whiteSpace: "nowrap" };
-}
-function primaryBtn(p) {
-  return { background: `linear-gradient(135deg, ${p.base}, ${p.dark})`, color: "#fff", border: "none", padding: "10px 16px", borderRadius: 10, fontSize: 12, fontWeight: 800, cursor: "pointer", boxShadow: `0 6px 16px ${p.base}40`, whiteSpace: "nowrap" };
-}
-function pageBtn(disabled) {
-  return { background: disabled ? "#F1F5F9" : "#fff", color: disabled ? "#CBD5E1" : "#0F172A", border: "1px solid #E2E8F0", padding: "8px 14px", borderRadius: 8, fontSize: 12, fontWeight: 700, cursor: disabled ? "not-allowed" : "pointer" };
 }

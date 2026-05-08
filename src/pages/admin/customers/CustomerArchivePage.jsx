@@ -1,133 +1,98 @@
 // ================================================================
-// /admin/customers/archive — Soft-deleted customers + restore window
+// /admin/customers/archive — Data Explorer (red accent)
+// Soft-deleted accounts, restorable for 30 days.
 // ================================================================
-import React, { useState } from "react";
-import { useOutletContext } from "react-router-dom";
-import DataTable from "../../../components/admin/DataTable";
-import DangerActionDialog from "../../../components/admin/DangerActionDialog";
-import AdminKpiCard from "../../../components/admin/AdminKpiCard";
-import { ADMIN_BRAND, CRITICAL_RED, ADMIN_INDIGO } from "../../../utils/admin/adminPalette";
-import { hasPermission, PERMISSIONS } from "../../../utils/admin/permissions";
-import { logAdminAction } from "../../../utils/admin/adminApi";
-import { fmtDate, fmtRelativeTime } from "../../../utils/format";
+import DataExplorer from '@/components/admin/shared/DataExplorer';
 
-const SAMPLE_ARCHIVES = Array.from({ length: 8 }).map((_, i) => ({
-  id: `arch-${i + 1}`,
-  customerName: ["Eski Müşteri Co", "Closed Deal Ltd", "Cancelled Inc", "Test Account", "Demo Org", "Trial User", "Pilot SMB", "Departed Corp"][i],
-  customerId: `cus-${800 + i}`,
-  reason: ["Customer requested deletion", "Payment failure 90 days", "Duplicate account", "GDPR request", "Internal cleanup", "Policy violation", "Inactive 12 months", "Customer churned"][i],
-  archivedBy: "Mehmet Fatih",
-  archivedAt: new Date(Date.now() - i * 8 * 86400000).toISOString(),
-  scheduledPurgeAt: new Date(Date.now() - i * 8 * 86400000 + 90 * 86400000).toISOString(),
-}));
+const archived = [
+  { id: 'cus-9001', name: 'Eskidji Tekstil',     email: 'old@eskidji.com',         archivedAt: '2026-04-22', archivedBy: 'meh.fatih77@gmail.com', reason: 'Customer request' },
+  { id: 'cus-9002', name: 'Ankara Reklam',       email: 'old@ankarareklam.com',    archivedAt: '2026-04-29', archivedBy: 'meh.fatih77@gmail.com', reason: 'Non-payment' },
+  { id: 'cus-9003', name: 'İzmit Lojistik',      email: 'old@izmitlogistik.com',   archivedAt: '2026-05-01', archivedBy: 'admin@zyrix.com',       reason: 'Customer request' },
+  { id: 'cus-9004', name: 'Konya Üretim',        email: 'fatura@konyauretim.com',  archivedAt: '2026-05-02', archivedBy: 'meh.fatih77@gmail.com', reason: 'Duplicate account' },
+  { id: 'cus-9005', name: 'Sharm Travel',        email: 'old@sharmtravel.eg',      archivedAt: '2026-05-03', archivedBy: 'admin@zyrix.com',       reason: 'Bankruptcy' },
+  { id: 'cus-9006', name: 'Manisa Bağcılık',     email: 'old@manisabag.com',       archivedAt: '2026-05-04', archivedBy: 'meh.fatih77@gmail.com', reason: 'Customer request' },
+  { id: 'cus-9007', name: 'Doha Foods Co',       email: 'old@dohafoods.qa',        archivedAt: '2026-05-05', archivedBy: 'admin@zyrix.com',       reason: 'Non-payment' },
+  { id: 'cus-9008', name: 'Erzurum Gıda',        email: 'old@erzurumgida.com',     archivedAt: '2026-05-06', archivedBy: 'meh.fatih77@gmail.com', reason: 'Switched provider' }
+];
+
+const ReasonBadge = ({ reason }) => {
+  const colors = {
+    'Customer request': '#1A56DB',
+    'Non-payment':      '#DC2626',
+    'Duplicate account':'#7C3AED',
+    'Bankruptcy':       '#991B1B',
+    'Switched provider':'#F59E0B'
+  };
+  const c = colors[reason] || '#64748B';
+  return (
+    <span style={{
+      padding: '3px 10px',
+      background: `${c}15`,
+      color: c,
+      borderRadius: '999px',
+      fontSize: '11px',
+      fontWeight: 700
+    }}>{reason}</span>
+  );
+};
 
 export default function CustomerArchivePage() {
-  const { admin } = useOutletContext() || {};
-  const brand = ADMIN_BRAND;
-  const crit = CRITICAL_RED;
-  const indigo = ADMIN_INDIGO;
-  const [items, setItems] = useState(SAMPLE_ARCHIVES);
-  const [pendingRestore, setPendingRestore] = useState(null);
-  const [pendingPurge, setPendingPurge] = useState(null);
-
-  const canRestore = hasPermission(admin, PERMISSIONS.CUSTOMER_RESTORE);
-  const canPurge = hasPermission(admin, PERMISSIONS.CUSTOMER_DELETE);
-
-  const restore = () => {
-    if (!pendingRestore) return;
-    logAdminAction({
-      action: "customer.restore",
-      resourceType: "customer", resourceId: pendingRestore.customerId,
-      severity: "WARNING",
-      metadata: { archiveId: pendingRestore.id },
-    });
-    setItems(items.filter((x) => x.id !== pendingRestore.id));
-    setPendingRestore(null);
-  };
-
-  const purge = () => {
-    if (!pendingPurge) return;
-    logAdminAction({
-      action: "customer.purge",
-      resourceType: "customer", resourceId: pendingPurge.customerId,
-      severity: "CRITICAL",
-      metadata: { archiveId: pendingPurge.id, reason: "manual_purge" },
-    });
-    setItems(items.filter((x) => x.id !== pendingPurge.id));
-    setPendingPurge(null);
-  };
-
-  const columns = [
-    { key: "customerName", label: "Customer", sortable: true,
-      render: (r) => (
-        <div>
-          <div style={{ fontWeight: 700, color: "#0F172A" }}>{r.customerName}</div>
-          <div style={{ fontSize: 10, color: "#94A3B8", fontFamily: "ui-monospace, monospace" }}>{r.customerId}</div>
-        </div>
-      ),
-    },
-    { key: "reason", label: "Reason" },
-    { key: "archivedAt", label: "Archived", sortable: true,
-      render: (r) => <span style={{ fontSize: 12 }}>{fmtRelativeTime(r.archivedAt)}</span> },
-    { key: "scheduledPurgeAt", label: "Auto-purge", sortable: true,
-      render: (r) => {
-        const d = (new Date(r.scheduledPurgeAt).getTime() - Date.now()) / 86400000;
-        const days = Math.ceil(d);
-        const c = days <= 7 ? crit.dark : days <= 30 ? "#B45309" : "#64748B";
-        return <span style={{ fontSize: 12, color: c, fontWeight: 700 }}>{days > 0 ? `${days}d` : "expired"}</span>;
-      },
-    },
-    { key: "actions", label: "Actions", align: "end",
-      render: (r) => (
-        <div style={{ display: "flex", gap: 6, justifyContent: "flex-end" }}>
-          {canRestore && (
-            <button type="button" onClick={() => setPendingRestore(r)} style={{ background: indigo.bg, color: indigo.dark, border: `1px solid ${indigo.base}40`, padding: "6px 10px", borderRadius: 8, fontSize: 11, fontWeight: 700, cursor: "pointer" }}>
-              ↶ Restore
-            </button>
-          )}
-          {canPurge && (
-            <button type="button" onClick={() => setPendingPurge(r)} style={{ background: crit.bg, color: crit.dark, border: `1px solid ${crit.base}40`, padding: "6px 10px", borderRadius: 8, fontSize: 11, fontWeight: 700, cursor: "pointer" }}>
-              🗑 Purge now
-            </button>
-          )}
-        </div>
-      ),
-    },
-  ];
+  const recentlyArchived = archived.filter((a) => {
+    const days = (Date.now() - new Date(a.archivedAt)) / 86400000;
+    return days <= 7;
+  }).length;
 
   return (
-    <div style={{ padding: "28px 24px" }}>
-      <div style={{ marginBottom: 22 }}>
-        <h1 style={{ fontSize: 24, fontWeight: 900, color: "#0F172A", margin: "0 0 4px" }}>Archived Customers</h1>
-        <p style={{ fontSize: 12, color: "#64748B", margin: 0 }}>Soft-deleted accounts. Auto-purge runs at 90 days from archive date.</p>
-      </div>
-
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: 12, marginBottom: 22 }}>
-        <AdminKpiCard label="Total archived"   value={items.length}                                      palette={indigo} icon="🗃" />
-        <AdminKpiCard label="Within 30 days"   value={items.filter((i) => (new Date(i.scheduledPurgeAt) - Date.now()) / 86400000 <= 30).length} palette={{ bg: "#FEF3C7", base: "#F59E0B", dark: "#B45309" }} icon="⏰" />
-        <AdminKpiCard label="Purge imminent"    value={items.filter((i) => (new Date(i.scheduledPurgeAt) - Date.now()) / 86400000 <= 7).length}  palette={crit} icon="⚠" />
-      </div>
-
-      <DataTable columns={columns} rows={items} rowKey="id" empty="No archived customers" />
-
-      <DangerActionDialog
-        open={!!pendingRestore}
-        title="Restore customer?"
-        message={`Restore ${pendingRestore?.customerName} to active status. They'll be able to log in again.`}
-        severity="warning"
-        steps={1}
-        onConfirm={restore}
-        onCancel={() => setPendingRestore(null)}
-      />
-      <DangerActionDialog
-        open={!!pendingPurge}
-        title="Purge customer immediately?"
-        message={`IRREVERSIBLE. This bypasses the 90-day grace period and permanently erases ${pendingPurge?.customerName}. Used only for KVKK/GDPR right-to-erasure requests.`}
-        severity="critical"
-        steps={3}
-        confirmWord="PURGE NOW"
-        onConfirm={purge}
-        onCancel={() => setPendingPurge(null)}
+    <div style={{ padding: '20px' }}>
+      <DataExplorer
+        title="Archived Customers"
+        subtitle="Soft-deleted records — restorable for 30 days"
+        data={archived}
+        rowKey={(r) => r.id}
+        searchKeys={['name', 'email', 'id', 'reason']}
+        miniKpis={[
+          { label: 'Total archived', value: archived.length, color: '#DC2626' },
+          { label: 'Last 7 days', value: recentlyArchived, color: '#F59E0B' },
+          { label: 'Restorable', value: archived.length, color: '#10B981' },
+          { label: 'Permanent purge', value: 0, color: '#94A3B8' }
+        ]}
+        filters={[
+          {
+            key: 'reason',
+            label: 'reasons',
+            options: ['Customer request', 'Non-payment', 'Duplicate account', 'Bankruptcy', 'Switched provider'].map((v) => ({ value: v, label: v }))
+          }
+        ]}
+        columns={[
+          { key: 'name', label: 'Customer', render: (r) => (
+            <div>
+              <div style={{ fontWeight: 700, color: '#0F172A' }}>{r.name}</div>
+              <div style={{ fontSize: '12px', color: '#64748B', fontFamily: 'monospace' }}>{r.id}</div>
+            </div>
+          )},
+          { key: 'email', label: 'Email', render: (r) => <span style={{ fontFamily: 'monospace', fontSize: '13px', color: '#475569' }}>{r.email}</span> },
+          { key: 'reason', label: 'Reason', render: (r) => <ReasonBadge reason={r.reason} /> },
+          { key: 'archivedAt', label: 'Archived', render: (r) => (
+            <div>
+              <div style={{ fontWeight: 600, color: '#0F172A' }}>{r.archivedAt}</div>
+              <div style={{ fontSize: '11px', color: '#64748B' }}>by {r.archivedBy}</div>
+            </div>
+          )}
+        ]}
+        bulkActions={[
+          { label: 'Restore selected', icon: '↩', primary: true, onClick: (ids) => console.log('restore', ids) },
+          {
+            label: 'Permanently delete',
+            icon: '🗑',
+            danger: true,
+            onClick: (ids) => {
+              if (window.confirm(`Permanently delete ${ids.length} customer(s)? This cannot be undone.`)) {
+                console.log('purge', ids);
+              }
+            }
+          }
+        ]}
+        aiInsight={`${recentlyArchived} archived in the last 7 days — review reasons for patterns.`}
       />
     </div>
   );

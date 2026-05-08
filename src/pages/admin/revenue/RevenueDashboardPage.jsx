@@ -1,115 +1,149 @@
 // ================================================================
-// /admin/revenue — MRR / ARR / churn / LTV / CAC dashboard (deep)
+// /admin/revenue — Analytics Lab (Bible v2 §17.5)
+// Stacked revenue by tier with period + dimension drill-downs.
 // ================================================================
-import React from "react";
-import AdminKpiCard from "../../../components/admin/AdminKpiCard";
-import { ADMIN_BRAND, ADMIN_INDIGO, CRITICAL_RED, TRUST_BLUE } from "../../../utils/admin/adminPalette";
-import { fmtCurrency } from "../../../utils/format";
+import { useState, useMemo } from 'react';
+import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import AnalyticsLab from '@/components/admin/shared/AnalyticsLab';
 
-const MRR_HISTORY = [
-  { month: "Jun", mrr: 248000 }, { month: "Jul", mrr: 289000 }, { month: "Aug", mrr: 311000 },
-  { month: "Sep", mrr: 348000 }, { month: "Oct", mrr: 372000 }, { month: "Nov", mrr: 391000 },
-  { month: "Dec", mrr: 412000 }, { month: "Jan", mrr: 432000 }, { month: "Feb", mrr: 459000 },
-  { month: "Mar", mrr: 481000 }, { month: "Apr", mrr: 508000 }, { month: "May", mrr: 542000 },
-];
-
-const SOURCE_BREAKDOWN = [
-  { source: "New",       value: 41000, color: "#10B981" },
-  { source: "Expansion", value: 22000, color: "#3B82F6" },
-  { source: "Reactivation", value: 8000, color: "#8B5CF6" },
-  { source: "Contraction", value: -12000, color: "#F59E0B" },
-  { source: "Churn",     value: -25000, color: "#DC2626" },
-];
+const controlStyle = {
+  padding: '8px 12px',
+  background: '#1E293B',
+  color: '#F9FAFB',
+  border: '1px solid rgba(255,255,255,0.1)',
+  borderRadius: '8px',
+  fontSize: '13px',
+  fontWeight: 600,
+  cursor: 'pointer'
+};
 
 export default function RevenueDashboardPage() {
-  const brand = ADMIN_BRAND;
-  const trust = TRUST_BLUE;
-  const crit = CRITICAL_RED;
-  const indigo = ADMIN_INDIGO;
-  const success = { bg: "#DCFCE7", base: "#10B981", dark: "#047857" };
-  const money = { bg: "#DEFAF6", base: "#14B8A6", dark: "#115E59" };
-  const amber = { bg: "#FEF3C7", base: "#F59E0B", dark: "#B45309" };
+  const [period, setPeriod] = useState('90d');
+  const [dimension, setDimension] = useState('plan');
 
-  const maxMrr = Math.max(...MRR_HISTORY.map((m) => m.mrr));
+  const data = useMemo(() => {
+    const days = period === '30d' ? 30 : period === '90d' ? 90 : 365;
+    return Array.from({ length: days }, (_, i) => {
+      const date = new Date(Date.now() - (days - 1 - i) * 86400000);
+      const base = 800000 + i * 1500;
+      return {
+        date: date.toLocaleDateString('en-GB', { month: 'short', day: 'numeric' }),
+        Lite:       base * 0.05 + Math.random() * 5000,
+        Pro:        base * 0.30 + Math.random() * 12000,
+        Business:   base * 0.40 + Math.random() * 18000,
+        Enterprise: base * 0.25 + Math.random() * 14000
+      };
+    });
+  }, [period]);
+
+  const insights = [
+    { icon: '💰', label: 'Total MRR',  value: '₺929,353', trend: 12.1 },
+    { icon: '📈', label: 'ARR',        value: '₺11.15M',  trend: 12.1 },
+    { icon: '🎯', label: 'NRR',        value: '108.4%',   trend: 3.2 },
+    { icon: '📉', label: 'Churn',      value: '2.1%',     trend: -0.6 }
+  ];
+
+  const controls = (
+    <>
+      <select value={period} onChange={(e) => setPeriod(e.target.value)} style={controlStyle}>
+        <option value="30d">Last 30 days</option>
+        <option value="90d">Last 90 days</option>
+        <option value="365d">Last 12 months</option>
+      </select>
+      <select value={dimension} onChange={(e) => setDimension(e.target.value)} style={controlStyle}>
+        <option value="plan">By plan</option>
+        <option value="country">By country</option>
+        <option value="cohort">By cohort</option>
+      </select>
+    </>
+  );
+
+  const mainChart = (
+    <ResponsiveContainer width="100%" height={400}>
+      <AreaChart data={data}>
+        <defs>
+          <linearGradient id="rev-lite" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#6B7280" stopOpacity={0.6} />
+            <stop offset="100%" stopColor="#6B7280" stopOpacity={0.05} />
+          </linearGradient>
+          <linearGradient id="rev-pro" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#1A56DB" stopOpacity={0.6} />
+            <stop offset="100%" stopColor="#1A56DB" stopOpacity={0.05} />
+          </linearGradient>
+          <linearGradient id="rev-biz" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#7C3AED" stopOpacity={0.6} />
+            <stop offset="100%" stopColor="#7C3AED" stopOpacity={0.05} />
+          </linearGradient>
+          <linearGradient id="rev-ent" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor="#E30A17" stopOpacity={0.6} />
+            <stop offset="100%" stopColor="#E30A17" stopOpacity={0.05} />
+          </linearGradient>
+        </defs>
+        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
+        <XAxis dataKey="date" stroke="#94A3B8" fontSize={11} tickCount={6} />
+        <YAxis stroke="#94A3B8" fontSize={11} tickFormatter={(v) => `₺${(v / 1000).toFixed(0)}k`} />
+        <Tooltip
+          contentStyle={{
+            background: '#0B1020',
+            border: '1px solid rgba(34,211,238,0.3)',
+            borderRadius: '8px',
+            color: '#F9FAFB'
+          }}
+          formatter={(v) => `₺${Math.round(v).toLocaleString()}`}
+        />
+        <Legend wrapperStyle={{ fontSize: '12px' }} />
+        <Area type="monotone" dataKey="Lite"       stackId="1" stroke="#6B7280" fill="url(#rev-lite)" animationDuration={1100} />
+        <Area type="monotone" dataKey="Pro"        stackId="1" stroke="#1A56DB" fill="url(#rev-pro)"  animationDuration={1100} />
+        <Area type="monotone" dataKey="Business"   stackId="1" stroke="#7C3AED" fill="url(#rev-biz)"  animationDuration={1100} />
+        <Area type="monotone" dataKey="Enterprise" stackId="1" stroke="#E30A17" fill="url(#rev-ent)"  animationDuration={1100} />
+      </AreaChart>
+    </ResponsiveContainer>
+  );
+
+  const drillDown = (
+    <div>
+      <div style={{ fontSize: '11px', fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '12px' }}>
+        {dimension === 'plan' ? 'Top plans by MRR' : dimension === 'country' ? 'Top countries by MRR' : 'Top cohorts by retained MRR'}
+      </div>
+      <table style={{ width: '100%', fontSize: '13px', color: '#F9FAFB' }}>
+        <tbody>
+          {(dimension === 'plan' ? [
+            ['Business',    '₺371,741', '+14.2%'],
+            ['Enterprise',  '₺232,338', '+9.8%'],
+            ['Pro',         '₺278,805', '+6.4%'],
+            ['Lite',        '₺46,468',  '-1.2%']
+          ] : dimension === 'country' ? [
+            ['🇹🇷 Türkiye', '₺612,450', '+13.1%'],
+            ['🇦🇪 UAE',     '₺128,300', '+18.4%'],
+            ['🇸🇦 KSA',     '₺94,210',  '+8.2%'],
+            ['🇪🇬 Egypt',   '₺46,180',  '+5.5%']
+          ] : [
+            ['2026-Q1', '₺312,400', '+22%'],
+            ['2025-Q4', '₺248,100', '+11%'],
+            ['2025-Q3', '₺178,400', '+4%'],
+            ['2025-Q2', '₺96,200',  '-2%']
+          ]).map((row) => (
+            <tr key={row[0]} style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+              <td style={{ padding: '10px 0', fontWeight: 700 }}>{row[0]}</td>
+              <td style={{ padding: '10px 0', textAlign: 'end', fontWeight: 700 }}>{row[1]}</td>
+              <td style={{ padding: '10px 0', textAlign: 'end', color: row[2].startsWith('-') ? '#EF4444' : '#10B981', fontWeight: 700 }}>{row[2]}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
 
   return (
-    <div style={{ padding: "28px 24px" }}>
-      <div style={{ marginBottom: 24 }}>
-        <h1 style={{ fontSize: 26, fontWeight: 900, color: "#0F172A", margin: "0 0 6px" }}>Revenue Dashboard</h1>
-        <p style={{ fontSize: 12, color: "#64748B", margin: 0 }}>MRR · ARR · churn · LTV · CAC · forecast — last 12 months</p>
-      </div>
-
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 12, marginBottom: 22 }}>
-        <AdminKpiCard label="MRR (current)"   value={fmtCurrency(542000)} delta={6.7}  palette={money}   icon="💰" size="lg" />
-        <AdminKpiCard label="ARR"             value={fmtCurrency(6504000)} delta={28.4} palette={success} icon="📈" size="lg" />
-        <AdminKpiCard label="Net new MRR"     value={fmtCurrency(34000)}  delta={12.1} palette={trust}   icon="➕" />
-        <AdminKpiCard label="Churn rate"      value="2.1%"                delta={-0.6} palette={crit}    icon="📉" />
-        <AdminKpiCard label="LTV"             value={fmtCurrency(8420)}   delta={4.2}  palette={indigo}  icon="💎" />
-        <AdminKpiCard label="CAC"             value={fmtCurrency(890)}    delta={-3.1} palette={amber}   icon="🎯" />
-        <AdminKpiCard label="LTV/CAC"         value="9.5x"                delta={7.4}  palette={success} icon="⚖" />
-        <AdminKpiCard label="Avg revenue/cust" value={fmtCurrency(434)}    delta={2.8}  palette={brand}   icon="👤" />
-      </div>
-
-      <div style={{ background: "#fff", border: "1px solid #E2E8F0", borderRadius: 16, padding: 22, marginBottom: 22 }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-          <h3 style={{ fontSize: 14, fontWeight: 800, color: "#0F172A", margin: 0 }}>MRR — last 12 months</h3>
-          <span style={{ fontSize: 11, color: "#64748B" }}>+118% vs same period last year</span>
-        </div>
-        <div style={{ display: "flex", alignItems: "flex-end", gap: 8, height: 220, paddingTop: 10 }}>
-          {MRR_HISTORY.map((m, i) => (
-            <div key={m.month} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
-              <div style={{ width: "100%", height: `${(m.mrr / maxMrr) * 100}%`, background: `linear-gradient(180deg, ${money.base}, ${money.dark})`, borderRadius: "8px 8px 0 0", minHeight: 8, position: "relative" }}>
-                {i === MRR_HISTORY.length - 1 && (
-                  <span style={{ position: "absolute", top: -22, insetInlineStart: "50%", transform: "translateX(-50%)", fontSize: 10, fontWeight: 800, color: money.dark, whiteSpace: "nowrap" }}>
-                    {fmtCurrency(m.mrr)}
-                  </span>
-                )}
-              </div>
-              <div style={{ fontSize: 10, color: "#94A3B8", fontWeight: 700 }}>{m.month}</div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 18 }} className="rev-bottom">
-        <div style={{ background: "#fff", border: "1px solid #E2E8F0", borderRadius: 14, padding: 20 }}>
-          <h3 style={{ fontSize: 14, fontWeight: 800, color: "#0F172A", margin: "0 0 14px" }}>This month — MRR movement</h3>
-          {SOURCE_BREAKDOWN.map((s) => {
-            const isNeg = s.value < 0;
-            return (
-              <div key={s.source} style={{ display: "grid", gridTemplateColumns: "auto 1fr auto", gap: 10, alignItems: "center", padding: "10px 0", borderBottom: "1px solid #F1F5F9" }}>
-                <span style={{ width: 12, height: 12, borderRadius: 4, background: s.color }} />
-                <span style={{ fontSize: 13, fontWeight: 700, color: "#0F172A" }}>{s.source}</span>
-                <strong style={{ fontSize: 14, color: isNeg ? "#9F1239" : "#047857", fontFamily: "monospace" }}>
-                  {isNeg ? "" : "+"}{fmtCurrency(s.value)}
-                </strong>
-              </div>
-            );
-          })}
-          <div style={{ marginTop: 14, padding: 14, background: success.bg, borderRadius: 10, fontSize: 13, fontWeight: 800, color: success.dark, textAlign: "center" }}>
-            Net new MRR: +{fmtCurrency(SOURCE_BREAKDOWN.reduce((s, x) => s + x.value, 0))}
-          </div>
-        </div>
-
-        <div style={{ background: "#fff", border: "1px solid #E2E8F0", borderRadius: 14, padding: 20 }}>
-          <h3 style={{ fontSize: 14, fontWeight: 800, color: "#0F172A", margin: "0 0 14px" }}>Quick actions</h3>
-          {[
-            { label: "View subscriptions",    icon: "🔁", to: "/admin/revenue/subscriptions" },
-            { label: "Failed payments queue", icon: "⚠",  to: "/admin/revenue/failed-payments" },
-            { label: "Issue refund",          icon: "↩",  to: "/admin/revenue/refunds" },
-            { label: "Create coupon",         icon: "🎟",  to: "/admin/revenue/coupons" },
-            { label: "Run cohort analysis",   icon: "📐", to: "/admin/revenue/cohorts" },
-            { label: "Forecast next 90 days", icon: "🔮", to: "/admin/revenue/forecast" },
-          ].map((a) => (
-            <a key={a.to} href={a.to} style={{ display: "grid", gridTemplateColumns: "auto 1fr auto", gap: 10, padding: "10px 14px", background: "#F8FAFC", border: "1px solid #F1F5F9", borderRadius: 10, marginBottom: 6, textDecoration: "none", color: "#0F172A", fontSize: 12, fontWeight: 700, alignItems: "center" }}>
-              <span style={{ fontSize: 18 }}>{a.icon}</span>
-              <span>{a.label}</span>
-              <span>→</span>
-            </a>
-          ))}
-        </div>
-        <style>{`@media (max-width: 900px) { .rev-bottom { grid-template-columns: 1fr !important; } }`}</style>
-      </div>
+    <div style={{ padding: '20px' }}>
+      <AnalyticsLab
+        title="Revenue Dashboard"
+        subtitle="Stacked revenue by tier — drill into period and dimension"
+        controls={controls}
+        mainChart={mainChart}
+        insights={insights}
+        drillDown={drillDown}
+      />
     </div>
   );
 }
