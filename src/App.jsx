@@ -361,9 +361,10 @@ export default function App() {
             <Route path="/help/shortcuts" element={<RequireAuth><KeyboardShortcutsPage /></RequireAuth>} />
             <Route path="/help/whats-new" element={<RequireAuth><WhatsNewPage /></RequireAuth>} />
 
-            {/* Support center (Phase 13) — public KB + ticketing */}
+            {/* Support center (Phase 13) — public KB + ticketing.
+                /destek belongs to the KAYNAKLAR resource shell above
+                (HelpCenterPage), so do NOT re-register it here. */}
             <Route path="/support"                   element={<SupportHomePage />} />
-            <Route path="/destek"                    element={<SupportHomePage />} />
             <Route path="/support/kb"                element={<SupportKnowledgeBasePage />} />
             <Route path="/support/article/:slug"     element={<ArticleDetailPage />} />
             <Route path="/support/contact"           element={<ContactSupportPage />} />
