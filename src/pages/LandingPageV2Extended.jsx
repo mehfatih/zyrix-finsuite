@@ -649,7 +649,11 @@ function ProblemSolution() {
 // ── FEATURES (Interactive Tabs) ───────────────────────────────
 function Features() {
   const { t, lang, isRTL } = useI18n();
-  const { profile } = useCountry();
+  // Defensive: useCountry() always returns the context value (with a default
+  // profile baked in), but if this ever renders outside <CountryProvider> the
+  // context value is the default fallback object — never undefined. We still
+  // optional-chain to be crash-proof against unexpected hook shapes.
+  const profile = useCountry()?.profile;
   const isMobile = useIsMobile();
   const isSaudi = lang === "AR";
   const [activeTab, setActiveTab] = useState("invoice");
@@ -1118,7 +1122,11 @@ function CashflowCTA() {
 // PRICING - SOURCED FROM planCatalog.js (single source of truth)
 function Pricing() {
   const { t, lang, isRTL } = useI18n();
-  const { profile } = useCountry();
+  // Defensive: useCountry() always returns the context value (with a default
+  // profile baked in), but if this ever renders outside <CountryProvider> the
+  // context value is the default fallback object — never undefined. We still
+  // optional-chain to be crash-proof against unexpected hook shapes.
+  const profile = useCountry()?.profile;
   const isMobile = useIsMobile();
   const isSaudi = lang === "AR";
 
@@ -1516,7 +1524,11 @@ function FinalCTA() {
 // -- Stats Strip (V2-ext) --
 function StatsStrip() {
   const { t, lang } = useI18n();
-  const { profile } = useCountry();
+  // Defensive: useCountry() always returns the context value (with a default
+  // profile baked in), but if this ever renders outside <CountryProvider> the
+  // context value is the default fallback object — never undefined. We still
+  // optional-chain to be crash-proof against unexpected hook shapes.
+  const profile = useCountry()?.profile;
   const isMobile = useIsMobile();
   const isRTL = lang === "AR";
   const isSaudi = lang === "AR";
@@ -1666,7 +1678,11 @@ function StatsStrip() {
 
 function AIInvoiceDemoSection() {
   const { lang, isRTL } = useI18n();
-  const { profile } = useCountry();
+  // Defensive: useCountry() always returns the context value (with a default
+  // profile baked in), but if this ever renders outside <CountryProvider> the
+  // context value is the default fallback object — never undefined. We still
+  // optional-chain to be crash-proof against unexpected hook shapes.
+  const profile = useCountry()?.profile;
   const isArabic = lang === "AR";
   const T = isArabic ? SA : C;
   const [loading, setLoading] = useState(false);
