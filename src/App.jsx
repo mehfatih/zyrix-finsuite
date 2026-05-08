@@ -28,6 +28,12 @@ const MobilPage           = React.lazy(() => import("./pages/features/MobilPage.
 const AcademyPage         = React.lazy(() => import("./pages/resources/AcademyPage.jsx"));
 const HelpCenterPage      = React.lazy(() => import("./pages/resources/HelpCenterPage.jsx"));
 const WebinarsPage        = React.lazy(() => import("./pages/resources/WebinarsPage.jsx"));
+const KilavuzPage         = React.lazy(() => import("./pages/resources/KilavuzPage.jsx"));
+const KariyerPage         = React.lazy(() => import("./pages/resources/KariyerPage.jsx"));
+const BasinPage           = React.lazy(() => import("./pages/resources/BasinPage.jsx"));
+const PartnersPage        = React.lazy(() => import("./pages/resources/PartnersPage.jsx"));
+const CerezPage           = React.lazy(() => import("./pages/resources/CerezPage.jsx"));
+const GdprPage            = React.lazy(() => import("./pages/resources/GdprPage.jsx"));
 const PrivacyPage         = React.lazy(() => import("./pages/PrivacyPage.jsx"));
 const TermsPage           = React.lazy(() => import("./pages/TermsPage.jsx"));
 const SecurityPage        = React.lazy(() => import("./pages/SecurityPage.jsx"));
@@ -226,7 +232,19 @@ export default function App() {
             <Route path="/akademi"    element={<AcademyPage />} />
             <Route path="/destek"     element={<HelpCenterPage />} />
             <Route path="/webinarlar" element={<WebinarsPage />} />
+            <Route path="/kilavuz"    element={<KilavuzPage />} />
+            <Route path="/kariyer"    element={<KariyerPage />} />
+            <Route path="/basin"      element={<BasinPage />} />
+            <Route path="/partners"   element={<PartnersPage />} />
+            <Route path="/cerez"      element={<CerezPage />} />
+            <Route path="/gdpr"       element={<GdprPage />} />
             <Route path="/case-studies" element={<CaseStudiesPage />} />
+            {/* Turkish-slug aliases for existing pages (footer uses these) */}
+            <Route path="/basarilar"  element={<CaseStudiesPage />} />
+            <Route path="/hakkimizda" element={<AboutPage />} />
+            <Route path="/iletisim"   element={<ContactPage />} />
+            <Route path="/sartlar"    element={<TermsPage />} />
+            <Route path="/gizlilik"   element={<PrivacyPage />} />
             <Route path="/integrations" element={<IntegrationsPage />} />
             <Route path="/sectors" element={<SectorsPage />} />
             <Route path="/about" element={<AboutPage />} />
@@ -383,9 +401,11 @@ export default function App() {
             <Route path="/migration/export"    element={<RequireAuth><ExportCenterPage /></RequireAuth>} />
             <Route path="/migration/concierge" element={<RequireAuth><MigrationConciergePage /></RequireAuth>} />
 
-            {/* Trust Center (Phase 13) — public */}
+            {/* Trust Center (Phase 13) — public.
+                /guvenlik is the public-facing Security page (with NavV2
+                + FooterV2 brand shell); the Trust Center keeps /trust. */}
             <Route path="/trust"             element={<TrustCenterPage />} />
-            <Route path="/guvenlik"          element={<TrustCenterPage />} />
+            <Route path="/guvenlik"          element={<SecurityPage />} />
             <Route path="/trust/whitepaper"  element={<SecurityWhitepaperPage />} />
             <Route path="/trust/compliance"  element={<ComplianceCertificationsPage />} />
             <Route path="/trust/pentest"     element={<PenetrationTestReportsPage />} />
