@@ -37,11 +37,9 @@
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Manrope:wght@400;500;600;700;800;900&family=Inter+Tight:wght@600;700;800;900&display=swap" rel="stylesheet" />
 
     <style>
+      /* Brand-dark default so route-to-route transitions never flash white. */
+      /* Each page's own inline body bg overrides this while it is mounted. */
       *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-      /* Brand-dark default so route-to-route transitions never flash white.
-         Each page's inline <style>{`body { background: ... }`}</style> takes
-         over once it mounts (later rule, equal specificity → wins), and the
-         dark fallback returns the moment the page unmounts. */
       html, body { background: #1F0205; }
       body {
         font-family: 'Plus Jakarta Sans', 'Manrope', system-ui, sans-serif;
