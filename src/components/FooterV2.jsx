@@ -120,28 +120,31 @@ export default function FooterV2() {
     { label: "API & Webhooks", href: "/features#api", route: true },
   ];
 
+  // KAYNAKLAR / RESOURCES — every entry now has a real route. Academy,
+  // Help Center and Webinars previously fell back to "#" or to /contact;
+  // they each have their own brand-themed page now.
   const resourceLinks = lang === "AR" ? [
     { label: "المدونة", href: "/blog", route: true },
     { label: "دليل المستخدم", href: "/how-it-works", route: true },
-    { label: "أكاديمية زيركس", href: "#", route: false },
-    { label: "مركز المساعدة", href: "/contact", route: true },
-    { label: "الندوات الإلكترونية", href: "#", route: false },
+    { label: "أكاديمية زيركس", href: "/akademi", route: true },
+    { label: "مركز المساعدة", href: "/destek", route: true },
+    { label: "الندوات الإلكترونية", href: "/webinarlar", route: true },
     { label: "حالات نجاح", href: "/case-studies", route: true },
     { label: "خريطة الموقع", href: "/sitemap", route: true },
   ] : lang === "EN" ? [
     { label: "Blog", href: "/blog", route: true },
     { label: "User Guide", href: "/how-it-works", route: true },
-    { label: "Zyrix Academy", href: "#", route: false },
-    { label: "Help Center", href: "/contact", route: true },
-    { label: "Webinars", href: "#", route: false },
+    { label: "Zyrix Academy", href: "/akademi", route: true },
+    { label: "Help Center", href: "/destek", route: true },
+    { label: "Webinars", href: "/webinarlar", route: true },
     { label: "Success Stories", href: "/case-studies", route: true },
     { label: "Site Map", href: "/sitemap", route: true },
   ] : [
     { label: "Blog", href: "/blog", route: true },
     { label: "Kullanım Kılavuzu", href: "/how-it-works", route: true },
-    { label: "Zyrix Akademi", href: "#", route: false },
-    { label: "Yardım Merkezi", href: "/contact", route: true },
-    { label: "Webinarlar", href: "#", route: false },
+    { label: "Zyrix Akademi", href: "/akademi", route: true },
+    { label: "Yardım Merkezi", href: "/destek", route: true },
+    { label: "Webinarlar", href: "/webinarlar", route: true },
     { label: "Başarı Hikayeleri", href: "/case-studies", route: true },
     { label: "Site Haritası", href: "/sitemap", route: true },
   ];

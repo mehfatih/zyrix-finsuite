@@ -25,6 +25,9 @@ const EFaturaPage         = React.lazy(() => import("./pages/features/EFaturaPag
 const CRMPage             = React.lazy(() => import("./pages/features/CRMPage.jsx"));
 const AIPage              = React.lazy(() => import("./pages/features/AIPage.jsx"));
 const MobilPage           = React.lazy(() => import("./pages/features/MobilPage.jsx"));
+const AcademyPage         = React.lazy(() => import("./pages/resources/AcademyPage.jsx"));
+const HelpCenterPage      = React.lazy(() => import("./pages/resources/HelpCenterPage.jsx"));
+const WebinarsPage        = React.lazy(() => import("./pages/resources/WebinarsPage.jsx"));
 const PrivacyPage         = React.lazy(() => import("./pages/PrivacyPage.jsx"));
 const TermsPage           = React.lazy(() => import("./pages/TermsPage.jsx"));
 const SecurityPage        = React.lazy(() => import("./pages/SecurityPage.jsx"));
@@ -219,6 +222,10 @@ export default function App() {
             <Route path="/crm"      element={<CRMPage />} />
             <Route path="/ai"       element={<AIPage />} />
             <Route path="/mobil"    element={<MobilPage />} />
+            {/* KAYNAKLAR — resource pages on the shared ResourcePage shell */}
+            <Route path="/akademi"    element={<AcademyPage />} />
+            <Route path="/destek"     element={<HelpCenterPage />} />
+            <Route path="/webinarlar" element={<WebinarsPage />} />
             <Route path="/case-studies" element={<CaseStudiesPage />} />
             <Route path="/integrations" element={<IntegrationsPage />} />
             <Route path="/sectors" element={<SectorsPage />} />
