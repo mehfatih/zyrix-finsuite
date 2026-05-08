@@ -40,59 +40,59 @@ const API = import.meta.env.VITE_API_URL || "http://localhost:3000";
 // ---------- Translations ----------
 const TXT = {
   TR: {
-    eyebrow: "ANALIZINI KAYDET",
-    h1a: "AI nakit akisi analizini kaydet",
-    h1b: "icgoru kaybolmadan once.",
-    sub: "Calisma alanini olustur ve fatura risk profilin, geri kazanilabilir nakit tahminin ve AI tarafindan olusturulan takip planini eylem icin hazir tut.",
+    eyebrow: "ANALİZİNİ KAYDET",
+    h1a: "AI nakit akışı analizini kaydet",
+    h1b: "içgörü kaybolmadan önce.",
+    sub: "Çalışma alanını oluştur ve fatura risk profilin, geri kazanılabilir nakit tahminin ve AI tarafından oluşturulan takip planını eylem için hazır tut.",
 
     outcomes: [
       { num: "99",      label: "riskli fatura tespit edildi" },
-      { num: "32",      label: "takip hazir" },
-      { num: "$6,048",  label: "geri kazanilabilir nakit tahmini" },
+      { num: "32",      label: "takip hazır" },
+      { num: "$6,048",  label: "geri kazanılabilir nakit tahmini" },
     ],
 
-    smartEyebrow: "AKILLI ASISTAN",
-    smartTitle: "Analizin calisma alaninda seni bekliyor olacak.",
-    smartText: "Kayittan sonra Zyrix sifirdan baslamak yerine mevcut nakit akisi baglamindan devam eder.",
+    smartEyebrow: "AKILLI ASİSTAN",
+    smartTitle: "Analizin çalışma alanında seni bekliyor olacak.",
+    smartText: "Kayıttan sonra Zyrix sıfırdan başlamak yerine mevcut nakit akışı bağlamından devam eder.",
 
-    formEyebrow: "CALISMA ALANI OLUSTUR",
-    formTitle: "Nakit akisini hemen duzeltmeye basla.",
-    formSub: "Calisma alanini olusturmak icin bilgilerini gir.",
+    formEyebrow: "ÇALIŞMA ALANI OLUŞTUR",
+    formTitle: "Nakit akışını hemen düzeltmeye başla.",
+    formSub: "Çalışma alanını oluşturmak için bilgilerini gir.",
 
     fName:    "AD SOYAD",
-    fEmail:   "IS E-POSTASI",
-    fPhone:   "TELEFON (OPSIYONEL)",
-    fCompany: "SIRKET ADI",
-    fPassword:"SIFRE",
-    fCountry: "ULKE",
-    fRegion:  "BOLGE",
+    fEmail:   "İŞ E-POSTASI",
+    fPhone:   "TELEFON (OPSİYONEL)",
+    fCompany: "ŞİRKET ADI",
+    fPassword:"ŞİFRE",
+    fCountry: "ÜLKE",
+    fRegion:  "BÖLGE",
 
-    fNamePh:    "Adin",
+    fNamePh:    "Adın",
     fEmailPh:   "ornek@sirket.com",
-    fCompanyPh: "Sirket adi",
+    fCompanyPh: "Şirket adı",
     fPasswordPh: "En az 8 karakter",
 
-    submitBtn: "Calisma Alanini Olustur",
-    submitting: "Olusturuluyor...",
+    submitBtn: "Çalışma Alanını Oluştur",
+    submitting: "Oluşturuluyor...",
 
-    secondaryLogin: "Giris Yap",
+    secondaryLogin: "Giriş Yap",
     secondaryOtp:   "OTP ile Devam Et",
 
-    legalPrefix: "Hesap olusturarak ",
+    legalPrefix: "Hesap oluşturarak ",
     legalAnd: " ve ",
-    legalSuffix: " kabul etmis olursun.",
-    legalTerms: "Kullanim Sartlari",
-    legalPrivacy: "Gizlilik Politikasi",
+    legalSuffix: " kabul etmiş olursun.",
+    legalTerms: "Kullanım Şartları",
+    legalPrivacy: "Gizlilik Politikası",
 
-    trust: ["Kurulum gerekmez", "Guvenli calisma alani", "Dakikalar icinde hazir", "Istediginde iptal et"],
+    trust: ["Kurulum gerekmez", "Güvenli çalışma alanı", "Dakikalar içinde hazır", "İstediğinde iptal et"],
 
-    errInvalid: "Lutfen gerekli alanlari doldur.",
-    errEmail:   "Gecerli bir e-posta adresi gir.",
-    errPass:    "Sifre en az 8 karakter olmali.",
+    errInvalid: "Lütfen gerekli alanları doldur.",
+    errEmail:   "Geçerli bir e-posta adresi gir.",
+    errPass:    "Şifre en az 8 karakter olmalı.",
 
     detected: "tespit edildi",
-    selectCountry: "Ulke sec",
-    selectRegion: "Bolge sec",
+    selectCountry: "Ülke seç",
+    selectRegion: "Bölge seç",
   },
 
   EN: {
@@ -466,7 +466,16 @@ export default function RegisterPage() {
                     gap: 12,
                   }}
                 >
-                  {t.outcomes.map((o, i) => (
+                  {t.outcomes.map((o, i) => {
+                    // Localize currency: outcome values that ship with a "$" prefix
+                    // are demo monetary numbers — render them with the visitor's
+                    // detected currency symbol (₺ for TR, ر.س for SA, د.إ for AE,
+                    // $ for USD-fallback markets).
+                    const isMoney = typeof o.num === "string" && o.num.startsWith("$");
+                    const displayNum = isMoney
+                      ? (profile && profile.currencySymbol ? profile.currencySymbol : "$") + o.num.slice(1)
+                      : o.num;
+                    return (
                     <div
                       key={i}
                       style={{
@@ -486,7 +495,7 @@ export default function RegisterPage() {
                           fontVariantNumeric: "tabular-nums",
                         }}
                       >
-                        {o.num}
+                        {displayNum}
                       </div>
                       <div
                         style={{
@@ -500,7 +509,8 @@ export default function RegisterPage() {
                         {o.label}
                       </div>
                     </div>
-                  ))}
+                    );
+                  })}
                 </div>
 
                 {/* Smart Assistant card */}

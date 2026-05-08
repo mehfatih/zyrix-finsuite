@@ -738,7 +738,12 @@ function Features() {
           boxShadow: isSaudi ? "0 1px 2px rgba(0, 25, 12, 0.04)" : "0 1px 2px rgba(42, 3, 6, 0.04)",
         }}>
           {tabs.map(tab => (
-            <button key={tab.key} onClick={() => setActiveTab(tab.key)} style={{
+            <button
+              key={tab.key}
+              type="button"
+              onClick={(e) => { e.preventDefault(); setActiveTab(tab.key); }}
+              aria-pressed={activeTab === tab.key}
+              style={{
               padding: isMobile ? "8px 12px" : "11px 20px", fontSize: isMobile ? 12 : 13, fontWeight: 600,
               color: activeTab === tab.key ? "white" : C.muted,
               borderRadius: 100,
@@ -934,7 +939,7 @@ function Features() {
                     <div style={{ width: 28, height: 28, borderRadius: 8, background: `linear-gradient(135deg, ${C.red}, ${C.redDeep})`, display: "grid", placeItems: "center", color: "white" }}>✨</div>
                     <div style={{ fontWeight: 700, fontSize: 13 }}>{lang === "AR" ? "مساعد AI" : (lang === "EN" ? "AI Assistant" : "AI Asistanı")}</div>
                   </div>
-                  <p style={{ fontSize: 13, color: C.inkSoft, lineHeight: 1.6, marginBottom: 10 }} dangerouslySetInnerHTML={{ __html: lang === "AR" ? "توقع التحصيل لهذا الأسبوع: <strong>186,500 ر.س</strong>. شركة الأفق ستدفع في الموعد باحتمال 92%." : (lang === "EN" ? "This week collection forecast: <strong>$186,500</strong>. ABC Ltd. will pay on time with 92% probability." : "Bu hafta tahsilat tahmini: <strong>₺186.500</strong>. ABC Ltd. %92 olasilikla zamaninda ödeyecek.") }} />
+                  <p style={{ fontSize: 13, color: C.inkSoft, lineHeight: 1.6, marginBottom: 10 }} dangerouslySetInnerHTML={{ __html: lang === "AR" ? "توقع التحصيل لهذا الأسبوع: <strong>186,500 ر.س</strong>. شركة الأفق ستدفع في الموعد باحتمال 92%." : (lang === "EN" ? "This week collection forecast: <strong>$186,500</strong>. ABC Ltd. will pay on time with 92% probability." : "Bu hafta tahsilat tahmini: <strong>₺186.500</strong>. ABC Ltd. %92 olasılıkla zamanında ödeyecek.") }} />
                   <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
                     <span style={{ background: "white", padding: "4px 10px", borderRadius: 100, fontSize: 11, fontWeight: 600, color: C.red }}>{lang === "AR" ? "دقة عالية" : (lang === "EN" ? "High accuracy" : "Yüksek doğruluk")}</span>
                     <span style={{ background: "white", padding: "4px 10px", borderRadius: 100, fontSize: 11, fontWeight: 600, color: C.muted }}>Gemini 2.0</span>
