@@ -18,6 +18,7 @@ import BurjMamlakaWatermark from "../components/landing-v2/BurjMamlakaWatermark"
 import NavV2 from "../components/NavV2.jsx";
 import FooterV2 from "../components/FooterV2.jsx";
 import { WhyUsSection, SectorsSection, IntegrationsSection, FAQSection, WhatsAppWidget } from "../components/landing-v2/NewSections";
+import ContactExpertModal from "../components/landing-v2/ContactExpertModal.jsx";
 
 import { useCountry } from "../hooks/useCountry.jsx";
 import { formatCurrency } from "../utils/formatCurrency.js";
@@ -802,7 +803,7 @@ function Features() {
                 </li>
               ))}
             </ul>
-            <a href="#" style={{
+            <Link to="/features" style={{
               display: "inline-flex", alignItems: "center", gap: 6,
               fontSize: 14, fontWeight: 700, color: isSaudi ? SA.green : C.red, textDecoration: "none",
             }}>
@@ -810,7 +811,7 @@ function Features() {
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" style={{ width: 16, height: 16, transform: isRTL ? "scaleX(-1)" : "none" }}>
                 <path d="M5 12h14M12 5l7 7-7 7" />
               </svg>
-            </a>
+            </Link>
           </div>
 
           {/* Visual */}
@@ -1083,13 +1084,17 @@ function CashflowCTA() {
                   <path d="M5 12h14M12 5l7 7-7 7" />
                 </svg>
               </a>
-              <a href="#" style={{
-                display: "inline-flex", alignItems: "center", gap: 10,
-                background: "rgba(255, 255, 255, 0.08)", color: "white",
-                fontSize: isMobile ? 14 : 15, fontWeight: 600, padding: isMobile ? "13px 20px" : "16px 26px",
-                borderRadius: 14, border: "1px solid rgba(255, 255, 255, 0.18)",
-                textDecoration: "none",
-              }}>{t("lv2.demo.cta2")}</a>
+              <button
+                type="button"
+                onClick={() => window.dispatchEvent(new CustomEvent("zyrix:open-contact"))}
+                style={{
+                  display: "inline-flex", alignItems: "center", gap: 10,
+                  background: "rgba(255, 255, 255, 0.08)", color: "white",
+                  fontSize: isMobile ? 14 : 15, fontWeight: 600, padding: isMobile ? "13px 20px" : "16px 26px",
+                  borderRadius: 14, border: "1px solid rgba(255, 255, 255, 0.18)",
+                  textDecoration: "none", cursor: "pointer", fontFamily: "inherit",
+                }}
+              >{t("lv2.demo.cta2")}</button>
             </div>
           </div>
 
@@ -1505,14 +1510,14 @@ function FinalCTA() {
               <path d="M5 12h14M12 5l7 7-7 7" />
             </svg>
           </a>
-          <a href="#" style={{
+          <Link to="/how-it-works" style={{
             display: "inline-flex", alignItems: "center", gap: 10,
             background: "rgba(255, 255, 255, 0.12)",
             color: "white", fontSize: isMobile ? 14 : 15, fontWeight: 600,
             padding: isMobile ? "13px 22px" : "16px 30px", borderRadius: 14,
             border: "1px solid rgba(255, 255, 255, 0.25)",
             textDecoration: "none",
-          }}>{t("lv2.cta.watchDemo")}</a>
+          }}>{t("lv2.cta.watchDemo")}</Link>
         </div>
       </div>
     </section>
@@ -2665,9 +2670,18 @@ function AIInvoiceDemoSection() {
 
 export default function LandingPageV2Extended() {
   const { lang } = useI18n();
+  const [contactOpen, setContactOpen] = React.useState(false);
   React.useEffect(() => {
     document.body.classList.add("landing-page");
     return () => document.body.classList.remove("landing-page");
+  }, []);
+  // Listen for "open contact modal" requests dispatched from any descendant
+  // (e.g. the "Talk to an Expert" button in CashflowCTA). Using a custom
+  // event keeps the buttons free of prop-drilling through several sections.
+  React.useEffect(() => {
+    const handler = () => setContactOpen(true);
+    window.addEventListener("zyrix:open-contact", handler);
+    return () => window.removeEventListener("zyrix:open-contact", handler);
   }, []);
   const arFont = "'IBM Plex Sans Arabic', 'Manrope', system-ui, sans-serif";
   const ltrFont = "'Manrope', system-ui, -apple-system, sans-serif";
@@ -2701,6 +2715,11 @@ export default function LandingPageV2Extended() {
         <WhatsAppWidget lang={lang} />
       </div>
 
+      <ContactExpertModal
+        open={contactOpen}
+        onClose={() => setContactOpen(false)}
+        lang={lang}
+      />
     </>
   );
 }

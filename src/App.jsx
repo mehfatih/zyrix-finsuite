@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, RequireAuth, useAuth } from "./context/AuthContext";
 import ScrollToTop from "./components/ScrollToTop.jsx";
 import SkeletonScreen from "./components/dashboard/SkeletonScreen.jsx";
+import BrandedLoader from "./components/BrandedLoader.jsx";
 
 // ── Eagerly loaded (auth + always-on) ──────────────────────────
 import LoginPage          from "./pages/LoginPage";
@@ -189,7 +190,11 @@ function HomeRedirect() {
   return <Navigate to="/dashboard" replace />;
 }
 
-const PageFallback = () => <SkeletonScreen kind="page" />;
+// Brand-coloured full-viewport loader. Replaces the previous light skeleton so
+// lazy-route transitions don't flash a white screen before the next page paints.
+// SkeletonScreen is still imported for in-app dashboard loading states.
+const PageFallback = () => <BrandedLoader />;
+void SkeletonScreen;
 
 export default function App() {
   return (

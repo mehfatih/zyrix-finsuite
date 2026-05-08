@@ -38,11 +38,16 @@
 
     <style>
       *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      /* Brand-dark default so route-to-route transitions never flash white.
+         Each page's inline <style>{`body { background: ... }`}</style> takes
+         over once it mounts (later rule, equal specificity → wins), and the
+         dark fallback returns the moment the page unmounts. */
+      html, body { background: #1F0205; }
       body {
-        background: #fff;
         font-family: 'Plus Jakarta Sans', 'Manrope', system-ui, sans-serif;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
+        color: #fff;
       }
       #root { min-height: 100vh; }
     </style>
