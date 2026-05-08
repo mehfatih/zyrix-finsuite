@@ -3,7 +3,6 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, RequireAuth, useAuth } from "./context/AuthContext";
 import ScrollToTop from "./components/ScrollToTop.jsx";
 import SkeletonScreen from "./components/dashboard/SkeletonScreen.jsx";
-import BrandedLoader from "./components/BrandedLoader.jsx";
 
 // ── Eagerly loaded (auth + always-on) ──────────────────────────
 import LoginPage          from "./pages/LoginPage";
@@ -203,10 +202,10 @@ function HomeRedirect() {
   return <Navigate to="/dashboard" replace />;
 }
 
-// Brand-coloured full-viewport loader. Replaces the previous light skeleton so
-// lazy-route transitions don't flash a white screen before the next page paints.
-// SkeletonScreen is still imported for in-app dashboard loading states.
-const PageFallback = () => <BrandedLoader />;
+// No Suspense fallback. The body background is dark wine (#1F0205, set in
+// index.html) so the brief lazy-load gap between routes paints brand-dark
+// instead of flashing a full-viewport branded splash. SkeletonScreen is
+// kept imported because dashboard pages reach for it directly.
 void SkeletonScreen;
 
 export default function App() {
@@ -215,7 +214,7 @@ export default function App() {
       <BrowserRouter>
         <ScrollToTop />
         <a href="#main-content" className="skip-to-content" style={skipLinkStyle}>Skip to main content</a>
-        <Suspense fallback={<PageFallback />}>
+        <Suspense fallback={null}>
           <Routes>
             <Route path="/" element={<LandingPageV2Extended />} />
             <Route path="/ai-analysis" element={<AIAnalysisPage />} />
