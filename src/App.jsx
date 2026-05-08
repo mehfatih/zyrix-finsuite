@@ -113,6 +113,7 @@ const AdminManualInvoice     = React.lazy(() => import("./pages/admin/revenue/Ma
 const AdminDunningRules      = React.lazy(() => import("./pages/admin/revenue/DunningRulesPage.jsx"));
 const AdminRevenueForecast   = React.lazy(() => import("./pages/admin/revenue/RevenueForecastPage.jsx"));
 // Cluster C — Plans
+const AdminPlansOverview  = React.lazy(() => import("./pages/admin/plans/PlansOverviewPage.jsx"));
 const AdminPlansEditor    = React.lazy(() => import("./pages/admin/plans/PlansEditorPage.jsx"));
 const AdminFeatureToggles = React.lazy(() => import("./pages/admin/plans/FeatureTogglesPage.jsx"));
 const AdminABTesting      = React.lazy(() => import("./pages/admin/plans/ABTestingPage.jsx"));
@@ -120,6 +121,7 @@ const AdminCustomQuotes   = React.lazy(() => import("./pages/admin/plans/CustomQ
 const AdminAddons         = React.lazy(() => import("./pages/admin/plans/AddonsPage.jsx"));
 const AdminPricingHistory = React.lazy(() => import("./pages/admin/plans/PricingHistoryPage.jsx"));
 // Cluster D — Support
+const AdminSupportOverview  = React.lazy(() => import("./pages/admin/support/SupportOverviewPage.jsx"));
 const AdminTicketsQueue     = React.lazy(() => import("./pages/admin/ops/TicketsQueuePage.jsx"));
 const AdminLiveChatMonitor  = React.lazy(() => import("./pages/admin/ops/LiveChatMonitorPage.jsx"));
 const AdminEmailCampaigns   = React.lazy(() => import("./pages/admin/ops/EmailCampaignsPage.jsx"));
@@ -131,6 +133,7 @@ const AdminNPSSurveys       = React.lazy(() => import("./pages/admin/ops/NPSSurv
 const AdminWebinarManager   = React.lazy(() => import("./pages/admin/ops/WebinarManagerPage.jsx"));
 const AdminStatusPageEditor = React.lazy(() => import("./pages/admin/ops/StatusPageEditorPage.jsx"));
 // Cluster E — Analytics
+const AdminAnalyticsOverview = React.lazy(() => import("./pages/admin/analytics/AnalyticsOverviewPage.jsx"));
 const AdminProductAnalytics = React.lazy(() => import("./pages/admin/analytics/ProductAnalyticsPage.jsx"));
 const AdminFeatureAdoption  = React.lazy(() => import("./pages/admin/analytics/FeatureAdoptionPage.jsx"));
 const AdminChurnAnalysis    = React.lazy(() => import("./pages/admin/analytics/ChurnAnalysisPage.jsx"));
@@ -143,6 +146,7 @@ const AdminScheduledReports = React.lazy(() => import("./pages/admin/analytics/S
 const AdminRealtimeActivity = React.lazy(() => import("./pages/admin/analytics/RealtimeActivityPage.jsx"));
 const AdminDataExport       = React.lazy(() => import("./pages/admin/analytics/DataExportPage.jsx"));
 // Cluster F — Compliance
+const AdminComplianceOverview = React.lazy(() => import("./pages/admin/compliance/ComplianceOverviewPage.jsx"));
 const AdminKVKKRequests       = React.lazy(() => import("./pages/admin/compliance/KVKKRequestsPage.jsx"));
 const AdminGDPRRequests       = React.lazy(() => import("./pages/admin/compliance/GDPRRequestsPage.jsx"));
 const AdminAuditLog           = React.lazy(() => import("./pages/admin/compliance/AuditLogPage.jsx"));
@@ -152,6 +156,7 @@ const AdminDataRetention      = React.lazy(() => import("./pages/admin/complianc
 const AdminSubprocessors      = React.lazy(() => import("./pages/admin/compliance/SubprocessorsPage.jsx"));
 const AdminRightToBeForgotten = React.lazy(() => import("./pages/admin/compliance/RightToBeForgottenPage.jsx"));
 // Cluster G — System
+const AdminSystemOverview   = React.lazy(() => import("./pages/admin/system/SystemOverviewPage.jsx"));
 const AdminSystemHealth     = React.lazy(() => import("./pages/admin/system/SystemHealthPage.jsx"));
 const AdminErrorMonitoring  = React.lazy(() => import("./pages/admin/system/ErrorMonitoringPage.jsx"));
 const AdminAlerts           = React.lazy(() => import("./pages/admin/system/AlertsPage.jsx"));
@@ -166,6 +171,7 @@ const AdminMaintenance      = React.lazy(() => import("./pages/admin/system/Main
 const AdminSecurityScanner  = React.lazy(() => import("./pages/admin/system/SecurityScannerPage.jsx"));
 const AdminAccountSecurity  = React.lazy(() => import("./pages/admin/settings/AccountSecurityPage.jsx"));
 // Cluster H — Marketing
+const AdminMarketingOverview   = React.lazy(() => import("./pages/admin/marketing/MarketingOverviewPage.jsx"));
 const AdminReviewsManager      = React.lazy(() => import("./pages/admin/marketing/ReviewsManagerPage.jsx"));
 const AdminLandingEditor       = React.lazy(() => import("./pages/admin/marketing/LandingEditorPage.jsx"));
 const AdminConversionAnalytics = React.lazy(() => import("./pages/admin/marketing/ConversionAnalyticsPage.jsx"));
@@ -177,6 +183,7 @@ const AdminReferrals           = React.lazy(() => import("./pages/admin/marketin
 const AdminSocialScheduler     = React.lazy(() => import("./pages/admin/marketing/SocialSchedulerPage.jsx"));
 const AdminEmailSequences      = React.lazy(() => import("./pages/admin/marketing/EmailSequencesPage.jsx"));
 // Cluster I — Mali Müşavir
+const AdminMusavirOverview     = React.lazy(() => import("./pages/admin/musavir/MusavirOverviewPage.jsx"));
 const AdminPartnersDirectory   = React.lazy(() => import("./pages/admin/musavir/PartnersDirectoryPage.jsx"));
 const AdminCommissions         = React.lazy(() => import("./pages/admin/musavir/CommissionsPage.jsx"));
 const AdminAccountantReferrals = React.lazy(() => import("./pages/admin/musavir/AccountantReferralsPage.jsx"));
@@ -285,6 +292,7 @@ export default function App() {
               <Route path="revenue/forecast"         element={<AdminRevenueForecast />} />
 
               {/* Cluster C — Plans */}
+              <Route path="plans/overview" element={<AdminPlansOverview />} />
               <Route path="plans"          element={<AdminPlansEditor />} />
               <Route path="plans/features" element={<AdminFeatureToggles />} />
               <Route path="plans/ab-test"  element={<AdminABTesting />} />
@@ -293,6 +301,7 @@ export default function App() {
               <Route path="plans/history"  element={<AdminPricingHistory />} />
 
               {/* Cluster D — Support */}
+              <Route path="support/overview"  element={<AdminSupportOverview />} />
               <Route path="ops/tickets"       element={<AdminTicketsQueue />} />
               <Route path="ops/chat"          element={<AdminLiveChatMonitor />} />
               <Route path="ops/campaigns"     element={<AdminEmailCampaigns />} />
@@ -305,6 +314,7 @@ export default function App() {
               <Route path="ops/status-page"   element={<AdminStatusPageEditor />} />
 
               {/* Cluster E — Analytics */}
+              <Route path="analytics/overview"    element={<AdminAnalyticsOverview />} />
               <Route path="analytics/product"     element={<AdminProductAnalytics />} />
               <Route path="analytics/adoption"    element={<AdminFeatureAdoption />} />
               <Route path="analytics/churn"       element={<AdminChurnAnalysis />} />
@@ -318,6 +328,7 @@ export default function App() {
               <Route path="analytics/export"      element={<AdminDataExport />} />
 
               {/* Cluster F — Compliance */}
+              <Route path="compliance/overview"      element={<AdminComplianceOverview />} />
               <Route path="compliance/kvkk"          element={<AdminKVKKRequests />} />
               <Route path="compliance/gdpr"          element={<AdminGDPRRequests />} />
               <Route path="compliance/audit"         element={<AdminAuditLog />} />
@@ -328,6 +339,7 @@ export default function App() {
               <Route path="compliance/forgotten"     element={<AdminRightToBeForgotten />} />
 
               {/* Cluster G — System */}
+              <Route path="system/overview"    element={<AdminSystemOverview />} />
               <Route path="system/health"      element={<AdminSystemHealth />} />
               <Route path="system/errors"      element={<AdminErrorMonitoring />} />
               <Route path="system/alerts"      element={<AdminAlerts />} />
@@ -345,6 +357,7 @@ export default function App() {
               <Route path="settings/security"  element={<AdminAccountSecurity />} />
 
               {/* Cluster H — Marketing */}
+              <Route path="marketing/overview"   element={<AdminMarketingOverview />} />
               <Route path="marketing/reviews"    element={<AdminReviewsManager />} />
               <Route path="marketing/landing"    element={<AdminLandingEditor />} />
               <Route path="marketing/conversion" element={<AdminConversionAnalytics />} />
@@ -357,6 +370,7 @@ export default function App() {
               <Route path="marketing/sequences"  element={<AdminEmailSequences />} />
 
               {/* Cluster I — Mali Müşavir */}
+              <Route path="musavir/overview"    element={<AdminMusavirOverview />} />
               <Route path="musavir/partners"    element={<AdminPartnersDirectory />} />
               <Route path="musavir/commissions" element={<AdminCommissions />} />
               <Route path="musavir/referrals"   element={<AdminAccountantReferrals />} />

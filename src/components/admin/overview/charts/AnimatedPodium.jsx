@@ -58,7 +58,15 @@ const colorFor = (item, idx) => {
   return TIER_FALLBACK_COLORS[item.tier] || "#9CA3AF";
 };
 
-export default function AnimatedPodium({ customers }) {
+export default function AnimatedPodium({
+  customers,
+  // Optional formatter for the cell amount label. Defaults to
+  // `₺{mrr.toLocaleString()}` so Customer/Revenue Overview keep their
+  // currency rendering. Support page passes `(v) => `${v} tickets`,
+  // System page `(v) => `${(v/1000).toFixed(1)}K req`, etc.
+  valueFormatter,
+}) {
+  const fmt = (v) => (valueFormatter ? valueFormatter(v) : `₺${v.toLocaleString()}`);
   const [appeared, setAppeared] = useState([]);
   const [hovered, setHovered] = useState(null);
 
@@ -163,7 +171,7 @@ export default function AnimatedPodium({ customers }) {
                       fontWeight="800"
                       style={{ pointerEvents: "none", textShadow: "0 1px 2px rgba(0,0,0,0.5)" }}
                     >
-                      ₺{original.mrr.toLocaleString()}
+                      {fmt(original.mrr)}
                     </text>
                   </>
                 )}
@@ -185,7 +193,7 @@ export default function AnimatedPodium({ customers }) {
                     </text>
                     <text x={cell.x + cell.w / 2} y={cell.y + cell.h / 2 + 10} fill="#9CA3AF"
                           fontSize="10" textAnchor="middle">
-                      ₺{original.mrr.toLocaleString()}
+                      {fmt(original.mrr)}
                     </text>
                   </g>
                 )}
@@ -228,7 +236,7 @@ export default function AnimatedPodium({ customers }) {
               }}>{c.name}</span>
             </div>
             <div style={{ color: "#111827", fontWeight: 800, marginTop: "2px" }}>
-              ₺{c.mrr.toLocaleString()}
+              {fmt(c.mrr)}
             </div>
           </div>
         ))}

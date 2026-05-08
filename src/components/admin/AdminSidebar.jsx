@@ -50,6 +50,7 @@ const GROUPS = [
     label: "Plans",
     icon: "💎",
     items: [
+      { to: "/admin/plans/overview",     icon: "📈", label: "Overview",         perm: PERMISSIONS.PLAN_VIEW },
       { to: "/admin/plans",              icon: "💎", label: "Plans Editor",     perm: PERMISSIONS.PLAN_VIEW },
       { to: "/admin/plans/features",     icon: "🎚", label: "Feature Toggles",  perm: PERMISSIONS.PLAN_EDIT },
       { to: "/admin/plans/ab-test",      icon: "🆎", label: "A/B Testing",      perm: PERMISSIONS.PLAN_EDIT },
@@ -63,6 +64,7 @@ const GROUPS = [
     label: "Support",
     icon: "💬",
     items: [
+      { to: "/admin/support/overview",    icon: "📈", label: "Overview",            perm: PERMISSIONS.SUPPORT_VIEW },
       { to: "/admin/ops/tickets",         icon: "🎫", label: "Tickets Queue",       perm: PERMISSIONS.SUPPORT_VIEW },
       { to: "/admin/ops/chat",            icon: "💬", label: "Live Chat Monitor",   perm: PERMISSIONS.SUPPORT_VIEW },
       { to: "/admin/ops/campaigns",       icon: "📣", label: "Email Campaigns",     perm: PERMISSIONS.CAMPAIGN_VIEW },
@@ -80,6 +82,7 @@ const GROUPS = [
     label: "Analytics",
     icon: "📈",
     items: [
+      { to: "/admin/analytics/overview",     icon: "📈", label: "Overview",           perm: PERMISSIONS.ANALYTICS_VIEW },
       { to: "/admin/analytics/product",      icon: "📊", label: "Product Analytics",  perm: PERMISSIONS.ANALYTICS_VIEW },
       { to: "/admin/analytics/adoption",     icon: "🚀", label: "Feature Adoption",   perm: PERMISSIONS.ANALYTICS_VIEW },
       { to: "/admin/analytics/churn",        icon: "📉", label: "Churn Analysis",     perm: PERMISSIONS.ANALYTICS_VIEW },
@@ -98,6 +101,7 @@ const GROUPS = [
     label: "Compliance",
     icon: "🛡",
     items: [
+      { to: "/admin/compliance/overview",        icon: "📈", label: "Overview",                perm: PERMISSIONS.AUDIT_VIEW },
       { to: "/admin/compliance/kvkk",            icon: "🇹🇷", label: "KVKK Requests",           perm: PERMISSIONS.KVKK_RESPOND },
       { to: "/admin/compliance/gdpr",            icon: "🇪🇺", label: "GDPR Requests",           perm: PERMISSIONS.GDPR_RESPOND },
       { to: "/admin/compliance/audit",           icon: "📜", label: "System Audit Log",       perm: PERMISSIONS.AUDIT_VIEW },
@@ -113,6 +117,7 @@ const GROUPS = [
     label: "System",
     icon: "⚙",
     items: [
+      { to: "/admin/system/overview",   icon: "📈", label: "Overview",            perm: PERMISSIONS.SYSTEM_VIEW },
       { to: "/admin/system/health",     icon: "❤️", label: "System Health",       perm: PERMISSIONS.SYSTEM_VIEW },
       { to: "/admin/system/errors",     icon: "🚨", label: "Error Monitoring",    perm: PERMISSIONS.ERRORS_VIEW },
       { to: "/admin/system/alerts",     icon: "🔔", label: "Alerts",              perm: PERMISSIONS.ALERTS_MANAGE },
@@ -132,6 +137,7 @@ const GROUPS = [
     label: "Marketing",
     icon: "📣",
     items: [
+      { to: "/admin/marketing/overview",   icon: "📈", label: "Overview",           perm: PERMISSIONS.MARKETING_VIEW },
       { to: "/admin/marketing/reviews",    icon: "⭐", label: "Reviews",            perm: PERMISSIONS.REVIEW_MODERATE },
       { to: "/admin/marketing/landing",    icon: "🎨", label: "Landing Editor",     perm: PERMISSIONS.MARKETING_EDIT },
       { to: "/admin/marketing/conversion", icon: "📈", label: "Conversion Analytics", perm: PERMISSIONS.MARKETING_VIEW },
@@ -149,6 +155,7 @@ const GROUPS = [
     label: "Mali Müşavir",
     icon: "🧮",
     items: [
+      { to: "/admin/musavir/overview",      icon: "📈", label: "Overview",            perm: PERMISSIONS.MUSAVIR_VIEW },
       { to: "/admin/musavir/partners",      icon: "🤝", label: "Partners Directory", perm: PERMISSIONS.MUSAVIR_VIEW },
       { to: "/admin/musavir/commissions",   icon: "💵", label: "Commissions",        perm: PERMISSIONS.COMMISSION_MANAGE },
       { to: "/admin/musavir/referrals",     icon: "🔗", label: "Accountant Referrals", perm: PERMISSIONS.MUSAVIR_VIEW },
