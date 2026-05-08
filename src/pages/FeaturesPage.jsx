@@ -1,9 +1,59 @@
-import React, { useMemo, useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useMemo, useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom";
 import { useI18n } from "../i18n/i18n.jsx";
 
 import NavV2 from "../components/NavV2.jsx";
 import FooterV2 from "../components/FooterV2.jsx";
+
+// Footer ÜRÜN deep-links land on these eight anchors. Each #id resolves to
+// a distinct visible section AND activates the matching module tab below.
+// HASH_TO_MODULE keeps the existing 6-module tab stack in sync with the
+// 8 footer entries (some footer features map to the same module — e-fatura,
+// e-arsiv, kdv all belong to the invoice module — but each has its own
+// dedicated anchor card with different copy, so scrolling lands distinctly).
+const HASH_TO_MODULE = {
+  "e-fatura": "invoice",
+  "crm":      "team",
+  "tahsilat": "collection",
+  "ai":       "ai",
+  "mobil":    "invoice",
+  "e-arsiv":  "invoice",
+  "kdv":      "invoice",
+  "api":      "cashflow",
+};
+
+const ANCHOR_COPY = {
+  TR: [
+    { id: "e-fatura", title: "E-Fatura",         sub: "GİB onaylı altyapı, otomatik KDV hesaplama, e-Arşiv ve toplu fatura — hepsi tek panelde.",         cta: "Detayları gör",  to: "/e-fatura" },
+    { id: "crm",      title: "CRM Yönetimi",     sub: "360° müşteri görünümü, görsel pipeline, churn tahmini ve müşteri DNA'sı — sezgilere değil veriye dayanır.", cta: "Detayları gör",  to: "/crm" },
+    { id: "tahsilat", title: "Akıllı Tahsilat",  sub: "Geç tahsilatları %60 azaltın: WhatsApp hatırlatmaları, otomatik takip, AR aging analizi.", cta: "Modülü görüntüle" },
+    { id: "ai",       title: "AI Asistan",       sub: "Tax Autopilot, Death Predictor, Co-Founder Mode, Voice-to-Invoice — Gemini destekli AI tek panelinizde.", cta: "Detayları gör",  to: "/ai" },
+    { id: "mobil",    title: "Mobil Uygulama",   sub: "iOS + Android native uygulamalar. Sesli fatura, kamera ile fiş, çevrimdışı mod.",                  cta: "Detayları gör",  to: "/mobil" },
+    { id: "e-arsiv",  title: "e-Arşiv Fatura",   sub: "B2C için e-Arşiv, 10 yıl saklama otomatik, GİB entegrasyonu — yasal yükümlülük tek tıkla.",         cta: "Modülü görüntüle" },
+    { id: "kdv",      title: "KDV Raporları",    sub: "KDV-1, KDV-2 ve muhtasar beyannameler AI tarafından hazırlanır, mali müşaviriniz onaylar.",         cta: "Modülü görüntüle" },
+    { id: "api",      title: "API & Webhooks",   sub: "REST API, webhook'lar, SDK'lar — sistemlerinizi Zyrix'e bağlayın.",                                cta: "Entegrasyonlar", to: "/integrations" },
+  ],
+  EN: [
+    { id: "e-fatura", title: "E-Invoice",          sub: "GİB-approved, automatic VAT, e-Archive and bulk invoicing — all in one panel.",                  cta: "See details",      to: "/e-fatura" },
+    { id: "crm",      title: "CRM Management",     sub: "360° customer view, visual pipeline, churn forecasting and customer DNA — built on data, not guesses.", cta: "See details",      to: "/crm" },
+    { id: "tahsilat", title: "Smart Collections",  sub: "Cut late collections by 60%: WhatsApp reminders, automatic follow-ups, AR-aging analysis.",      cta: "Open the module" },
+    { id: "ai",       title: "AI Assistant",       sub: "Tax Autopilot, Death Predictor, Co-Founder Mode, Voice-to-Invoice — Gemini-powered, in one panel.", cta: "See details",      to: "/ai" },
+    { id: "mobil",    title: "Mobile App",         sub: "Native iOS + Android apps. Voice invoicing, camera receipts, offline mode.",                     cta: "See details",      to: "/mobil" },
+    { id: "e-arsiv",  title: "e-Archive Invoice",  sub: "B2C e-Archive, 10-year storage automatic, GİB integration — compliance in one click.",            cta: "Open the module" },
+    { id: "kdv",      title: "VAT Reports",        sub: "VAT-1, VAT-2 and withholding returns drafted by AI; your accountant approves.",                  cta: "Open the module" },
+    { id: "api",      title: "API & Webhooks",     sub: "REST API, webhooks, SDKs — connect your systems to Zyrix.",                                       cta: "Integrations",    to: "/integrations" },
+  ],
+  AR: [
+    { id: "e-fatura", title: "الفاتورة الإلكترونية",      sub: "بنية معتمدة من GİB، حساب VAT تلقائي، e-Arşiv وفوترة جماعية — كلّها في لوحة واحدة.",          cta: "عرض التفاصيل",  to: "/e-fatura" },
+    { id: "crm",      title: "إدارة CRM",                  sub: "رؤية 360° للعميل، خط مبيعات بصري، توقع الفقد، وDNA للعميل — مبنية على البيانات لا التخمين.", cta: "عرض التفاصيل",  to: "/crm" },
+    { id: "tahsilat", title: "التحصيل الذكي",              sub: "خفّض التحصيل المتأخر بنسبة 60%: تذكيرات WhatsApp، متابعات تلقائية، تحليل أعمار الديون.",     cta: "افتح الوحدة" },
+    { id: "ai",       title: "مساعد AI",                   sub: "Tax Autopilot، Death Predictor، Co-Founder، Voice-to-Invoice — مدعومة بـ Gemini.",        cta: "عرض التفاصيل",  to: "/ai" },
+    { id: "mobil",    title: "تطبيق الجوال",                sub: "تطبيقات iOS + Android أصلية. فوترة صوتية، إيصالات بالكاميرا، وضع غير متصل.",                cta: "عرض التفاصيل",  to: "/mobil" },
+    { id: "e-arsiv",  title: "الأرشيف الإلكتروني",          sub: "e-Arşiv للبيع للأفراد، تخزين 10 سنوات تلقائي، تكامل GİB — الامتثال بنقرة.",                cta: "افتح الوحدة" },
+    { id: "kdv",      title: "تقارير ضريبة القيمة المضافة", sub: "إقرارات VAT-1 وVAT-2 والخصم يحضّرها AI، ومحاسبك يعتمد.",                                  cta: "افتح الوحدة" },
+    { id: "api",      title: "API و Webhooks",              sub: "REST API، webhooks، SDKs — اربط أنظمتك بـ Zyrix.",                                       cta: "التكاملات",    to: "/integrations" },
+  ],
+};
 
 // ---------- Palettes ----------
 const C = {
@@ -633,12 +683,32 @@ export default function FeaturesPage() {
 
   // ---------- State ----------
   const [activeId, setActiveId] = useState("invoice");
+  const location = useLocation();
 
   const activeModule = useMemo(() => {
     return t.modules[activeId] || t.modules.invoice;
   }, [activeId, t]);
 
   const moduleList = MODULE_IDS.map((id) => ({ id: id, ...t.modules[id] }));
+
+  // Hash-based deep linking from the footer ÜRÜN section.
+  // Re-runs on every location change so navigating /features → /features#tahsilat
+  // (without a remount) still scrolls + activates the right tab.
+  useEffect(() => {
+    const hash = (location.hash || "").replace(/^#/, "");
+    if (!hash) return;
+    const moduleId = HASH_TO_MODULE[hash];
+    if (moduleId) setActiveId(moduleId);
+    // Defer the scroll until after the section paints; 300ms is enough for
+    // both initial mount (Suspense → page) and same-route hash updates.
+    const id = setTimeout(() => {
+      const el = document.getElementById(hash);
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }, 300);
+    return () => clearTimeout(id);
+  }, [location.hash, location.pathname]);
+
+  const anchorList = ANCHOR_COPY[lang] || ANCHOR_COPY.TR;
 
   // ---------- Bar chart data ----------
   const barHeights = [42, 58, 70, 96, 88, 118, 132, 146];
@@ -754,6 +824,98 @@ export default function FeaturesPage() {
               >
                 {t.ctaSecondary}
               </Link>
+            </div>
+          </div>
+
+          {/* ── DEEP-LINK ANCHORS (footer ÜRÜN targets) ─────────────
+             Eight anchored cards. Each #id is a distinct visible
+             section so /features#tahsilat, /features#kdv, etc. all
+             land on different content (and the hash useEffect activates
+             the matching module tab below). */}
+          <div style={{ marginBottom: 78 }}>
+            <div style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+              gap: 16,
+            }}>
+              {anchorList.map((a) => {
+                const targetTo = a.to ? a.to : `#${a.id}`;
+                return (
+                  <div
+                    key={a.id}
+                    id={a.id}
+                    style={{
+                      scrollMarginTop: 100,
+                      background: "rgba(255,255,255,.92)",
+                      border: "1px solid " + T.hairline,
+                      borderRadius: 22,
+                      padding: 22,
+                      borderTop: "3px solid " + themeColor,
+                      boxShadow: "0 14px 36px rgba(58,5,9,.06)",
+                    }}
+                  >
+                    <div style={{
+                      fontFamily: "monospace",
+                      fontSize: 11,
+                      fontWeight: 800,
+                      color: themeColor,
+                      letterSpacing: "1.2px",
+                      textTransform: "uppercase",
+                      marginBottom: 8,
+                    }}>#{a.id}</div>
+                    <h3 style={{
+                      margin: 0,
+                      fontSize: 20,
+                      fontWeight: 900,
+                      color: T.ink,
+                      letterSpacing: "-0.01em",
+                      lineHeight: 1.2,
+                    }}>{a.title}</h3>
+                    <p style={{
+                      margin: "8px 0 14px",
+                      fontSize: 13,
+                      color: T.muted,
+                      lineHeight: 1.55,
+                      fontWeight: 500,
+                    }}>{a.sub}</p>
+                    {a.to ? (
+                      <Link to={a.to} style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: 6,
+                        fontSize: 13,
+                        fontWeight: 800,
+                        color: themeColor,
+                        textDecoration: "none",
+                      }}>
+                        <span>{a.cta}</span>
+                        <span aria-hidden="true">{isRTL ? "←" : "→"}</span>
+                      </Link>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={() => setActiveId(HASH_TO_MODULE[a.id] || "invoice")}
+                        style={{
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: 6,
+                          fontSize: 13,
+                          fontWeight: 800,
+                          color: themeColor,
+                          background: "transparent",
+                          border: "none",
+                          padding: 0,
+                          cursor: "pointer",
+                          fontFamily: "inherit",
+                        }}
+                      >
+                        <span>{a.cta}</span>
+                        <span aria-hidden="true">{isRTL ? "←" : "→"}</span>
+                      </button>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
 
