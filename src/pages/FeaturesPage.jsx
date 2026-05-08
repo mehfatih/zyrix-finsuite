@@ -27,16 +27,26 @@ const SA = {
   hairline: "rgba(0,0,0,.08)",
 };
 
-// ── Stable tab descriptor (icon + trilingual label) ────────────────
+// ── Stable tab descriptor (icon + trilingual label + colour theme) ─
+// Each tab carries its own palette so the tab grid can render eight
+// distinctly themed cards (light tint when idle, gradient when active).
 const TABS = [
-  { key: "e-fatura", icon: "🧾", labels: { TR: "E-Fatura",        EN: "E-Invoice",          AR: "الفاتورة الإلكترونية" } },
-  { key: "crm",      icon: "👥", labels: { TR: "CRM Yönetimi",    EN: "CRM Management",     AR: "إدارة CRM" } },
-  { key: "tahsilat", icon: "💸", labels: { TR: "Akıllı Tahsilat", EN: "Smart Collections",  AR: "التحصيل الذكي" } },
-  { key: "ai",       icon: "✨", labels: { TR: "AI Asistan",      EN: "AI Assistant",       AR: "مساعد AI" } },
-  { key: "mobil",    icon: "📱", labels: { TR: "Mobil Uygulama",  EN: "Mobile App",         AR: "تطبيق الجوال" } },
-  { key: "e-arsiv",  icon: "🗄️", labels: { TR: "e-Arşiv Fatura",  EN: "e-Archive Invoice",  AR: "الأرشيف الإلكتروني" } },
-  { key: "kdv",      icon: "📊", labels: { TR: "KDV Raporları",   EN: "VAT Reports",        AR: "تقارير VAT" } },
-  { key: "api",      icon: "🔌", labels: { TR: "API & Webhooks",  EN: "API & Webhooks",     AR: "API و Webhooks" } },
+  { key: "e-fatura", icon: "🧾", labels: { TR: "E-Fatura",        EN: "E-Invoice",          AR: "الفاتورة الإلكترونية" },
+    theme: { bg: "#FEE2E2", border: "#DC2626", from: "#DC2626", to: "#991B1B", icon: "#DC2626", glow: "rgba(220,38,38,0.30)" } },
+  { key: "crm",      icon: "👥", labels: { TR: "CRM Yönetimi",    EN: "CRM Management",     AR: "إدارة CRM" },
+    theme: { bg: "#DBEAFE", border: "#2563EB", from: "#2563EB", to: "#1E40AF", icon: "#2563EB", glow: "rgba(37,99,235,0.30)" } },
+  { key: "tahsilat", icon: "💸", labels: { TR: "Akıllı Tahsilat", EN: "Smart Collections",  AR: "التحصيل الذكي" },
+    theme: { bg: "#FED7AA", border: "#EA580C", from: "#EA580C", to: "#9A3412", icon: "#EA580C", glow: "rgba(234,88,12,0.30)" } },
+  { key: "ai",       icon: "✨", labels: { TR: "AI Asistan",      EN: "AI Assistant",       AR: "مساعد AI" },
+    theme: { bg: "#EDE9FE", border: "#7C3AED", from: "#7C3AED", to: "#5B21B6", icon: "#7C3AED", glow: "rgba(124,58,237,0.30)" } },
+  { key: "mobil",    icon: "📱", labels: { TR: "Mobil Uygulama",  EN: "Mobile App",         AR: "تطبيق الجوال" },
+    theme: { bg: "#D1FAE5", border: "#10B981", from: "#10B981", to: "#065F46", icon: "#10B981", glow: "rgba(16,185,129,0.30)" } },
+  { key: "e-arsiv",  icon: "🗄️", labels: { TR: "e-Arşiv Fatura",  EN: "e-Archive Invoice",  AR: "الأرشيف الإلكتروني" },
+    theme: { bg: "#E0F2FE", border: "#0EA5E9", from: "#0EA5E9", to: "#075985", icon: "#0EA5E9", glow: "rgba(14,165,233,0.30)" } },
+  { key: "kdv",      icon: "📊", labels: { TR: "KDV Raporları",   EN: "VAT Reports",        AR: "تقارير VAT" },
+    theme: { bg: "#FCE7F3", border: "#DB2777", from: "#DB2777", to: "#9F1239", icon: "#DB2777", glow: "rgba(219,39,119,0.30)" } },
+  { key: "api",      icon: "🔌", labels: { TR: "API & Webhooks",  EN: "API & Webhooks",     AR: "API و Webhooks" },
+    theme: { bg: "#FEF3C7", border: "#F59E0B", from: "#F59E0B", to: "#92400E", icon: "#F59E0B", glow: "rgba(245,158,11,0.30)" } },
 ];
 
 const TAB_KEYS = TABS.map((t) => t.key);
@@ -491,7 +501,8 @@ const HERO_COPY = {
     h1Highlight: "tek bir akıllı sistemde.",
     sub: "Zyrix faturayı, tahsilatı, nakit akışı sinyallerini, AI önerilerini ve ekip aksiyonlarını tek karar motorunda birleştirir.",
     backHome: "← Anasayfa",
-    pickFeature: "Bir özelliğe odaklan",
+    pickFeature: "BİR ÖZELLİĞE ODAKLAN",
+    pickHint: "Detaylı bilgi için kart seçin",
   },
   EN: {
     eyebrow: "ZYRIX FINSUITE · FEATURES",
@@ -499,7 +510,8 @@ const HERO_COPY = {
     h1Highlight: "in one smart system.",
     sub: "Zyrix unifies invoicing, collection, cash-flow signals, AI recommendations and team actions in a single decision engine.",
     backHome: "← Home",
-    pickFeature: "Pick a feature",
+    pickFeature: "PICK A FEATURE",
+    pickHint: "Select a card for full details",
   },
   AR: {
     eyebrow: "ZYRIX FINSUITE · المزايا",
@@ -508,6 +520,7 @@ const HERO_COPY = {
     sub: "يوحّد Zyrix الفوترة والتحصيل وإشارات التدفق النقدي وتوصيات AI وإجراءات الفريق في محرّك قرار واحد.",
     backHome: "← الرئيسية",
     pickFeature: "اختر ميزة",
+    pickHint: "اضغط على بطاقة لعرض التفاصيل",
   },
 };
 
@@ -629,36 +642,41 @@ export default function FeaturesPage() {
           </div>
         </section>
 
-        {/* TAB BAR — anchor target for hash deep-links */}
+        {/* TAB GRID — 2 rows × 4 cols on desktop, themed cards. Anchor
+            target #feature-tabs is preserved for hash deep-links. */}
         <section id="feature-tabs" style={{
-          padding: "20px 24px 40px",
-          position: "sticky",
-          top: 64,
-          zIndex: 5,
+          padding: "32px 24px 48px",
           background: `linear-gradient(180deg, ${T.bgTinted} 0%, ${T.bgTinted}cc 100%)`,
-          backdropFilter: "blur(8px)",
-          WebkitBackdropFilter: "blur(8px)",
           borderBottom: `1px solid ${C.hairline}`,
         }}>
           <div style={{ maxWidth: 1180, margin: "0 auto" }}>
-            <div style={{
-              fontSize: 11, fontWeight: 800, letterSpacing: "0.16em",
-              textTransform: "uppercase", color: C.muted, marginBottom: 12,
-            }}>{hero.pickFeature}</div>
+            <div style={{ textAlign: "center", marginBottom: 24 }}>
+              <div style={{
+                fontSize: 13, fontWeight: 800,
+                letterSpacing: "0.20em",
+                color: "#DC2626",
+                marginBottom: 8,
+              }}>{hero.pickFeature}</div>
+              <div style={{
+                fontSize: 14, fontWeight: 600,
+                color: C.muted, lineHeight: 1.5,
+              }}>{hero.pickHint}</div>
+            </div>
+
             <div
               role="tablist"
               aria-label={hero.pickFeature}
+              className="feat-tab-grid"
               style={{
-                display: "flex",
-                gap: 8,
-                overflowX: "auto",
-                paddingBottom: 4,
-                scrollbarWidth: "thin",
+                display: "grid",
+                gridTemplateColumns: "repeat(4, minmax(0, 1fr))",
+                gap: 14,
               }}
             >
               {TABS.map((tab) => {
                 const isActive = tab.key === activeTab;
                 const label = (tab.labels && tab.labels[lang]) || tab.labels.TR;
+                const th = tab.theme;
                 return (
                   <button
                     key={tab.key}
@@ -668,28 +686,82 @@ export default function FeaturesPage() {
                     aria-controls={`tabpanel-${tab.key}`}
                     id={`tabbtn-${tab.key}`}
                     onClick={() => onTabClick(tab.key)}
+                    className={"feat-tab-card" + (isActive ? " feat-tab-card--active" : "")}
                     style={{
-                      display: "inline-flex",
-                      alignItems: "center",
-                      gap: 8,
-                      padding: "10px 18px",
-                      borderRadius: 999,
-                      whiteSpace: "nowrap",
-                      flexShrink: 0,
+                      position: "relative",
                       cursor: "pointer",
                       border: "none",
-                      fontFamily: "inherit",
-                      fontSize: 14,
-                      fontWeight: 800,
-                      transition: "background .15s, color .15s, box-shadow .15s",
-                      background: isActive ? ctaGradient : "rgba(255,255,255,0.85)",
+                      borderRadius: 16,
+                      padding: "18px 16px",
+                      textAlign: isRTL ? "right" : "left",
+                      background: isActive
+                        ? `linear-gradient(135deg, ${th.from}, ${th.to})`
+                        : th.bg,
                       color: isActive ? "#fff" : C.ink,
-                      boxShadow: isActive ? ctaShadow : `0 2px 8px rgba(58,5,9,0.06)`,
-                      border: isActive ? "none" : `1px solid ${C.hairline}`,
+                      borderTop: `3px solid ${th.border}`,
+                      boxShadow: isActive
+                        ? `0 18px 38px ${th.glow}, 0 0 0 1px ${th.border}30`
+                        : "0 2px 8px rgba(15,23,42,0.05)",
+                      fontFamily: "inherit",
+                      transition: "transform 250ms ease, box-shadow 250ms ease, background 250ms ease",
+                      overflow: "hidden",
                     }}
                   >
-                    <span aria-hidden="true">{tab.icon}</span>
-                    <span>{label}</span>
+                    {/* Subtle dotted backdrop on idle cards (artistic touch) */}
+                    {!isActive && (
+                      <span aria-hidden="true" style={{
+                        position: "absolute",
+                        inset: 0,
+                        backgroundImage: `radial-gradient(${th.border}22 1px, transparent 1px)`,
+                        backgroundSize: "14px 14px",
+                        opacity: 0.55,
+                        pointerEvents: "none",
+                      }} />
+                    )}
+
+                    <div style={{
+                      position: "relative",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 12,
+                    }}>
+                      {/* Icon disc with theme glow */}
+                      <span aria-hidden="true" style={{
+                        flexShrink: 0,
+                        width: 40,
+                        height: 40,
+                        borderRadius: 12,
+                        display: "grid",
+                        placeItems: "center",
+                        fontSize: 20,
+                        background: isActive ? "rgba(255,255,255,0.18)" : "#fff",
+                        color: isActive ? "#fff" : th.icon,
+                        boxShadow: isActive
+                          ? `0 0 0 4px rgba(255,255,255,0.10)`
+                          : `0 4px 14px ${th.glow}`,
+                      }}>{tab.icon}</span>
+
+                      <span style={{
+                        flex: 1,
+                        minWidth: 0,
+                        fontSize: 13,
+                        fontWeight: 800,
+                        lineHeight: 1.25,
+                        letterSpacing: "0.005em",
+                        color: isActive ? "#fff" : C.ink,
+                      }}>{label}</span>
+
+                      {/* Active dot indicator */}
+                      {isActive && (
+                        <span aria-hidden="true" style={{
+                          flexShrink: 0,
+                          width: 8, height: 8, borderRadius: "50%",
+                          background: "#fff",
+                          boxShadow: "0 0 0 4px rgba(255,255,255,0.30)",
+                          marginInlineStart: 4,
+                        }} />
+                      )}
+                    </div>
                   </button>
                 );
               })}
@@ -941,8 +1013,32 @@ export default function FeaturesPage() {
             from { opacity: 0; transform: translateY(6px); }
             to   { opacity: 1; transform: translateY(0); }
           }
+          @keyframes featTabPulse {
+            0%, 100% { box-shadow: 0 18px 38px var(--feat-glow, rgba(220,38,38,0.30)),
+                                  0 0 0 1px rgba(255,255,255,0.10); }
+            50%      { box-shadow: 0 22px 48px var(--feat-glow, rgba(220,38,38,0.45)),
+                                  0 0 0 4px rgba(255,255,255,0.16); }
+          }
+          .feat-tab-card { will-change: transform, box-shadow; }
+          .feat-tab-card:hover:not(.feat-tab-card--active) {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 14px 28px rgba(15,23,42,0.10) !important;
+          }
+          .feat-tab-card:focus-visible {
+            outline: 2px solid #0F172A;
+            outline-offset: 3px;
+          }
+          .feat-tab-card--active {
+            animation: featTabPulse 2.4s ease-in-out infinite;
+          }
           @media (max-width: 880px) {
             .feat-tabpanel { grid-template-columns: 1fr !important; gap: 24px !important; }
+          }
+          @media (max-width: 1023px) {
+            .feat-tab-grid { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+          }
+          @media (max-width: 480px) {
+            .feat-tab-grid { grid-template-columns: 1fr !important; }
           }
         `}</style>
       </main>
