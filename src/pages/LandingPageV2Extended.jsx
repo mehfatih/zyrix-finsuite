@@ -649,6 +649,7 @@ function ProblemSolution() {
 // ── FEATURES (Interactive Tabs) ───────────────────────────────
 function Features() {
   const { t, lang, isRTL } = useI18n();
+  const { profile } = useCountry();
   const isMobile = useIsMobile();
   const isSaudi = lang === "AR";
   const [activeTab, setActiveTab] = useState("invoice");
