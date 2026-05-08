@@ -1,1667 +1,951 @@
-import React, { useMemo, useState, useEffect } from "react";
+// ================================================================
+// /features — single tabbed page driving 8 distinct product features.
+// The footer ÜRÜN deep-links (/features#e-fatura, /features#crm,
+// /features#tahsilat, /features#ai, /features#mobil, /features#e-arsiv,
+// /features#kdv, /features#api) all land here and pre-select the
+// matching tab. Only ONE tab's content is visible at a time.
+// ================================================================
+import React, { useState, useEffect, useMemo } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useI18n } from "../i18n/i18n.jsx";
-
 import NavV2 from "../components/NavV2.jsx";
 import FooterV2 from "../components/FooterV2.jsx";
 
-// Footer ÜRÜN deep-links land on these eight anchors. Each #id resolves to
-// a distinct visible section AND activates the matching module tab below.
-// HASH_TO_MODULE keeps the existing 6-module tab stack in sync with the
-// 8 footer entries (some footer features map to the same module — e-fatura,
-// e-arsiv, kdv all belong to the invoice module — but each has its own
-// dedicated anchor card with different copy, so scrolling lands distinctly).
-const HASH_TO_MODULE = {
-  "e-fatura": "invoice",
-  "crm":      "team",
-  "tahsilat": "collection",
-  "ai":       "ai",
-  "mobil":    "invoice",
-  "e-arsiv":  "invoice",
-  "kdv":      "invoice",
-  "api":      "cashflow",
-};
-
-const ANCHOR_COPY = {
-  TR: [
-    { id: "e-fatura", title: "E-Fatura",         sub: "GİB onaylı altyapı, otomatik KDV hesaplama, e-Arşiv ve toplu fatura — hepsi tek panelde.",         cta: "Detayları gör",  to: "/e-fatura" },
-    { id: "crm",      title: "CRM Yönetimi",     sub: "360° müşteri görünümü, görsel pipeline, churn tahmini ve müşteri DNA'sı — sezgilere değil veriye dayanır.", cta: "Detayları gör",  to: "/crm" },
-    { id: "tahsilat", title: "Akıllı Tahsilat",  sub: "Geç tahsilatları %60 azaltın: WhatsApp hatırlatmaları, otomatik takip, AR aging analizi.", cta: "Modülü görüntüle" },
-    { id: "ai",       title: "AI Asistan",       sub: "Tax Autopilot, Death Predictor, Co-Founder Mode, Voice-to-Invoice — Gemini destekli AI tek panelinizde.", cta: "Detayları gör",  to: "/ai" },
-    { id: "mobil",    title: "Mobil Uygulama",   sub: "iOS + Android native uygulamalar. Sesli fatura, kamera ile fiş, çevrimdışı mod.",                  cta: "Detayları gör",  to: "/mobil" },
-    { id: "e-arsiv",  title: "e-Arşiv Fatura",   sub: "B2C için e-Arşiv, 10 yıl saklama otomatik, GİB entegrasyonu — yasal yükümlülük tek tıkla.",         cta: "Modülü görüntüle" },
-    { id: "kdv",      title: "KDV Raporları",    sub: "KDV-1, KDV-2 ve muhtasar beyannameler AI tarafından hazırlanır, mali müşaviriniz onaylar.",         cta: "Modülü görüntüle" },
-    { id: "api",      title: "API & Webhooks",   sub: "REST API, webhook'lar, SDK'lar — sistemlerinizi Zyrix'e bağlayın.",                                cta: "Entegrasyonlar", to: "/integrations" },
-  ],
-  EN: [
-    { id: "e-fatura", title: "E-Invoice",          sub: "GİB-approved, automatic VAT, e-Archive and bulk invoicing — all in one panel.",                  cta: "See details",      to: "/e-fatura" },
-    { id: "crm",      title: "CRM Management",     sub: "360° customer view, visual pipeline, churn forecasting and customer DNA — built on data, not guesses.", cta: "See details",      to: "/crm" },
-    { id: "tahsilat", title: "Smart Collections",  sub: "Cut late collections by 60%: WhatsApp reminders, automatic follow-ups, AR-aging analysis.",      cta: "Open the module" },
-    { id: "ai",       title: "AI Assistant",       sub: "Tax Autopilot, Death Predictor, Co-Founder Mode, Voice-to-Invoice — Gemini-powered, in one panel.", cta: "See details",      to: "/ai" },
-    { id: "mobil",    title: "Mobile App",         sub: "Native iOS + Android apps. Voice invoicing, camera receipts, offline mode.",                     cta: "See details",      to: "/mobil" },
-    { id: "e-arsiv",  title: "e-Archive Invoice",  sub: "B2C e-Archive, 10-year storage automatic, GİB integration — compliance in one click.",            cta: "Open the module" },
-    { id: "kdv",      title: "VAT Reports",        sub: "VAT-1, VAT-2 and withholding returns drafted by AI; your accountant approves.",                  cta: "Open the module" },
-    { id: "api",      title: "API & Webhooks",     sub: "REST API, webhooks, SDKs — connect your systems to Zyrix.",                                       cta: "Integrations",    to: "/integrations" },
-  ],
-  AR: [
-    { id: "e-fatura", title: "الفاتورة الإلكترونية",      sub: "بنية معتمدة من GİB، حساب VAT تلقائي، e-Arşiv وفوترة جماعية — كلّها في لوحة واحدة.",          cta: "عرض التفاصيل",  to: "/e-fatura" },
-    { id: "crm",      title: "إدارة CRM",                  sub: "رؤية 360° للعميل، خط مبيعات بصري، توقع الفقد، وDNA للعميل — مبنية على البيانات لا التخمين.", cta: "عرض التفاصيل",  to: "/crm" },
-    { id: "tahsilat", title: "التحصيل الذكي",              sub: "خفّض التحصيل المتأخر بنسبة 60%: تذكيرات WhatsApp، متابعات تلقائية، تحليل أعمار الديون.",     cta: "افتح الوحدة" },
-    { id: "ai",       title: "مساعد AI",                   sub: "Tax Autopilot، Death Predictor، Co-Founder، Voice-to-Invoice — مدعومة بـ Gemini.",        cta: "عرض التفاصيل",  to: "/ai" },
-    { id: "mobil",    title: "تطبيق الجوال",                sub: "تطبيقات iOS + Android أصلية. فوترة صوتية، إيصالات بالكاميرا، وضع غير متصل.",                cta: "عرض التفاصيل",  to: "/mobil" },
-    { id: "e-arsiv",  title: "الأرشيف الإلكتروني",          sub: "e-Arşiv للبيع للأفراد، تخزين 10 سنوات تلقائي، تكامل GİB — الامتثال بنقرة.",                cta: "افتح الوحدة" },
-    { id: "kdv",      title: "تقارير ضريبة القيمة المضافة", sub: "إقرارات VAT-1 وVAT-2 والخصم يحضّرها AI، ومحاسبك يعتمد.",                                  cta: "افتح الوحدة" },
-    { id: "api",      title: "API و Webhooks",              sub: "REST API، webhooks، SDKs — اربط أنظمتك بـ Zyrix.",                                       cta: "التكاملات",    to: "/integrations" },
-  ],
-};
-
-// ---------- Palettes ----------
 const C = {
-  red:        "#E30A17",
-  redDeep:    "#B30810",
-  redBright:  "#FF1A2A",
-  redSoft:    "#FFE3E5",
-  wine900:    "#3A0509",
-  wine950:    "#1F0205",
-  bgTinted:   "#FFF7F4",
-  ink:        "#1B0F11",
-  muted:      "#5C4F52",
-  hairline:   "rgba(0,0,0,.08)",
-  emerald:    "#10B981",
-  amber:      "#F59E0B",
-  indigo:     "#6366F1",
+  red: "#E30A17", redDeep: "#B30810", redBright: "#FF1A2A",
+  redSoft: "#FFE3E5",
+  wine900: "#3A0509", wine950: "#1F0205",
+  bgTinted: "#FFF7F4", bg: "#FFF8F8",
+  ink: "#1B0F11", inkSoft: "#3A2A30", muted: "#5C4F52",
+  hairline: "rgba(0,0,0,.08)",
+  emerald: "#10B981", emeraldSoft: "#D1FAE5", amber: "#F59E0B",
 };
-
 const SA = {
-  green:        "#006C35",
-  greenDeep:    "#004D26",
-  greenBright:  "#00A050",
-  greenSoft:    "#DDF3E6",
-  green900:     "#00190C",
-  green950:     "#000B05",
-  bgTinted:     "#F4FBF7",
-  ink:          "#0B1A12",
-  muted:        "#4A5C50",
-  hairline:     "rgba(0,0,0,.08)",
-  emerald:      "#10B981",
-  amber:        "#F59E0B",
-  indigo:       "#6366F1",
+  green: "#006C35", greenDeep: "#004D26", greenBright: "#00A050",
+  green900: "#00190C", green950: "#000B05",
+  bgTinted: "#F4FBF7", bg: "#F5FBF7",
+  hairline: "rgba(0,0,0,.08)",
 };
 
-// ---------- Module IDs (stable across languages) ----------
-const MODULE_IDS = ["invoice", "collection", "cashflow", "risk", "ai", "team"];
+// ── Stable tab descriptor (icon + trilingual label) ────────────────
+const TABS = [
+  { key: "e-fatura", icon: "🧾", labels: { TR: "E-Fatura",        EN: "E-Invoice",          AR: "الفاتورة الإلكترونية" } },
+  { key: "crm",      icon: "👥", labels: { TR: "CRM Yönetimi",    EN: "CRM Management",     AR: "إدارة CRM" } },
+  { key: "tahsilat", icon: "💸", labels: { TR: "Akıllı Tahsilat", EN: "Smart Collections",  AR: "التحصيل الذكي" } },
+  { key: "ai",       icon: "✨", labels: { TR: "AI Asistan",      EN: "AI Assistant",       AR: "مساعد AI" } },
+  { key: "mobil",    icon: "📱", labels: { TR: "Mobil Uygulama",  EN: "Mobile App",         AR: "تطبيق الجوال" } },
+  { key: "e-arsiv",  icon: "🗄️", labels: { TR: "e-Arşiv Fatura",  EN: "e-Archive Invoice",  AR: "الأرشيف الإلكتروني" } },
+  { key: "kdv",      icon: "📊", labels: { TR: "KDV Raporları",   EN: "VAT Reports",        AR: "تقارير VAT" } },
+  { key: "api",      icon: "🔌", labels: { TR: "API & Webhooks",  EN: "API & Webhooks",     AR: "API و Webhooks" } },
+];
 
-// ---------- Trilingual copy ----------
-const TXT = {
+const TAB_KEYS = TABS.map((t) => t.key);
+
+// ── Distinct trilingual content per tab ────────────────────────────
+const TAB_CONTENT = {
+  "e-fatura": {
+    TR: {
+      headline: "GİB onaylı E-Fatura altyapısı",
+      sub: "Saniyeler içinde profesyonel e-Fatura kesin, GİB ile entegre çalışın.",
+      features: [
+        "Otomatik KDV hesaplama (%1, %8, %18, %20)",
+        "GİB entegrasyonu (e-Fatura + e-Arşiv)",
+        "PDF, XML ve UBL formatları",
+        "Tek tıkla gönderim ve canlı durum takibi",
+        "Toplu fatura işlemleri ve şablonlar",
+      ],
+      useCase: "Bursa'daki tekstil firması ABC her ay 500+ fatura kesiyor — Zyrix ile süre 4 saatten 20 dakikaya indi.",
+      stats: [
+        { label: "Bu ay", value: "324", trend: "↑ 18%" },
+        { label: "Onaylı", value: "298", trend: "92%" },
+        { label: "Bekleyen", value: "26", trend: "8%" },
+      ],
+    },
+    EN: {
+      headline: "GİB-approved e-Invoice infrastructure",
+      sub: "Issue professional e-Invoices in seconds, fully integrated with GİB.",
+      features: [
+        "Automatic VAT (1%, 8%, 18%, 20%)",
+        "GİB integration (e-Invoice + e-Archive)",
+        "PDF, XML and UBL formats",
+        "One-click delivery with live status tracking",
+        "Bulk invoicing and templates",
+      ],
+      useCase: "ABC, a textile manufacturer in Bursa, issues 500+ invoices a month — Zyrix cut the work from 4 hours to 20 minutes.",
+      stats: [
+        { label: "This month", value: "324", trend: "↑ 18%" },
+        { label: "Approved",   value: "298", trend: "92%" },
+        { label: "Pending",    value: "26",  trend: "8%" },
+      ],
+    },
+    AR: {
+      headline: "بنية فاتورة إلكترونية معتمدة من GİB",
+      sub: "أصدر فواتير احترافية في ثوانٍ، بتكامل كامل مع GİB.",
+      features: [
+        "حساب VAT تلقائي (1%، 8%، 18%، 20%)",
+        "تكامل GİB (e-Fatura + e-Arşiv)",
+        "صيغ PDF وXML وUBL",
+        "إرسال بنقرة مع متابعة الحالة لحظياً",
+        "فوترة جماعية وقوالب جاهزة",
+      ],
+      useCase: "شركة ABC للنسيج في بورصة تصدر أكثر من 500 فاتورة شهرياً — وفّر Zyrix الوقت من 4 ساعات إلى 20 دقيقة.",
+      stats: [
+        { label: "هذا الشهر", value: "324", trend: "↑ 18%" },
+        { label: "معتمدة",     value: "298", trend: "92%" },
+        { label: "بالانتظار",  value: "26",  trend: "8%" },
+      ],
+    },
+  },
+  "crm": {
+    TR: {
+      headline: "360° Müşteri Görünümü",
+      sub: "Müşterilerinizi tanıyın, büyütün, kaybetmeyin.",
+      features: [
+        "Customer DNA analizi (davranış skorları)",
+        "Churn tahmini (yapay zeka ile)",
+        "Görsel pipeline yönetimi",
+        "Müşteri yaşam döngüsü takibi",
+        "Otomatik segmentasyon ve etiketleme",
+      ],
+      useCase: "İstanbul danışmanlık firması XYZ Zyrix ile müşteri terkini %35 azalttı.",
+      stats: [
+        { label: "Aktif müşteri", value: "1,247", trend: "↑ 12%" },
+        { label: "Risk altında",  value: "23",    trend: "↓ 35%" },
+        { label: "Yeni (30 gün)", value: "156",   trend: "↑ 8%" },
+      ],
+    },
+    EN: {
+      headline: "360° Customer View",
+      sub: "Know your customers — grow them, keep them.",
+      features: [
+        "Customer DNA scoring (behaviour profile)",
+        "AI-powered churn forecasting",
+        "Visual pipeline management",
+        "Lifecycle tracking",
+        "Automatic segmentation and tagging",
+      ],
+      useCase: "XYZ, an Istanbul consultancy, cut customer churn by 35% with Zyrix.",
+      stats: [
+        { label: "Active customers", value: "1,247", trend: "↑ 12%" },
+        { label: "At risk",          value: "23",    trend: "↓ 35%" },
+        { label: "New (30 days)",    value: "156",   trend: "↑ 8%" },
+      ],
+    },
+    AR: {
+      headline: "رؤية 360° للعميل",
+      sub: "اعرف عملاءك — ربّيهم ولا تخسرهم.",
+      features: [
+        "DNA العميل (ملف سلوكي)",
+        "توقع الفقد بالذكاء الاصطناعي",
+        "إدارة خط مبيعات بصرية",
+        "تتبع دورة حياة العميل",
+        "تقسيم ووسم آلي",
+      ],
+      useCase: "شركة XYZ للاستشارات في إسطنبول خفّضت الفقد بنسبة 35% مع Zyrix.",
+      stats: [
+        { label: "عملاء نشطون", value: "1,247", trend: "↑ 12%" },
+        { label: "تحت الخطر",   value: "23",    trend: "↓ 35%" },
+        { label: "جدد (30 يوم)", value: "156",  trend: "↑ 8%" },
+      ],
+    },
+  },
+  "tahsilat": {
+    TR: {
+      headline: "Geç tahsilatları %60 azaltın",
+      sub: "AI destekli akıllı takip sistemi.",
+      features: [
+        "WhatsApp otomatik hatırlatmalar",
+        "Vade öncesi nazik hatırlatma",
+        "Vade sonrası kademeli takip akışı",
+        "AR aging raporları (15/30/60/90 gün)",
+        "Tahsilat skorlama ve önceliklendirme",
+      ],
+      useCase: "Ankara market zinciri DEF tahsilat süresini 45 günden 18 güne indirdi.",
+      stats: [
+        { label: "Ortalama tahsilat süresi", value: "18 gün", trend: "↓ 60%" },
+        { label: "Bu ay tahsil edildi",      value: "₺412K",  trend: "↑ 22%" },
+        { label: "Geciken kayıt",            value: "9",      trend: "↓ 70%" },
+      ],
+    },
+    EN: {
+      headline: "Cut late collections by 60%",
+      sub: "AI-driven smart follow-up system.",
+      features: [
+        "Automatic WhatsApp reminders",
+        "Gentle pre-due-date nudges",
+        "Tiered post-due-date follow-up cadence",
+        "AR-aging reports (15/30/60/90 days)",
+        "Collection scoring and prioritisation",
+      ],
+      useCase: "DEF, a supermarket chain in Ankara, cut average collection time from 45 to 18 days.",
+      stats: [
+        { label: "Avg. collection time", value: "18 days", trend: "↓ 60%" },
+        { label: "Collected this month", value: "₺412K",   trend: "↑ 22%" },
+        { label: "Late records",         value: "9",       trend: "↓ 70%" },
+      ],
+    },
+    AR: {
+      headline: "خفّض التحصيل المتأخر بـ 60%",
+      sub: "نظام متابعة ذكي مدعوم بالذكاء الاصطناعي.",
+      features: [
+        "تذكيرات WhatsApp تلقائية",
+        "تذكيرات لطيفة قبل الاستحقاق",
+        "متابعات متدرجة بعد الاستحقاق",
+        "تقارير أعمار الديون (15/30/60/90 يوم)",
+        "تقييم التحصيل وأولوياته",
+      ],
+      useCase: "سلسلة سوبرماركت DEF في أنقرة قلّصت زمن التحصيل من 45 يوماً إلى 18 يوماً.",
+      stats: [
+        { label: "متوسط زمن التحصيل", value: "18 يوماً", trend: "↓ 60%" },
+        { label: "تحصيل هذا الشهر",   value: "₺412K",    trend: "↑ 22%" },
+        { label: "متأخرة",              value: "9",        trend: "↓ 70%" },
+      ],
+    },
+  },
+  "ai": {
+    TR: {
+      headline: "Yapay Zeka Finansal CFO'nuz",
+      sub: "Cebinizdeki Tax Autopilot, Death Predictor ve Co-Founder.",
+      features: [
+        "Voice-to-Invoice (Türkçe ve Arapça)",
+        "Tax Autopilot — KDV beyanı otomasyonu",
+        "Death Predictor — firma sağlık skoru",
+        "Bank Reconciliation AI",
+        "Cash Flow Forecast (30/60/90 gün)",
+        "AI Co-Founder modu — karar danışmanlığı",
+      ],
+      useCase: "İzmir lojistik firması GHI ses komutuyla günde 50 fatura kesiyor.",
+      stats: [
+        { label: "AI tahmin doğruluğu", value: "94.2%", trend: "↑ Gemini 2.0" },
+        { label: "Risk skoru",          value: "Düşük", trend: "✓ Sağlıklı" },
+        { label: "Sesli komut/gün",     value: "50+",   trend: "GHI ortalaması" },
+      ],
+    },
+    EN: {
+      headline: "Your AI Financial CFO",
+      sub: "Tax Autopilot, Death Predictor and Co-Founder — in your pocket.",
+      features: [
+        "Voice-to-Invoice (Turkish + Arabic)",
+        "Tax Autopilot — VAT-return automation",
+        "Death Predictor — business health score",
+        "Bank Reconciliation AI",
+        "Cash-flow forecast (30/60/90 days)",
+        "AI Co-Founder mode — decision sparring partner",
+      ],
+      useCase: "GHI, a logistics firm in İzmir, issues 50 invoices a day by voice command alone.",
+      stats: [
+        { label: "Forecast accuracy", value: "94.2%", trend: "↑ Gemini 2.0" },
+        { label: "Risk score",        value: "Low",   trend: "✓ Healthy" },
+        { label: "Voice cmds/day",    value: "50+",   trend: "GHI avg." },
+      ],
+    },
+    AR: {
+      headline: "مدير ماليّتك بالذكاء الاصطناعي",
+      sub: "Tax Autopilot وDeath Predictor وCo-Founder — في جيبك.",
+      features: [
+        "Voice-to-Invoice (عربي وتركي)",
+        "Tax Autopilot — أتمتة إقرار VAT",
+        "Death Predictor — درجة صحة الشركة",
+        "Bank Reconciliation AI",
+        "توقع التدفق النقدي (30/60/90 يوم)",
+        "AI Co-Founder — شريك للقرارات",
+      ],
+      useCase: "شركة GHI للوجستيات في إزمير تصدر 50 فاتورة يومياً بالأوامر الصوتية فقط.",
+      stats: [
+        { label: "دقة التوقع", value: "94.2%",    trend: "↑ Gemini 2.0" },
+        { label: "درجة الخطر", value: "منخفضة", trend: "✓ صحية" },
+        { label: "أوامر/يوم",   value: "50+",     trend: "متوسط GHI" },
+      ],
+    },
+  },
+  "mobil": {
+    TR: {
+      headline: "İşinizi her yerde yönetin",
+      sub: "iOS ve Android için native uygulama.",
+      features: [
+        "Voice-to-Invoice — sesle fatura kesimi",
+        "Fotoğrafla fiş işleme (OCR)",
+        "Barkod ile ürün ekleme",
+        "Push bildirimleri (ödeme, fatura, risk)",
+        "Çevrimdışı mod — internet yokken bile çalışır",
+        "Apple Watch ve Wear OS desteği",
+      ],
+      useCase: "Saha ekipleri Zyrix mobil ile yolda fatura kesip ödeme tahsil ediyor.",
+      stats: [
+        { label: "App Store puan",    value: "4.8 ★", trend: "iOS" },
+        { label: "Google Play puan",  value: "4.7 ★", trend: "Android" },
+        { label: "Çevrimdışı işlem",  value: "✓",     trend: "Senkron otomatik" },
+      ],
+    },
+    EN: {
+      headline: "Run your business anywhere",
+      sub: "Native iOS and Android apps.",
+      features: [
+        "Voice-to-Invoice — talk an invoice into existence",
+        "Photo receipt capture (OCR)",
+        "Barcode product entry",
+        "Push notifications (payment, invoice, risk)",
+        "Offline mode — works without internet",
+        "Apple Watch and Wear OS support",
+      ],
+      useCase: "Field teams issue invoices and take payments on the road with Zyrix Mobile.",
+      stats: [
+        { label: "App Store rating",   value: "4.8 ★", trend: "iOS" },
+        { label: "Google Play rating", value: "4.7 ★", trend: "Android" },
+        { label: "Offline ops",        value: "✓",     trend: "Auto-sync" },
+      ],
+    },
+    AR: {
+      headline: "أدر عملك من أي مكان",
+      sub: "تطبيقات iOS وAndroid أصلية.",
+      features: [
+        "Voice-to-Invoice — أنشئ فاتورة بصوتك",
+        "التقاط الإيصالات بالصورة (OCR)",
+        "إضافة منتج بالباركود",
+        "إشعارات فورية (دفع، فاتورة، خطر)",
+        "وضع غير متصل — يعمل دون إنترنت",
+        "دعم Apple Watch وWear OS",
+      ],
+      useCase: "تستخدم الفرق الميدانية تطبيق Zyrix لإصدار الفواتير وقبض المدفوعات في الطريق.",
+      stats: [
+        { label: "تقييم App Store",  value: "4.8 ★", trend: "iOS" },
+        { label: "تقييم Google Play", value: "4.7 ★", trend: "Android" },
+        { label: "العمل دون اتصال",   value: "✓",     trend: "مزامنة آلية" },
+      ],
+    },
+  },
+  "e-arsiv": {
+    TR: {
+      headline: "10 yıl saklama yükümlülüğü artık otomatik",
+      sub: "GİB e-Arşiv entegrasyonu.",
+      features: [
+        "Otomatik e-Arşiv oluşturma",
+        "10 yıl güvenli saklama (KVKK uyumlu)",
+        "GİB'e otomatik raporlama",
+        "Hızlı arama ve erişim",
+        "Denetim hazırlığı — tek tıkla rapor",
+      ],
+      useCase: "B2C satış yapan e-ticaret işletmeleri için yasal yükümlülük artık AI tarafından yönetiliyor.",
+      stats: [
+        { label: "Saklama süresi",   value: "10 yıl", trend: "GİB onaylı" },
+        { label: "Arama gecikmesi",  value: "<1sn",   trend: "Tüm 10 yıl" },
+        { label: "KVKK uyum",         value: "✓",     trend: "Otomatik" },
+      ],
+    },
+    EN: {
+      headline: "10-year archival duty, now on autopilot",
+      sub: "GİB e-Archive integration.",
+      features: [
+        "Automatic e-Archive generation",
+        "10-year secure storage (KVKK-compliant)",
+        "Auto-reporting to GİB",
+        "Fast search and retrieval",
+        "Audit-ready exports in one click",
+      ],
+      useCase: "B2C e-commerce businesses now have their archival obligation handled end-to-end by AI.",
+      stats: [
+        { label: "Retention",     value: "10 years", trend: "GİB approved" },
+        { label: "Search latency",value: "<1s",      trend: "Across all 10 years" },
+        { label: "KVKK compliance", value: "✓",      trend: "Automatic" },
+      ],
+    },
+    AR: {
+      headline: "التزام الحفظ 10 سنوات أصبح آلياً",
+      sub: "تكامل GİB e-Arşiv.",
+      features: [
+        "إنشاء e-Arşiv آلياً",
+        "حفظ آمن 10 سنوات (متوافق KVKK)",
+        "تقرير آلي إلى GİB",
+        "بحث واسترجاع سريع",
+        "جاهز للتدقيق بنقرة",
+      ],
+      useCase: "شركات التجارة الإلكترونية B2C يديرها الذكاء الاصطناعي بالكامل لالتزام الأرشفة.",
+      stats: [
+        { label: "مدة الحفظ", value: "10 سنوات", trend: "معتمد GİB" },
+        { label: "زمن البحث", value: "<1ث",       trend: "10 سنوات كاملة" },
+        { label: "KVKK",       value: "✓",        trend: "آلي" },
+      ],
+    },
+  },
+  "kdv": {
+    TR: {
+      headline: "KDV beyannameleriniz tek tıkla",
+      sub: "Otomatik KDV-1, KDV-2 ve KDV-9015 formları.",
+      features: [
+        "Aylık KDV beyannamesi otomatik hazırlama",
+        "KDV-1 (genel)",
+        "KDV-2 (kısmi tevkifat)",
+        "KDV-9015 (sorumlu sıfatıyla)",
+        "Otomatik mahsup hesaplama",
+        "SMMM'e direkt gönderim",
+      ],
+      useCase: "Mali müşaviriniz Zyrix'in hazırladığı taslakları tek tıkla onaylar — hata oranı sıfıra yakın.",
+      stats: [
+        { label: "Aylık beyan süresi", value: "12 dk",  trend: "↓ 90%" },
+        { label: "Hata oranı",          value: "0.2%",   trend: "↓ %95" },
+        { label: "SMMM onay süresi",    value: "1 dk",   trend: "Tek tıkla" },
+      ],
+    },
+    EN: {
+      headline: "Your VAT returns, in one click",
+      sub: "Automated VAT-1, VAT-2 and VAT-9015 forms.",
+      features: [
+        "Automatic monthly VAT-return drafts",
+        "VAT-1 (general)",
+        "VAT-2 (partial withholding)",
+        "VAT-9015 (responsible-party VAT)",
+        "Auto offset calculations",
+        "Direct submission to your accountant",
+      ],
+      useCase: "Your accountant approves Zyrix-prepared drafts with one click — error rates are near zero.",
+      stats: [
+        { label: "Monthly filing time", value: "12 min", trend: "↓ 90%" },
+        { label: "Error rate",          value: "0.2%",   trend: "↓ 95%" },
+        { label: "Accountant approval", value: "1 min",  trend: "One click" },
+      ],
+    },
+    AR: {
+      headline: "إقرارات VAT الخاصة بك، بنقرة واحدة",
+      sub: "نماذج VAT-1 وVAT-2 وVAT-9015 آلياً.",
+      features: [
+        "إعداد إقرار VAT الشهري آلياً",
+        "VAT-1 (عام)",
+        "VAT-2 (خصم جزئي)",
+        "VAT-9015 (طرف مسؤول)",
+        "حساب المقاصة تلقائياً",
+        "إرسال مباشر إلى المحاسب",
+      ],
+      useCase: "محاسبك يعتمد المسودات التي يحضّرها Zyrix بنقرة واحدة — نسبة الخطأ تقترب من الصفر.",
+      stats: [
+        { label: "زمن الإقرار الشهري", value: "12 د",  trend: "↓ 90%" },
+        { label: "نسبة الخطأ",            value: "0.2%",  trend: "↓ 95%" },
+        { label: "اعتماد المحاسب",       value: "1 د",   trend: "بنقرة" },
+      ],
+    },
+  },
+  "api": {
+    TR: {
+      headline: "Sistemlerinizi Zyrix'e bağlayın",
+      sub: "Modern REST API ve webhook altyapısı.",
+      features: [
+        "REST API (OpenAPI 3.0)",
+        "Webhook events (fatura, ödeme, müşteri)",
+        "Rate limiting ve fair-use politikaları",
+        "API key yönetimi (multi-tenant)",
+        "SDK: JavaScript, Python, PHP",
+        "Sandbox ortamı (canlıya geçmeden test)",
+        "Detaylı dokümantasyon ve örnekler",
+      ],
+      useCase: "ERP, e-ticaret ve özel iç araçlarınızı Zyrix ile dakikalar içinde entegre edin.",
+      stats: [
+        { label: "API çağrı/sn",   value: "1000+", trend: "Pro plan" },
+        { label: "Webhook gecikmesi", value: "<200ms", trend: "P95" },
+        { label: "Uptime SLA",       value: "99.95%", trend: "Aylık" },
+      ],
+    },
+    EN: {
+      headline: "Connect your systems to Zyrix",
+      sub: "Modern REST API and webhook stack.",
+      features: [
+        "REST API (OpenAPI 3.0)",
+        "Webhook events (invoice, payment, customer)",
+        "Rate limiting and fair-use policies",
+        "API key management (multi-tenant)",
+        "SDKs: JavaScript, Python, PHP",
+        "Sandbox environment (test before going live)",
+        "Detailed documentation and code samples",
+      ],
+      useCase: "Plug your ERP, storefront or internal tools into Zyrix in minutes, not weeks.",
+      stats: [
+        { label: "API calls/sec",     value: "1000+",  trend: "Pro plan" },
+        { label: "Webhook latency",   value: "<200ms", trend: "P95" },
+        { label: "Uptime SLA",        value: "99.95%", trend: "Monthly" },
+      ],
+    },
+    AR: {
+      headline: "اربط أنظمتك بـ Zyrix",
+      sub: "بنية API وWebhook حديثة.",
+      features: [
+        "REST API (OpenAPI 3.0)",
+        "أحداث Webhook (فاتورة، دفع، عميل)",
+        "حدود معدل وسياسات استخدام عادل",
+        "إدارة API keys (متعدد المستأجرين)",
+        "SDK: JavaScript وPython وPHP",
+        "بيئة Sandbox (اختبار قبل النشر)",
+        "توثيق مفصّل وأمثلة كود",
+      ],
+      useCase: "اربط ERP أو متجرك الإلكتروني أو أدواتك الداخلية بـ Zyrix خلال دقائق.",
+      stats: [
+        { label: "مكالمات/ثانية", value: "1000+",  trend: "باقة Pro" },
+        { label: "زمن Webhook",    value: "<200ms", trend: "P95" },
+        { label: "Uptime SLA",     value: "99.95%", trend: "شهرياً" },
+      ],
+    },
+  },
+};
+
+const HERO_COPY = {
   TR: {
-    back: "Geri",
-    badge: "ZYRIX ZEKA PLATFORMU",
-    h1a: "Fatura operasyonunun ihtiyaci olan her sey",
-    h1b: "tek bir akilli sistemde",
-    sub: "Zyrix faturalari, tahsilatlari, nakit akisi sinyallerini, AI tavsiyelerini ve ekip aksiyonlarini, daha hizli nakit kazanmana yardim eden tek bir karar motorunda birlestirir.",
-    ctaPrimary: "AI Nakit Akisi Analizini Baslat",
-    ctaSecondary: "Nasil calistigini gor",
-
-    mapEyebrow: "ZEKA HARITASI",
-    mapTitle: "Alti motor. Tek nakit akisi komuta merkezi.",
-
-    activeEyebrow: "AKTIF MOTOR",
-    livePanel: "CANLI ZEKA PANELI",
-    aiInsight: "AI Icgorusu",
-    nextAction: "Onerilen sonraki aksiyon: AI analizini baslat ve ilk nakit akisi aksiyon planini olustur.",
-    runThis: "Bu analizi calistir",
-
-    dangerEyebrow: "ZYRIX NEDEN HER AKSIYONLA DAHA ZEKI",
-    dangerTitle: "Her fatura, sinyal ve aksiyon, bir sonraki karari daha keskin hale getirir.",
-    layer1Title: "Veri Katmani",
-    layer1Desc: "Fatura ve odeme davranisi, yapilandirilmis bir zekaya donusur.",
-    layer2Title: "AI Kararlari",
-    layer2Desc: "Sistem ne olduguyla yetinmez, sirada ne yapilmasi gerektigini soyler.",
-    layer3Title: "Otomasyon Katmani",
-    layer3Desc: "Ekipler zaman kaybetmeden takipler ve aksiyonlar hazirlanir.",
-    layer4Title: "Geri Besleme Dongusu",
-    layer4Desc: "Her aksiyon, bir sonraki tavsiye dongusunu daha iyi yapar.",
-
-    useEyebrow: "KULLANIM SENARYOLARI",
-    useTitle: "Nakit akisini koruyan gunluk kararlar icin tasarlandi.",
-    use1Title: "Geciken odemeleri azalt",
-    use1Desc: "Gecikme riskini erken yakala, sorun buyumeden takip baslat.",
-    use1Metric: "-18% gecikme",
-    use2Title: "Nakit akisini ongor",
-    use2Desc: "Nakdin nerede daralacagini, raporlara dusmeden once gor.",
-    use2Metric: "+24% nakit gorunurlugu",
-    use3Title: "Musterileri onceliklendir",
-    use3Desc: "Ekibinin enerjisini en yuksek riskli ve en yuksek etkili musterilere yonlendir.",
-    use3Metric: "12 oncelikli hesap",
-    use4Title: "Takipleri otomatize et",
-    use4Desc: "Mesajlar, aksiyonlar ve sonraki adimlar manuel kovalama olmadan hazirlanir.",
-    use4Metric: "37 aksiyon hazir",
-
-    cmpEyebrow: "PLATFORM KARSILASTIRMASI",
-    cmpTitle: "Geleneksel araclar kayit yonetir. Zyrix kararlari yonetir.",
-    cmpRows: [
-      ["Statik fatura listeleri", "Canli fatura zekasi"],
-      ["Manuel tahsilat", "AI ile onceliklendirilmis takipler"],
-      ["Sorunlardan sonra raporlar", "Kayiplar buyumeden once risk sinyalleri"],
-      ["Birbirinden kopuk araclar", "Nakit akisi aksiyonlari icin tek isletim sistemi"],
-    ],
-
-    finalEyebrow: "VERILERINLE BASLA",
-    finalTitle: "Ilk AI nakit akisi analizinle basla.",
-    finalSub: "Faturalarinin ne soyledigini gor, gizli riski kesfet ve ilk aksiyon planini olustur.",
-    finalCta1: "Analizimi Calistir",
-    finalCta2: "Fiyatlandirmayi gor",
-
-    // Compliance Trust Strip
-    trustEyebrow: "GUVEN ALTYAPISI",
-    trustTitle: "Duzenlenmis fatura operasyonlari icin tasarlandi.",
-    trustSub: "Zyrix kullanicinin pazar baglamina, diline ve is akisina uyum saglar; ekipleri jenerik finans surecine zorlamadan.",
-    trust1Title: "Yerellesmis uyumluluk motoru",
-    trust1Desc: "Fatura akislarini pazar baglamina gore uyarlar.",
-    trust2Title: "Guvenli fatura verisi",
-    trust2Desc: "Finansal kayitlari korumali ve yapili tutar.",
-    trust3Title: "Denetim hazir akislar",
-    trust3Desc: "Aksiyonlar ve fatura olaylari izlenebilir kalir.",
-    trust4Title: "Rol tabanli erisim",
-    trust4Desc: "Ekipler dogru seviyede dogru kontrol alir.",
-    trust5Title: "API hazir mimari",
-    trust5Desc: "Entegrasyonlar ve bagli sistemler icin tasarlanmis.",
-    trust6Title: "Kurumsal seviyede kontrol",
-    trust6Desc: "Guven ve gorunurluk gerektiren ekipler icin.",
-
-    modules: {
-      invoice: {
-        name: "Fatura Zekasi",
-        icon: "01",
-        desc: "Her faturayi bir sinyale donustur. Zyrix hacmi, zamanlamayi, davranisi, gecikmeleri ve tahsilat hareketini okur.",
-        benefits: [
-          "Fatura davranisini anlik anla",
-          "Olagandisi gecikme kaliplarini tespit et",
-          "Onceligi gereken faturalari hemen gor",
-        ],
-        insight: "Son fatura davranisinda %18 gecikme riski tespit edildi.",
-        metric: "%92",
-        metricLabel: "gorunurluk",
-      },
-      collection: {
-        name: "Tahsilat Otomasyonu",
-        icon: "02",
-        desc: "Manuel takipten cikip, musteri tabaninda akilli ve onceliklendirilmis tahsilat aksiyonlarina gec.",
-        benefits: [
-          "Riskli musterileri otomatik onceliklendir",
-          "Takip mesajlarini hazirla",
-          "Manuel tahsilat yukunu azalt",
-        ],
-        insight: "37 takip bugun otomatik olarak hazirlanabilir.",
-        metric: "37",
-        metricLabel: "aksiyon",
-      },
-      cashflow: {
-        name: "Nakit Akisi Tahmini",
-        icon: "03",
-        desc: "Sorunlar raporlarda gorunmeden once, nakit akisinin nasil olabilecegini ongor.",
-        benefits: [
-          "Gelen nakit hareketini tahmin et",
-          "Gelecekteki nakit bosluklarini fark et",
-          "Baski gelmeden kararlari planla",
-        ],
-        insight: "Tahmini yillik geri kazanilabilir etki: 72.000.",
-        metric: "72K",
-        metricLabel: "etki",
-      },
-      risk: {
-        name: "Musteri Risk Sinyalleri",
-        icon: "04",
-        desc: "Musterileri odeme davranisi, zamanlama degisikligi, risk hareketi ve takip aciliyetine gore puanla.",
-        benefits: [
-          "Kim odemeyi geciktirebilir, bil",
-          "Musteri risk hareketini izle",
-          "Ekibini en yuksek etkili hesaplara odakla",
-        ],
-        insight: "12 musteri oncelikli risk durumuna gecti.",
-        metric: "12",
-        metricLabel: "riskli hesap",
-      },
-      ai: {
-        name: "AI Aksiyon Motoru",
-        icon: "05",
-        desc: "Zyrix icgorulerle yetinmez. Sonraki aksiyonu onerir ve uygulama yolunu hazirlar.",
-        benefits: [
-          "Icgoruleri aksiyona cevir",
-          "Akilli oneriler uret",
-          "Hatirlatmalari ve sonraki adimlari otomatik hazirla",
-        ],
-        insight: "AI, 9 yuksek riskli hesaba hatirlatma gondermeyi oneriyor.",
-        metric: "9",
-        metricLabel: "AI aksiyonu",
-      },
-      team: {
-        name: "Ekip Kontrolu",
-        icon: "06",
-        desc: "Yoneticiler ve ekipler icin fatura operasyonlari, takipler, risk ve sonuclari tek komuta merkezinde topla.",
-        benefits: [
-          "Ekip aksiyonlarini takip et",
-          "Onceliklere hakim ol",
-          "Herkesi nakit akisi etrafinda hizala",
-        ],
-        insight: "Tekrarlayan takiplerin otomasyonu ile is yuku azaltilabilir.",
-        metric: "%41",
-        metricLabel: "daha az manuel is",
-      },
-    },
+    eyebrow: "ZYRIX FİNSUITE · ÖZELLİKLER",
+    h1Pre: "Fatura operasyonunun ihtiyacı olan her şey,",
+    h1Highlight: "tek bir akıllı sistemde.",
+    sub: "Zyrix faturayı, tahsilatı, nakit akışı sinyallerini, AI önerilerini ve ekip aksiyonlarını tek karar motorunda birleştirir.",
+    backHome: "← Anasayfa",
+    pickFeature: "Bir özelliğe odaklan",
   },
-
   EN: {
-    back: "Back",
-    badge: "ZYRIX INTELLIGENCE PLATFORM",
-    h1a: "Everything your invoice operation needs",
-    h1b: "in one intelligent system",
-    sub: "Zyrix connects invoices, collections, cashflow signals, AI recommendations, and team actions into one decision engine built to help you recover cash faster.",
-    ctaPrimary: "Start AI Cashflow Analysis",
-    ctaSecondary: "See how it works",
-
-    mapEyebrow: "INTELLIGENCE MAP",
-    mapTitle: "Six engines. One cashflow command center.",
-
-    activeEyebrow: "ACTIVE ENGINE",
-    livePanel: "LIVE INTELLIGENCE PANEL",
-    aiInsight: "AI Insight",
-    nextAction: "Recommended next action: start AI analysis and generate your first cashflow action plan.",
-    runThis: "Run this analysis",
-
-    dangerEyebrow: "WHY ZYRIX GETS SMARTER WITH EVERY ACTION",
-    dangerTitle: "Each invoice, signal, and action makes the next decision sharper.",
-    layer1Title: "Data Layer",
-    layer1Desc: "Invoice and payment behavior becomes structured intelligence.",
-    layer2Title: "AI Decisions",
-    layer2Desc: "The system recommends what to do next, not just what happened.",
-    layer3Title: "Automation Layer",
-    layer3Desc: "Follow-ups and actions are prepared before teams waste time.",
-    layer4Title: "Feedback Loop",
-    layer4Desc: "Every action improves the next recommendation cycle.",
-
-    useEyebrow: "USE CASES",
-    useTitle: "Built for the daily decisions that protect cashflow.",
-    use1Title: "Reduce delayed payments",
-    use1Desc: "Catch delay risk earlier and trigger follow-ups before the problem grows.",
-    use1Metric: "-18% delays",
-    use2Title: "Predict cashflow",
-    use2Desc: "See where cash may tighten before it appears in reports.",
-    use2Metric: "+24% cashflow visibility",
-    use3Title: "Prioritize customers",
-    use3Desc: "Focus your team on customers with the highest risk and highest impact.",
-    use3Metric: "12 priority accounts",
-    use4Title: "Automate follow-ups",
-    use4Desc: "Prepare messages, actions, and next steps without manual chasing.",
-    use4Metric: "37 actions ready",
-
-    cmpEyebrow: "PLATFORM COMPARISON",
-    cmpTitle: "Traditional tools manage records. Zyrix manages decisions.",
-    cmpRows: [
-      ["Static invoice lists", "Live invoice intelligence"],
-      ["Manual collections", "AI-prioritized follow-ups"],
-      ["Reports after problems happen", "Risk signals before losses grow"],
-      ["Separated tools", "One operating system for cashflow actions"],
-    ],
-
-    finalEyebrow: "START WITH YOUR DATA",
-    finalTitle: "Start with your first AI cashflow analysis.",
-    finalSub: "See what your invoices are telling you, discover hidden risk, and generate your first action plan.",
-    finalCta1: "Run My Analysis",
-    finalCta2: "See Pricing",
-
-    // Compliance Trust Strip
-    trustEyebrow: "COMPLIANCE TRUST LAYER",
-    trustTitle: "Built for regulated invoice operations.",
-    trustSub: "Zyrix adapts to the user's market context, language, and business workflow without forcing teams into generic finance processes.",
-    trust1Title: "Localized compliance engine",
-    trust1Desc: "Adapts invoice workflows to market context.",
-    trust2Title: "Secure invoice data",
-    trust2Desc: "Keeps financial records protected and structured.",
-    trust3Title: "Audit-ready workflows",
-    trust3Desc: "Actions and invoice events stay traceable.",
-    trust4Title: "Role-based access",
-    trust4Desc: "Teams get the right control at the right level.",
-    trust5Title: "API-ready architecture",
-    trust5Desc: "Designed for integrations and connected systems.",
-    trust6Title: "Enterprise-grade controls",
-    trust6Desc: "Built for teams that need trust and visibility.",
-
-    modules: {
-      invoice: {
-        name: "Invoice Intelligence",
-        icon: "01",
-        desc: "Turn every invoice into a signal. Zyrix reads volume, timing, behavior, delays, and collection movement.",
-        benefits: [
-          "Understand invoice behavior instantly",
-          "Detect unusual delay patterns",
-          "See which invoices need attention first",
-        ],
-        insight: "18% delay risk detected across recent invoice behavior.",
-        metric: "92%",
-        metricLabel: "visibility",
-      },
-      collection: {
-        name: "Collection Automation",
-        icon: "02",
-        desc: "Move from manual follow-up to smart, prioritized collection actions across your customer base.",
-        benefits: [
-          "Auto-prioritize risky customers",
-          "Prepare follow-up messages",
-          "Reduce manual collection workload",
-        ],
-        insight: "37 follow-ups can be prepared automatically today.",
-        metric: "37",
-        metricLabel: "actions",
-      },
-      cashflow: {
-        name: "Cashflow Forecasting",
-        icon: "03",
-        desc: "Forecast what your cashflow may look like before problems appear in reports.",
-        benefits: [
-          "Predict incoming cash movement",
-          "Spot future cashflow gaps",
-          "Plan decisions before pressure hits",
-        ],
-        insight: "Estimated annual recoverable impact: 72,000.",
-        metric: "72K",
-        metricLabel: "impact",
-      },
-      risk: {
-        name: "Customer Risk Signals",
-        icon: "04",
-        desc: "Score customers by payment behavior, timing changes, risk movement, and follow-up urgency.",
-        benefits: [
-          "Know who may delay payment",
-          "Track customer risk movement",
-          "Focus your team on the highest-impact accounts",
-        ],
-        insight: "12 customers moved into priority risk status.",
-        metric: "12",
-        metricLabel: "risk accounts",
-      },
-      ai: {
-        name: "AI Action Engine",
-        icon: "05",
-        desc: "Zyrix does not stop at insights. It recommends the next action and prepares the execution path.",
-        benefits: [
-          "Turn insights into actions",
-          "Generate smart recommendations",
-          "Prepare reminders and next steps automatically",
-        ],
-        insight: "AI recommends sending reminders to 9 high-risk accounts.",
-        metric: "9",
-        metricLabel: "AI actions",
-      },
-      team: {
-        name: "Team Control",
-        icon: "06",
-        desc: "Give managers and teams one command center for invoice operations, follow-ups, risk, and results.",
-        benefits: [
-          "Track team actions",
-          "Control priorities",
-          "Keep everyone aligned around cashflow",
-        ],
-        insight: "Team workload can be reduced by automating repeated follow-ups.",
-        metric: "41%",
-        metricLabel: "less manual work",
-      },
-    },
+    eyebrow: "ZYRIX FINSUITE · FEATURES",
+    h1Pre: "Everything an invoice operation needs,",
+    h1Highlight: "in one smart system.",
+    sub: "Zyrix unifies invoicing, collection, cash-flow signals, AI recommendations and team actions in a single decision engine.",
+    backHome: "← Home",
+    pickFeature: "Pick a feature",
   },
-
   AR: {
-    back: "\u0631\u062C\u0648\u0639",
-    badge: "\u0645\u0646\u0635\u0629 \u0632\u064A\u0631\u0643\u0633 \u0627\u0644\u0630\u0643\u064A\u0629",
-    h1a: "\u0643\u0644 \u0645\u0627 \u062A\u062D\u062A\u0627\u062C\u0647 \u0639\u0645\u0644\u064A\u0629 \u0627\u0644\u0641\u0648\u062A\u0631\u0629",
-    h1b: "\u0641\u064A \u0646\u0638\u0627\u0645 \u0648\u0627\u062D\u062F \u0630\u0643\u064A",
-    sub: "\u0632\u064A\u0631\u0643\u0633 \u064A\u0631\u0628\u0637 \u0627\u0644\u0641\u0648\u0627\u062A\u064A\u0631 \u0648\u0627\u0644\u062A\u062D\u0635\u064A\u0644 \u0648\u0625\u0634\u0627\u0631\u0627\u062A \u0627\u0644\u062A\u062F\u0641\u0642 \u0627\u0644\u0646\u0642\u062F\u064A \u0648\u062A\u0648\u0635\u064A\u0627\u062A \u0627\u0644\u0630\u0643\u0627\u0621 \u0627\u0644\u0627\u0635\u0637\u0646\u0627\u0639\u064A \u0648\u0623\u0641\u0639\u0627\u0644 \u0627\u0644\u0641\u0631\u064A\u0642 \u0641\u064A \u0645\u062D\u0631\u0643 \u0642\u0631\u0627\u0631 \u0648\u0627\u062D\u062F \u064A\u0633\u0627\u0639\u062F\u0643 \u0639\u0644\u0649 \u0627\u0633\u062A\u0631\u062F\u0627\u062F \u0646\u0642\u062F\u0643 \u0623\u0633\u0631\u0639.",
-    ctaPrimary: "\u0627\u0628\u062F\u0623 \u062A\u062D\u0644\u064A\u0644 \u0627\u0644\u062A\u062F\u0641\u0642 \u0627\u0644\u0646\u0642\u062F\u064A",
-    ctaSecondary: "\u0634\u0627\u0647\u062F \u0643\u064A\u0641 \u064A\u0639\u0645\u0644",
-
-    mapEyebrow: "\u062E\u0631\u064A\u0637\u0629 \u0627\u0644\u0630\u0643\u0627\u0621",
-    mapTitle: "\u0633\u062A\u0629 \u0645\u062D\u0631\u0643\u0627\u062A. \u0645\u0631\u0643\u0632 \u0642\u064A\u0627\u062F\u0629 \u0648\u0627\u062D\u062F \u0644\u0644\u062A\u062F\u0641\u0642 \u0627\u0644\u0646\u0642\u062F\u064A.",
-
-    activeEyebrow: "\u0627\u0644\u0645\u062D\u0631\u0643 \u0627\u0644\u0646\u0634\u0637",
-    livePanel: "\u0644\u0648\u062D\u0629 \u0630\u0643\u0627\u0621 \u0645\u0628\u0627\u0634\u0631\u0629",
-    aiInsight: "\u0631\u0624\u064A\u0629 \u0627\u0644\u0630\u0643\u0627\u0621 \u0627\u0644\u0627\u0635\u0637\u0646\u0627\u0639\u064A",
-    nextAction: "\u0627\u0644\u0625\u062C\u0631\u0627\u0621 \u0627\u0644\u0645\u0648\u0635\u0649 \u0628\u0647: \u0627\u0628\u062F\u0623 \u062A\u062D\u0644\u064A\u0644 \u0627\u0644\u0630\u0643\u0627\u0621 \u0627\u0644\u0627\u0635\u0637\u0646\u0627\u0639\u064A \u0648\u0623\u0646\u0634\u0626 \u062E\u0637\u0629 \u0639\u0645\u0644 \u0627\u0644\u062A\u062F\u0641\u0642 \u0627\u0644\u0646\u0642\u062F\u064A \u0627\u0644\u0623\u0648\u0644\u0649.",
-    runThis: "\u0646\u0641\u0651\u0630 \u0647\u0630\u0627 \u0627\u0644\u062A\u062D\u0644\u064A\u0644",
-
-    dangerEyebrow: "\u0644\u0645\u0627\u0630\u0627 \u064A\u0635\u0628\u062D \u0632\u064A\u0631\u0643\u0633 \u0623\u0630\u0643\u0649 \u0645\u0639 \u0643\u0644 \u0625\u062C\u0631\u0627\u0621",
-    dangerTitle: "\u0643\u0644 \u0641\u0627\u062A\u0648\u0631\u0629 \u0648\u0625\u0634\u0627\u0631\u0629 \u0648\u0625\u062C\u0631\u0627\u0621\u060C \u064A\u062C\u0639\u0644 \u0627\u0644\u0642\u0631\u0627\u0631 \u0627\u0644\u062A\u0627\u0644\u064A \u0623\u0643\u062B\u0631 \u062F\u0642\u0651\u0629.",
-    layer1Title: "\u0637\u0628\u0642\u0629 \u0627\u0644\u0628\u064A\u0627\u0646\u0627\u062A",
-    layer1Desc: "\u0633\u0644\u0648\u0643 \u0627\u0644\u0641\u0648\u0627\u062A\u064A\u0631 \u0648\u0627\u0644\u062F\u0641\u0639 \u064A\u062A\u062D\u0648\u0644 \u0625\u0644\u0649 \u0630\u0643\u0627\u0621 \u0645\u0646\u0638\u0651\u0645.",
-    layer2Title: "\u0642\u0631\u0627\u0631\u0627\u062A \u0627\u0644\u0630\u0643\u0627\u0621 \u0627\u0644\u0627\u0635\u0637\u0646\u0627\u0639\u064A",
-    layer2Desc: "\u0627\u0644\u0646\u0638\u0627\u0645 \u064A\u0648\u0635\u064A \u0628\u0645\u0627 \u064A\u062C\u0628 \u0641\u0639\u0644\u0647\u060C \u0644\u0627 \u064A\u0643\u062A\u0641\u064A \u0628\u0639\u0631\u0636 \u0645\u0627 \u062D\u062F\u062B.",
-    layer3Title: "\u0637\u0628\u0642\u0629 \u0627\u0644\u0623\u062A\u0645\u062A\u0629",
-    layer3Desc: "\u0627\u0644\u0645\u062A\u0627\u0628\u0639\u0627\u062A \u0648\u0627\u0644\u0625\u062C\u0631\u0627\u0621\u0627\u062A \u062A\u0651\u062C\u0647\u0651\u0632 \u0642\u0628\u0644 \u0623\u0646 \u062A\u0636\u064A\u0639 \u0627\u0644\u0641\u0631\u0642 \u0648\u0642\u062A\u0647\u0627.",
-    layer4Title: "\u062D\u0644\u0642\u0629 \u0627\u0644\u062A\u063A\u0630\u064A\u0629 \u0627\u0644\u0631\u0627\u062C\u0639\u0629",
-    layer4Desc: "\u0643\u0644 \u0625\u062C\u0631\u0627\u0621 \u064A\u062D\u0633\u0651\u0646 \u062F\u0648\u0631\u0629 \u0627\u0644\u062A\u0648\u0635\u064A\u0629 \u0627\u0644\u062A\u0627\u0644\u064A\u0629.",
-
-    useEyebrow: "\u062D\u0627\u0644\u0627\u062A \u0627\u0644\u0627\u0633\u062A\u062E\u062F\u0627\u0645",
-    useTitle: "\u0645\u0635\u0645\u0651\u0645 \u0644\u0644\u0642\u0631\u0627\u0631\u0627\u062A \u0627\u0644\u064A\u0648\u0645\u064A\u0629 \u0627\u0644\u062A\u064A \u062A\u062D\u0645\u064A \u0627\u0644\u062A\u062F\u0641\u0642 \u0627\u0644\u0646\u0642\u062F\u064A.",
-    use1Title: "\u0642\u0644\u0644 \u0627\u0644\u0645\u062F\u0641\u0648\u0639\u0627\u062A \u0627\u0644\u0645\u062A\u0623\u062E\u0631\u0629",
-    use1Desc: "\u0627\u0631\u0635\u062F \u062E\u0637\u0631 \u0627\u0644\u062A\u0623\u062E\u0631 \u0645\u0628\u0643\u0631\u0627\u064B \u0648\u0627\u0628\u062F\u0623 \u0627\u0644\u0645\u062A\u0627\u0628\u0639\u0629 \u0642\u0628\u0644 \u0623\u0646 \u062A\u0643\u0628\u0631 \u0627\u0644\u0645\u0634\u0643\u0644\u0629.",
-    use1Metric: "-18% \u062A\u0623\u062E\u0631",
-    use2Title: "\u062A\u0648\u0642\u0651\u0639 \u0627\u0644\u062A\u062F\u0641\u0642 \u0627\u0644\u0646\u0642\u062F\u064A",
-    use2Desc: "\u0634\u0648\u0641 \u0623\u064A\u0646 \u0633\u064A\u0636\u064A\u0642 \u0627\u0644\u0646\u0642\u062F \u0642\u0628\u0644 \u0623\u0646 \u064A\u0638\u0647\u0631 \u0641\u064A \u0627\u0644\u062A\u0642\u0627\u0631\u064A\u0631.",
-    use2Metric: "+24% \u0648\u0636\u0648\u062D \u0627\u0644\u062A\u062F\u0641\u0642",
-    use3Title: "\u0631\u062A\u0651\u0628 \u0627\u0644\u0639\u0645\u0644\u0627\u0621",
-    use3Desc: "\u0627\u062C\u0639\u0644 \u0641\u0631\u064A\u0642\u0643 \u064A\u0631\u0643\u0632 \u0639\u0644\u0649 \u0627\u0644\u0639\u0645\u0644\u0627\u0621 \u0630\u0648\u064A \u0623\u0639\u0644\u0649 \u062E\u0637\u0631 \u0648\u0623\u0639\u0644\u0649 \u0623\u062B\u0631.",
-    use3Metric: "12 \u062D\u0633\u0627\u0628 \u0623\u0648\u0644\u0648\u064A\u0629",
-    use4Title: "\u0623\u062A\u0645\u062A \u0627\u0644\u0645\u062A\u0627\u0628\u0639\u0627\u062A",
-    use4Desc: "\u0631\u0633\u0627\u0626\u0644 \u0648\u0625\u062C\u0631\u0627\u0621\u0627\u062A \u0648\u062E\u0637\u0648\u0627\u062A \u062A\u0627\u0644\u064A\u0629 \u0628\u062F\u0648\u0646 \u0645\u0644\u0627\u062D\u0642\u0629 \u064A\u062F\u0648\u064A\u0629.",
-    use4Metric: "37 \u0625\u062C\u0631\u0627\u0621 \u062C\u0627\u0647\u0632",
-
-    cmpEyebrow: "\u0645\u0642\u0627\u0631\u0646\u0629 \u0627\u0644\u0645\u0646\u0635\u0627\u062A",
-    cmpTitle: "\u0627\u0644\u0623\u062F\u0648\u0627\u062A \u0627\u0644\u062A\u0642\u0644\u064A\u062F\u064A\u0629 \u062A\u062F\u064A\u0631 \u0627\u0644\u0633\u062C\u0644\u0627\u062A. \u0632\u064A\u0631\u0643\u0633 \u064A\u062F\u064A\u0631 \u0627\u0644\u0642\u0631\u0627\u0631\u0627\u062A.",
-    cmpRows: [
-      ["\u0642\u0648\u0627\u0626\u0645 \u0641\u0648\u0627\u062A\u064A\u0631 \u062B\u0627\u0628\u062A\u0629", "\u0630\u0643\u0627\u0621 \u0641\u0648\u0627\u062A\u064A\u0631 \u062D\u064A"],
-      ["\u062A\u062D\u0635\u064A\u0644 \u064A\u062F\u0648\u064A", "\u0645\u062A\u0627\u0628\u0639\u0627\u062A \u0628\u0623\u0648\u0644\u0648\u064A\u0629 \u0630\u0643\u0627\u0621 \u0627\u0635\u0637\u0646\u0627\u0639\u064A"],
-      ["\u062A\u0642\u0627\u0631\u064A\u0631 \u0628\u0639\u062F \u0648\u0642\u0648\u0639 \u0627\u0644\u0645\u0634\u0627\u0643\u0644", "\u0625\u0634\u0627\u0631\u0627\u062A \u062E\u0637\u0631 \u0642\u0628\u0644 \u062A\u0641\u0627\u0642\u0645 \u0627\u0644\u062E\u0633\u0627\u0626\u0631"],
-      ["\u0623\u062F\u0648\u0627\u062A \u0645\u0646\u0641\u0635\u0644\u0629", "\u0646\u0638\u0627\u0645 \u062A\u0634\u063A\u064A\u0644 \u0648\u0627\u062D\u062F \u0644\u0625\u062C\u0631\u0627\u0621\u0627\u062A \u0627\u0644\u062A\u062F\u0641\u0642 \u0627\u0644\u0646\u0642\u062F\u064A"],
-    ],
-
-    finalEyebrow: "\u0627\u0628\u062F\u0623 \u0628\u0628\u064A\u0627\u0646\u0627\u062A\u0643",
-    finalTitle: "\u0627\u0628\u062F\u0623 \u0628\u0623\u0648\u0644 \u062A\u062D\u0644\u064A\u0644 \u0630\u0643\u0627\u0621 \u0627\u0635\u0637\u0646\u0627\u0639\u064A \u0644\u0644\u062A\u062F\u0641\u0642 \u0627\u0644\u0646\u0642\u062F\u064A.",
-    finalSub: "\u0634\u0648\u0641 \u0645\u0627\u0630\u0627 \u062A\u0642\u0648\u0644 \u0641\u0648\u0627\u062A\u064A\u0631\u0643\u060C \u0627\u0643\u062A\u0634\u0641 \u0627\u0644\u062E\u0637\u0631 \u0627\u0644\u062E\u0641\u064A\u060C \u0648\u0623\u0646\u0634\u0626 \u062E\u0637\u0629 \u0639\u0645\u0644\u0643 \u0627\u0644\u0623\u0648\u0644\u0649.",
-    finalCta1: "\u0634\u063A\u0651\u0644 \u062A\u062D\u0644\u064A\u0644\u064A",
-    finalCta2: "\u0634\u0627\u0647\u062F \u0627\u0644\u0623\u0633\u0639\u0627\u0631",
-
-    // Compliance Trust Strip
-    trustEyebrow: "طبقة الثقة والامتثال",
-    trustTitle: "مصمَّم لعمليات الفواتير الخاضعة للتنظيم.",
-    trustSub: "زيركس يتكيّف مع السياق السوقي للمستخدم ولغته وسير عمل أعماله، دون إجبار الفرق على عملية مالية عامة.",
-    trust1Title: "محرّك امتثال محلي",
-    trust1Desc: "يكيّف سير عمل الفواتير للسياق السوقي.",
-    trust2Title: "بيانات فواتير آمنة",
-    trust2Desc: "يحافظ على السجلات المالية محميّة ومنظّمة.",
-    trust3Title: "سير عمل جاهز للتدقيق",
-    trust3Desc: "تبقى الإجراءات وأحداث الفواتير قابلة للتتبّع.",
-    trust4Title: "وصول حسب الدور",
-    trust4Desc: "تحصل الفرق على الصلاحيات المناسبة في المستوى المناسب.",
-    trust5Title: "بنية جاهزة لـ API",
-    trust5Desc: "مصمَّمة للتكاملات والأنظمة المتصلة.",
-    trust6Title: "ضوابط بمستوى المؤسسات",
-    trust6Desc: "مصمَّم للفرق التي تحتاج إلى الثقة والوضوح.",
-
-    modules: {
-      invoice: {
-        name: "\u0630\u0643\u0627\u0621 \u0627\u0644\u0641\u0648\u0627\u062A\u064A\u0631",
-        icon: "01",
-        desc: "\u062D\u0648\u0651\u0644 \u0643\u0644 \u0641\u0627\u062A\u0648\u0631\u0629 \u0625\u0644\u0649 \u0625\u0634\u0627\u0631\u0629. \u0632\u064A\u0631\u0643\u0633 \u064A\u0642\u0631\u0623 \u0627\u0644\u062D\u062C\u0645 \u0648\u0627\u0644\u062A\u0648\u0642\u064A\u062A \u0648\u0627\u0644\u0633\u0644\u0648\u0643 \u0648\u0627\u0644\u062A\u0623\u062E\u0631 \u0648\u062D\u0631\u0643\u0629 \u0627\u0644\u062A\u062D\u0635\u064A\u0644.",
-        benefits: [
-          "\u0627\u0641\u0647\u0645 \u0633\u0644\u0648\u0643 \u0627\u0644\u0641\u0648\u0627\u062A\u064A\u0631 \u0641\u0648\u0631\u0627\u064B",
-          "\u0627\u0631\u0635\u062F \u0623\u0646\u0645\u0627\u0637 \u0627\u0644\u062A\u0623\u062E\u0631 \u063A\u064A\u0631 \u0627\u0644\u0639\u0627\u062F\u064A\u0629",
-          "\u0634\u0648\u0641 \u0627\u0644\u0641\u0648\u0627\u062A\u064A\u0631 \u0627\u0644\u062A\u064A \u062A\u062D\u062A\u0627\u062C \u0627\u0646\u062A\u0628\u0627\u0647\u0627\u064B \u0623\u0648\u0644\u0627\u064B",
-        ],
-        insight: "\u062E\u0637\u0631 \u062A\u0623\u062E\u0631 \u0628\u0646\u0633\u0628\u0629 18% \u0641\u064A \u0633\u0644\u0648\u0643 \u0627\u0644\u0641\u0648\u0627\u062A\u064A\u0631 \u0627\u0644\u0623\u062E\u064A\u0631.",
-        metric: "92%",
-        metricLabel: "\u0648\u0636\u0648\u062D",
-      },
-      collection: {
-        name: "\u0623\u062A\u0645\u062A\u0629 \u0627\u0644\u062A\u062D\u0635\u064A\u0644",
-        icon: "02",
-        desc: "\u0627\u0646\u062A\u0642\u0644 \u0645\u0646 \u0627\u0644\u0645\u062A\u0627\u0628\u0639\u0629 \u0627\u0644\u064A\u062F\u0648\u064A\u0629 \u0625\u0644\u0649 \u0625\u062C\u0631\u0627\u0621\u0627\u062A \u062A\u062D\u0635\u064A\u0644 \u0630\u0643\u064A\u0629 \u0648\u0645\u0631\u062A\u0651\u0628\u0629 \u0628\u0627\u0644\u0623\u0648\u0644\u0648\u064A\u0629 \u0639\u0628\u0631 \u0642\u0627\u0639\u062F\u0629 \u0639\u0645\u0644\u0627\u0626\u0643.",
-        benefits: [
-          "\u0631\u062A\u0651\u0628 \u0627\u0644\u0639\u0645\u0644\u0627\u0621 \u0627\u0644\u062E\u0637\u0631\u064A\u0646 \u062A\u0644\u0642\u0627\u0626\u064A\u0627\u064B",
-          "\u062C\u0647\u0651\u0632 \u0631\u0633\u0627\u0626\u0644 \u0627\u0644\u0645\u062A\u0627\u0628\u0639\u0629",
-          "\u0642\u0644\u0651\u0644 \u0639\u0628\u0621 \u0627\u0644\u062A\u062D\u0635\u064A\u0644 \u0627\u0644\u064A\u062F\u0648\u064A",
-        ],
-        insight: "37 \u0645\u062A\u0627\u0628\u0639\u0629 \u064A\u0645\u0643\u0646 \u062A\u062C\u0647\u064A\u0632\u0647\u0627 \u062A\u0644\u0642\u0627\u0626\u064A\u0627\u064B \u0627\u0644\u064A\u0648\u0645.",
-        metric: "37",
-        metricLabel: "\u0625\u062C\u0631\u0627\u0621",
-      },
-      cashflow: {
-        name: "\u062A\u0648\u0642\u0651\u0639 \u0627\u0644\u062A\u062F\u0641\u0642 \u0627\u0644\u0646\u0642\u062F\u064A",
-        icon: "03",
-        desc: "\u062A\u0648\u0642\u0651\u0639 \u0643\u064A\u0641 \u0633\u064A\u0628\u062F\u0648 \u062A\u062F\u0641\u0642\u0643 \u0627\u0644\u0646\u0642\u062F\u064A \u0642\u0628\u0644 \u0623\u0646 \u062A\u0638\u0647\u0631 \u0627\u0644\u0645\u0634\u0627\u0643\u0644 \u0641\u064A \u0627\u0644\u062A\u0642\u0627\u0631\u064A\u0631.",
-        benefits: [
-          "\u062A\u0648\u0642\u0651\u0639 \u062D\u0631\u0643\u0629 \u0627\u0644\u0646\u0642\u062F \u0627\u0644\u0648\u0627\u0631\u062F",
-          "\u0627\u0631\u0635\u062F \u0641\u062C\u0648\u0627\u062A \u0627\u0644\u0633\u064A\u0648\u0644\u0629 \u0627\u0644\u0645\u0633\u062A\u0642\u0628\u0644\u064A\u0629",
-          "\u062E\u0637\u0651\u0637 \u0642\u0631\u0627\u0631\u0627\u062A\u0643 \u0642\u0628\u0644 \u0648\u0635\u0648\u0644 \u0627\u0644\u0636\u063A\u0637",
-        ],
-        insight: "\u0627\u0644\u0623\u062B\u0631 \u0627\u0644\u0633\u0646\u0648\u064A \u0627\u0644\u0642\u0627\u0628\u0644 \u0644\u0644\u0627\u0633\u062A\u0631\u062F\u0627\u062F: 72,000.",
-        metric: "72K",
-        metricLabel: "\u0623\u062B\u0631",
-      },
-      risk: {
-        name: "\u0625\u0634\u0627\u0631\u0627\u062A \u0645\u062E\u0627\u0637\u0631 \u0627\u0644\u0639\u0645\u0644\u0627\u0621",
-        icon: "04",
-        desc: "\u0631\u062A\u0651\u0628 \u0627\u0644\u0639\u0645\u0644\u0627\u0621 \u062D\u0633\u0628 \u0633\u0644\u0648\u0643 \u0627\u0644\u062F\u0641\u0639\u060C \u062A\u063A\u064A\u0631 \u0627\u0644\u062A\u0648\u0642\u064A\u062A\u060C \u062D\u0631\u0643\u0629 \u0627\u0644\u0645\u062E\u0627\u0637\u0631\u060C \u0648\u0623\u0648\u0644\u0648\u064A\u0629 \u0627\u0644\u0645\u062A\u0627\u0628\u0639\u0629.",
-        benefits: [
-          "\u0627\u0639\u0631\u0641 \u0645\u0646 \u0642\u062F \u064A\u062A\u0623\u062E\u0631 \u0641\u064A \u0627\u0644\u062F\u0641\u0639",
-          "\u062A\u062A\u0628\u0651\u0639 \u062D\u0631\u0643\u0629 \u0645\u062E\u0627\u0637\u0631 \u0627\u0644\u0639\u0645\u0644\u0627\u0621",
-          "\u0631\u0643\u0651\u0632 \u0641\u0631\u064A\u0642\u0643 \u0639\u0644\u0649 \u0627\u0644\u062D\u0633\u0627\u0628\u0627\u062A \u0627\u0644\u0623\u0639\u0644\u0649 \u0623\u062B\u0631\u0627\u064B",
-        ],
-        insight: "12 \u0639\u0645\u064A\u0644\u0627\u064B \u0627\u0646\u062A\u0642\u0644\u0648\u0627 \u0625\u0644\u0649 \u062D\u0627\u0644\u0629 \u0627\u0644\u062E\u0637\u0631 \u0627\u0644\u0623\u0648\u0644\u0648\u064A\u0629.",
-        metric: "12",
-        metricLabel: "\u062D\u0633\u0627\u0628 \u062E\u0637\u0631",
-      },
-      ai: {
-        name: "\u0645\u062D\u0631\u0643 \u0625\u062C\u0631\u0627\u0621\u0627\u062A \u0627\u0644\u0630\u0643\u0627\u0621 \u0627\u0644\u0627\u0635\u0637\u0646\u0627\u0639\u064A",
-        icon: "05",
-        desc: "\u0632\u064A\u0631\u0643\u0633 \u0644\u0627 \u064A\u062A\u0648\u0642\u0641 \u0639\u0646\u062F \u0627\u0644\u0631\u0624\u0649. \u064A\u0648\u0635\u064A \u0628\u0627\u0644\u0625\u062C\u0631\u0627\u0621 \u0627\u0644\u062A\u0627\u0644\u064A \u0648\u064A\u062C\u0647\u0651\u0632 \u0645\u0633\u0627\u0631 \u0627\u0644\u062A\u0646\u0641\u064A\u0630.",
-        benefits: [
-          "\u062D\u0648\u0651\u0644 \u0627\u0644\u0631\u0624\u0649 \u0625\u0644\u0649 \u0625\u062C\u0631\u0627\u0621\u0627\u062A",
-          "\u0648\u0644\u0651\u062F \u062A\u0648\u0635\u064A\u0627\u062A \u0630\u0643\u064A\u0629",
-          "\u062C\u0647\u0651\u0632 \u0627\u0644\u062A\u0630\u0643\u064A\u0631\u0627\u062A \u0648\u0627\u0644\u062E\u0637\u0648\u0627\u062A \u0627\u0644\u062A\u0627\u0644\u064A\u0629 \u062A\u0644\u0642\u0627\u0626\u064A\u0627\u064B",
-        ],
-        insight: "\u0627\u0644\u0630\u0643\u0627\u0621 \u0627\u0644\u0627\u0635\u0637\u0646\u0627\u0639\u064A \u064A\u0648\u0635\u064A \u0628\u0625\u0631\u0633\u0627\u0644 \u062A\u0630\u0643\u064A\u0631\u0627\u062A \u0625\u0644\u0649 9 \u062D\u0633\u0627\u0628\u0627\u062A \u0639\u0627\u0644\u064A\u0629 \u0627\u0644\u062E\u0637\u0631.",
-        metric: "9",
-        metricLabel: "\u0625\u062C\u0631\u0627\u0621 \u0630\u0643\u064A",
-      },
-      team: {
-        name: "\u062A\u062D\u0643\u0651\u0645 \u0627\u0644\u0641\u0631\u064A\u0642",
-        icon: "06",
-        desc: "\u0627\u0639\u0637\u0650 \u0627\u0644\u0645\u062F\u064A\u0631\u064A\u0646 \u0648\u0627\u0644\u0641\u0631\u0642 \u0645\u0631\u0643\u0632 \u0642\u064A\u0627\u062F\u0629 \u0648\u0627\u062D\u062F\u0627\u064B \u0644\u0639\u0645\u0644\u064A\u0627\u062A \u0627\u0644\u0641\u0648\u0627\u062A\u064A\u0631 \u0648\u0627\u0644\u0645\u062A\u0627\u0628\u0639\u0629 \u0648\u0627\u0644\u062E\u0637\u0631 \u0648\u0627\u0644\u0646\u062A\u0627\u0626\u062C.",
-        benefits: [
-          "\u062A\u062A\u0628\u0651\u0639 \u0625\u062C\u0631\u0627\u0621\u0627\u062A \u0627\u0644\u0641\u0631\u064A\u0642",
-          "\u062A\u062D\u0643\u0651\u0645 \u0641\u064A \u0627\u0644\u0623\u0648\u0644\u0648\u064A\u0627\u062A",
-          "\u0627\u062D\u0641\u0638 \u0627\u0644\u062C\u0645\u064A\u0639 \u0645\u062A\u0648\u0627\u0641\u0642\u064A\u0646 \u062D\u0648\u0644 \u0627\u0644\u062A\u062F\u0641\u0642 \u0627\u0644\u0646\u0642\u062F\u064A",
-        ],
-        insight: "\u064A\u0645\u0643\u0646 \u062A\u0642\u0644\u064A\u0644 \u0639\u0628\u0621 \u0627\u0644\u0641\u0631\u064A\u0642 \u0628\u0623\u062A\u0645\u062A\u0629 \u0627\u0644\u0645\u062A\u0627\u0628\u0639\u0627\u062A \u0627\u0644\u0645\u062A\u0643\u0631\u0631\u0629.",
-        metric: "41%",
-        metricLabel: "\u0639\u0645\u0644 \u064A\u062F\u0648\u064A \u0623\u0642\u0644",
-      },
-    },
+    eyebrow: "ZYRIX FINSUITE · المزايا",
+    h1Pre: "كل ما تحتاجه عملية الفوترة،",
+    h1Highlight: "في نظام ذكي واحد.",
+    sub: "يوحّد Zyrix الفوترة والتحصيل وإشارات التدفق النقدي وتوصيات AI وإجراءات الفريق في محرّك قرار واحد.",
+    backHome: "← الرئيسية",
+    pickFeature: "اختر ميزة",
   },
 };
 
-
-// ---------- Module icons (inline SVG paths) ----------
-function renderModuleIcon(id, color) {
-  const stroke = color || "currentColor";
-  const common = {
-    width: 22,
-    height: 22,
-    viewBox: "0 0 24 24",
-    fill: "none",
-    stroke: stroke,
-    strokeWidth: 2,
-    strokeLinecap: "round",
-    strokeLinejoin: "round",
-  };
-  switch (id) {
-    case "invoice":
-      return (
-        <svg {...common}>
-          <path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
-          <path d="M14 3v6h6" />
-          <path d="M8 13h8" />
-          <path d="M8 17h6" />
-        </svg>
-      );
-    case "collection":
-      return (
-        <svg {...common}>
-          <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
-        </svg>
-      );
-    case "cashflow":
-      return (
-        <svg {...common}>
-          <polyline points="3 17 9 11 13 15 21 7" />
-          <polyline points="14 7 21 7 21 14" />
-        </svg>
-      );
-    case "risk":
-      return (
-        <svg {...common}>
-          <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
-          <line x1="12" y1="9" x2="12" y2="13" />
-          <line x1="12" y1="17" x2="12.01" y2="17" />
-        </svg>
-      );
-    case "ai":
-      return (
-        <svg {...common}>
-          <path d="M12 3v3" />
-          <path d="M12 18v3" />
-          <path d="M5.6 5.6l2.1 2.1" />
-          <path d="M16.3 16.3l2.1 2.1" />
-          <path d="M3 12h3" />
-          <path d="M18 12h3" />
-          <path d="M5.6 18.4l2.1-2.1" />
-          <path d="M16.3 7.7l2.1-2.1" />
-          <circle cx="12" cy="12" r="3" />
-        </svg>
-      );
-    case "team":
-      return (
-        <svg {...common}>
-          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-          <circle cx="9" cy="7" r="4" />
-          <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-          <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-        </svg>
-      );
-    default:
-      return null;
-  }
+// ── Helper renderers ───────────────────────────────────────────────
+function StatCard({ label, value, trend, accent, themeBg }) {
+  return (
+    <div style={{
+      background: themeBg,
+      borderRadius: 14,
+      padding: 16,
+      border: `1px solid ${C.hairline}`,
+    }}>
+      <div style={{ fontSize: 11, color: C.muted, marginBottom: 4, fontWeight: 700 }}>{label}</div>
+      <div style={{ fontSize: 24, fontWeight: 900, color: C.ink, letterSpacing: "-0.02em", lineHeight: 1.1 }}>{value}</div>
+      {trend && <div style={{ fontSize: 11, color: accent, fontWeight: 700, marginTop: 4 }}>{trend}</div>}
+    </div>
+  );
 }
 
-// ---------- Component ----------
+// ── Main component ────────────────────────────────────────────────
 export default function FeaturesPage() {
   const i18n = useI18n();
   const lang = (i18n && i18n.lang) || "TR";
-  const t = TXT[lang] || TXT.TR;
-  const isArabic = lang === "AR";
-  const isRTL = isArabic;
-  const T = isArabic ? SA : C;
+  const isRTL = (i18n && i18n.isRTL) || (lang === "AR");
+  const isAr = lang === "AR";
+  const T = isAr ? SA : C;
+  const accent = isAr ? SA.green : C.red;
+  const accentDeep = isAr ? SA.greenDeep : C.redDeep;
+  const ctaGradient = `linear-gradient(135deg, ${accent}, ${accentDeep})`;
+  const ctaShadow = isAr ? "0 22px 48px rgba(0,108,53,.30)" : "0 22px 48px rgba(227,10,23,.30)";
 
-  const themeColor   = isArabic ? SA.green       : C.red;
-  const themeDeep    = isArabic ? SA.greenDeep   : C.redDeep;
-  const themeBright  = isArabic ? SA.greenBright : C.redBright;
-  const themeNight   = isArabic ? SA.green950    : C.wine950;
-
-  const ctaShadow = isArabic
-    ? "0 26px 64px rgba(0,108,53,.30)"
-    : "0 26px 64px rgba(227,10,23,.30)";
-
-  const cardShadow = isArabic
-    ? "0 28px 74px rgba(0,77,38,.11)"
-    : "0 28px 74px rgba(58,5,9,.11)";
-
-  const heavyShadow = isArabic
-    ? "0 34px 90px rgba(0,77,38,.22)"
-    : "0 34px 90px rgba(58,5,9,.26)";
-
-  const activeCardShadow = isArabic
-    ? "0 24px 70px rgba(0,108,53,.28)"
-    : "0 24px 70px rgba(227,10,23,.28)";
-
-  const arrow = isRTL ? "\u2190" : "\u2192";
-
-  const cardBase = {
-    borderRadius: 30,
-    background: "rgba(255,255,255,.86)",
-    border: "1px solid " + T.hairline,
-    boxShadow: cardShadow,
-    backdropFilter: "blur(16px)",
-  };
-
-  // ---------- State ----------
-  const [activeId, setActiveId] = useState("invoice");
+  const hero = HERO_COPY[lang] || HERO_COPY.TR;
   const location = useLocation();
 
-  const activeModule = useMemo(() => {
-    return t.modules[activeId] || t.modules.invoice;
-  }, [activeId, t]);
+  const [activeTab, setActiveTab] = useState(() => {
+    const initialHash = (typeof window !== "undefined" && window.location.hash || "").replace(/^#/, "");
+    return TAB_KEYS.includes(initialHash) ? initialHash : "e-fatura";
+  });
 
-  const moduleList = MODULE_IDS.map((id) => ({ id: id, ...t.modules[id] }));
-
-  // Hash-based deep linking from the footer ÜRÜN section.
-  // Re-runs on every location change so navigating /features → /features#tahsilat
-  // (without a remount) still scrolls + activates the right tab.
+  // Hash → tab; re-runs on every location change so navigating
+  // /features → /features#tahsilat (without remount) still updates.
   useEffect(() => {
     const hash = (location.hash || "").replace(/^#/, "");
     if (!hash) return;
-    const moduleId = HASH_TO_MODULE[hash];
-    if (moduleId) setActiveId(moduleId);
-    // Defer the scroll until after the section paints; 300ms is enough for
-    // both initial mount (Suspense → page) and same-route hash updates.
+    if (!TAB_KEYS.includes(hash)) return;
+    setActiveTab(hash);
     const id = setTimeout(() => {
-      const el = document.getElementById(hash);
+      const el = document.getElementById("feature-tabs");
       if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
-    }, 300);
+    }, 120);
     return () => clearTimeout(id);
   }, [location.hash, location.pathname]);
 
-  const anchorList = ANCHOR_COPY[lang] || ANCHOR_COPY.TR;
+  const data = useMemo(() => {
+    const byTab = TAB_CONTENT[activeTab];
+    if (!byTab) return null;
+    return byTab[lang] || byTab.TR;
+  }, [activeTab, lang]);
 
-  // ---------- Bar chart data ----------
-  const barHeights = [42, 58, 70, 96, 88, 118, 132, 146];
-
-  // ---------- Comparison rows ----------
-  const cmpRows = t.cmpRows;
+  const onTabClick = (key) => {
+    setActiveTab(key);
+    // Update the URL hash without triggering a full route change.
+    if (typeof window !== "undefined") {
+      try {
+        window.history.replaceState(null, "", `#${key}`);
+      } catch (_) { /* browsers can refuse history.replaceState in some sandboxes */ }
+    }
+  };
 
   return (
     <>
       <NavV2 />
       <main
-      dir={isRTL ? "rtl" : "ltr"}
-      style={{
-        direction: isRTL ? "rtl" : "ltr",
-        minHeight: "100vh",
-        color: T.ink,
-        background: "linear-gradient(180deg,#fff 0%," + T.bgTinted + " 46%,#fff 100%)",
-        overflow: "hidden",
-        fontFamily: "'Plus Jakarta Sans', system-ui, sans-serif",
-      }}
-    >
-      <section style={{ padding: "148px 32px 78px", position: "relative" }}>
-        <div
-          style={{
-            position: "absolute",
-            inset: 0,
-            pointerEvents: "none",
-            background: isArabic
-              ? "radial-gradient(circle at 50% 12%, rgba(0,108,53,.16), transparent 50%)"
-              : "radial-gradient(circle at 50% 12%, rgba(227,10,23,.18), transparent 50%)",
-          }}
-        />
+        dir={isRTL ? "rtl" : "ltr"}
+        style={{
+          minHeight: "100vh",
+          background: `linear-gradient(180deg, #fff 0%, ${T.bgTinted} 46%, #fff 100%)`,
+          fontFamily: isAr
+            ? "'IBM Plex Sans Arabic', system-ui, sans-serif"
+            : "'Plus Jakarta Sans', 'Manrope', system-ui, sans-serif",
+          color: C.ink,
+        }}
+      >
+        {/* HERO */}
+        <section style={{ padding: "120px 24px 56px" }}>
+          <div style={{ maxWidth: 1180, margin: "0 auto" }}>
+            <Link to="/" style={{
+              fontSize: 13, fontWeight: 700, color: C.muted, textDecoration: "none",
+              borderBottom: `1px dashed ${C.hairline}`, paddingBottom: 1,
+            }}>{hero.backHome}</Link>
 
-        <div style={{ maxWidth: 1280, margin: "0 auto", position: "relative", zIndex: 2 }}>
-          {/* NAV */}
-          
-          {/* HERO */}
-          <div style={{ textAlign: "center", maxWidth: 980, margin: "0 auto 56px" }}>
-            <div
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 8,
-                padding: "10px 18px",
-                borderRadius: 999,
-                background: "rgba(255,255,255,.86)",
-                border: "1px solid " + T.hairline,
-                color: themeColor,
-                fontSize: 13,
-                fontWeight: 950,
-                letterSpacing: "1.3px",
-                marginBottom: 20,
-                boxShadow: "0 18px 44px rgba(58,5,9,.10)",
-              }}
-            >
-              ✦ {t.badge}
-            </div>
-
-            <h1
-              style={{
+            <div style={{ marginTop: 26, maxWidth: 880 }}>
+              <div style={{
+                fontSize: 12, fontWeight: 800, letterSpacing: "0.18em",
+                textTransform: "uppercase", color: accent, marginBottom: 14,
+              }}>{hero.eyebrow}</div>
+              <h1 style={{
                 margin: 0,
-                fontSize: "clamp(38px,5vw,68px)",
-                lineHeight: 1.04,
-                letterSpacing: "-0.06em",
-                fontWeight: 950,
-              }}
-            >
-              {t.h1a} <span style={{ color: themeColor }}>{t.h1b}</span>
-            </h1>
-
-            <p
-              style={{
-                margin: "24px auto 0",
-                maxWidth: 780,
-                color: T.muted,
-                fontSize: 19,
-                lineHeight: 1.75,
-                fontWeight: 650,
-              }}
-            >
-              {t.sub}
-            </p>
-
-            <div style={{ marginTop: 32, display: "flex", justifyContent: "center", gap: 14, flexWrap: "wrap" }}>
-              <Link
-                to="/onboarding"
-                style={{
-                  borderRadius: 22,
-                  padding: "20px 34px",
-                  color: "#fff",
-                  background: "linear-gradient(135deg, " + themeBright + ", " + themeDeep + ")",
-                  textDecoration: "none",
-                  fontSize: 17,
-                  fontWeight: 950,
-                  boxShadow: ctaShadow,
-                }}
-              >
-                {t.ctaPrimary} {arrow}
-              </Link>
-
-              <Link
-                to="/how-it-works"
-                style={{
-                  borderRadius: 22,
-                  padding: "19px 30px",
-                  color: T.ink,
-                  background: "#fff",
-                  border: "1px solid " + T.hairline,
-                  textDecoration: "none",
-                  fontSize: 17,
-                  fontWeight: 950,
-                }}
-              >
-                {t.ctaSecondary}
-              </Link>
+                fontSize: "clamp(38px, 5.4vw, 70px)",
+                lineHeight: 1.05,
+                letterSpacing: "-0.03em",
+                fontWeight: 900,
+                color: C.ink,
+              }}>
+                {hero.h1Pre}{" "}
+                <span style={{
+                  backgroundImage: ctaGradient,
+                  WebkitBackgroundClip: "text", backgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                }}>{hero.h1Highlight}</span>
+              </h1>
+              <p style={{
+                margin: "22px 0 0",
+                fontSize: 18, lineHeight: 1.65,
+                color: C.muted, fontWeight: 500,
+                maxWidth: 760,
+              }}>{hero.sub}</p>
             </div>
           </div>
+        </section>
 
-          {/* ── DEEP-LINK ANCHORS (footer ÜRÜN targets) ─────────────
-             Eight anchored cards. Each #id is a distinct visible
-             section so /features#tahsilat, /features#kdv, etc. all
-             land on different content (and the hash useEffect activates
-             the matching module tab below). */}
-          <div style={{ marginBottom: 78 }}>
+        {/* TAB BAR — anchor target for hash deep-links */}
+        <section id="feature-tabs" style={{
+          padding: "20px 24px 40px",
+          position: "sticky",
+          top: 64,
+          zIndex: 5,
+          background: `linear-gradient(180deg, ${T.bgTinted} 0%, ${T.bgTinted}cc 100%)`,
+          backdropFilter: "blur(8px)",
+          WebkitBackdropFilter: "blur(8px)",
+          borderBottom: `1px solid ${C.hairline}`,
+        }}>
+          <div style={{ maxWidth: 1180, margin: "0 auto" }}>
             <div style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-              gap: 16,
-            }}>
-              {anchorList.map((a) => {
-                const targetTo = a.to ? a.to : `#${a.id}`;
-                return (
-                  <div
-                    key={a.id}
-                    id={a.id}
-                    style={{
-                      scrollMarginTop: 100,
-                      background: "rgba(255,255,255,.92)",
-                      border: "1px solid " + T.hairline,
-                      borderRadius: 22,
-                      padding: 22,
-                      borderTop: "3px solid " + themeColor,
-                      boxShadow: "0 14px 36px rgba(58,5,9,.06)",
-                    }}
-                  >
-                    <div style={{
-                      fontFamily: "monospace",
-                      fontSize: 11,
-                      fontWeight: 800,
-                      color: themeColor,
-                      letterSpacing: "1.2px",
-                      textTransform: "uppercase",
-                      marginBottom: 8,
-                    }}>#{a.id}</div>
-                    <h3 style={{
-                      margin: 0,
-                      fontSize: 20,
-                      fontWeight: 900,
-                      color: T.ink,
-                      letterSpacing: "-0.01em",
-                      lineHeight: 1.2,
-                    }}>{a.title}</h3>
-                    <p style={{
-                      margin: "8px 0 14px",
-                      fontSize: 13,
-                      color: T.muted,
-                      lineHeight: 1.55,
-                      fontWeight: 500,
-                    }}>{a.sub}</p>
-                    {a.to ? (
-                      <Link to={a.to} style={{
-                        display: "inline-flex",
-                        alignItems: "center",
-                        gap: 6,
-                        fontSize: 13,
-                        fontWeight: 800,
-                        color: themeColor,
-                        textDecoration: "none",
-                      }}>
-                        <span>{a.cta}</span>
-                        <span aria-hidden="true">{isRTL ? "←" : "→"}</span>
-                      </Link>
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={() => setActiveId(HASH_TO_MODULE[a.id] || "invoice")}
-                        style={{
-                          display: "inline-flex",
-                          alignItems: "center",
-                          gap: 6,
-                          fontSize: 13,
-                          fontWeight: 800,
-                          color: themeColor,
-                          background: "transparent",
-                          border: "none",
-                          padding: 0,
-                          cursor: "pointer",
-                          fontFamily: "inherit",
-                        }}
-                      >
-                        <span>{a.cta}</span>
-                        <span aria-hidden="true">{isRTL ? "←" : "→"}</span>
-                      </button>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* INTELLIGENCE MAP */}
-          <div style={{ ...cardBase, padding: 34, marginBottom: 78 }}>
-            <div style={{ textAlign: "center", maxWidth: 760, margin: "0 auto 34px" }}>
-              <div
-                style={{
-                  color: themeColor,
-                  fontSize: 13,
-                  fontWeight: 950,
-                  letterSpacing: "1.5px",
-                  marginBottom: 8,
-                }}
-              >
-                {t.mapEyebrow}
-              </div>
-              <h2
-                style={{
-                  margin: 0,
-                  fontSize: 42,
-                  fontWeight: 950,
-                  letterSpacing: "-0.05em",
-                  lineHeight: 1.1,
-                }}
-              >
-                {t.mapTitle}
-              </h2>
-            </div>
-
+              fontSize: 11, fontWeight: 800, letterSpacing: "0.16em",
+              textTransform: "uppercase", color: C.muted, marginBottom: 12,
+            }}>{hero.pickFeature}</div>
             <div
+              role="tablist"
+              aria-label={hero.pickFeature}
               style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(3,1fr)",
-                gap: 18,
+                display: "flex",
+                gap: 8,
+                overflowX: "auto",
+                paddingBottom: 4,
+                scrollbarWidth: "thin",
               }}
             >
-              {moduleList.map((m) => {
-                const isActive = activeId === m.id;
+              {TABS.map((tab) => {
+                const isActive = tab.key === activeTab;
+                const label = (tab.labels && tab.labels[lang]) || tab.labels.TR;
                 return (
                   <button
-                    key={m.id}
-                    onClick={() => setActiveId(m.id)}
+                    key={tab.key}
+                    type="button"
+                    role="tab"
+                    aria-selected={isActive}
+                    aria-controls={`tabpanel-${tab.key}`}
+                    id={`tabbtn-${tab.key}`}
+                    onClick={() => onTabClick(tab.key)}
                     style={{
-                      textAlign: isRTL ? "right" : "left",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 8,
+                      padding: "10px 18px",
+                      borderRadius: 999,
+                      whiteSpace: "nowrap",
+                      flexShrink: 0,
                       cursor: "pointer",
-                      border: isActive
-                        ? "2px solid " + themeColor
-                        : "1px solid " + T.hairline,
-                      borderRadius: 28,
-                      padding: 24,
-                      background: isActive
-                        ? "linear-gradient(135deg, " + themeColor + ", " + themeDeep + ")"
-                        : "rgba(255,255,255,.92)",
-                      color: isActive ? "#fff" : T.ink,
-                      boxShadow: isActive
-                        ? activeCardShadow
-                        : "0 16px 40px rgba(58,5,9,.06)",
-                      transition: "transform .25s ease, box-shadow .25s ease",
-                      transform: isActive ? "translateY(-2px)" : "translateY(0)",
+                      border: "none",
                       fontFamily: "inherit",
+                      fontSize: 14,
+                      fontWeight: 800,
+                      transition: "background .15s, color .15s, box-shadow .15s",
+                      background: isActive ? ctaGradient : "rgba(255,255,255,0.85)",
+                      color: isActive ? "#fff" : C.ink,
+                      boxShadow: isActive ? ctaShadow : `0 2px 8px rgba(58,5,9,0.06)`,
+                      border: isActive ? "none" : `1px solid ${C.hairline}`,
                     }}
                   >
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 12,
-                        marginBottom: 18,
-                      }}
-                    >
-                      <div
-                        style={{
-                          width: 46,
-                          height: 46,
-                          borderRadius: 16,
-                          display: "grid",
-                          placeItems: "center",
-                          background: isActive
-                            ? "rgba(255,255,255,.16)"
-                            : (isArabic ? "rgba(0,108,53,.10)" : "rgba(227,10,23,.08)"),
-                          color: isActive ? "#fff" : themeColor,
-                          flexShrink: 0,
-                        }}
-                      >
-                        {renderModuleIcon(m.id, isActive ? "#fff" : themeColor)}
-                      </div>
-                      <div
-                        style={{
-                          fontWeight: 950,
-                          fontSize: 15,
-                          color: isActive ? "rgba(255,255,255,.78)" : T.muted,
-                          letterSpacing: "1.2px",
-                          fontFamily: "'Inter Tight', system-ui, sans-serif",
-                          fontVariantNumeric: "tabular-nums",
-                        }}
-                      >
-                        {m.icon}
-                      </div>
-                    </div>
-
-                    <div
-                      style={{
-                        fontSize: 20,
-                        fontWeight: 950,
-                        letterSpacing: "-0.035em",
-                      }}
-                    >
-                      {m.name}
-                    </div>
-
-                    <p
-                      style={{
-                        margin: "10px 0 0",
-                        color: isActive ? "rgba(255,255,255,.78)" : T.muted,
-                        fontSize: 14,
-                        lineHeight: 1.65,
-                        fontWeight: 650,
-                      }}
-                    >
-                      {m.desc}
-                    </p>
+                    <span aria-hidden="true">{tab.icon}</span>
+                    <span>{label}</span>
                   </button>
                 );
               })}
             </div>
           </div>
+        </section>
 
-          {/* INTERACTIVE FEATURE DETAIL */}
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: ".9fr 1.1fr",
-              gap: 28,
-              alignItems: "stretch",
-              marginBottom: 78,
-            }}
-          >
-            <div style={{ ...cardBase, padding: 36 }}>
+        {/* TAB PANEL — only the active tab's content renders */}
+        <section style={{ padding: "48px 24px 96px" }}>
+          <div style={{ maxWidth: 1180, margin: "0 auto" }}>
+            {data && (
               <div
+                key={activeTab}
+                role="tabpanel"
+                id={`tabpanel-${activeTab}`}
+                aria-labelledby={`tabbtn-${activeTab}`}
                 style={{
-                  color: themeColor,
-                  fontSize: 13,
-                  fontWeight: 950,
-                  letterSpacing: "1.5px",
-                  marginBottom: 10,
+                  display: "grid",
+                  gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1fr)",
+                  gap: 36,
+                  alignItems: "start",
+                  animation: "featTabFade .35s ease-out",
                 }}
+                className="feat-tabpanel"
               >
-                {t.activeEyebrow}
-              </div>
+                {/* Left — copy + features + use case */}
+                <div>
+                  <div style={{
+                    fontSize: 12, fontWeight: 800, letterSpacing: "0.18em",
+                    textTransform: "uppercase", color: accent, marginBottom: 12,
+                  }}>#{activeTab}</div>
+                  <h2 style={{
+                    margin: 0,
+                    fontSize: "clamp(28px, 3.6vw, 42px)",
+                    fontWeight: 900,
+                    color: C.ink,
+                    letterSpacing: "-0.02em",
+                    lineHeight: 1.15,
+                  }}>{data.headline}</h2>
+                  <p style={{
+                    margin: "14px 0 24px",
+                    fontSize: 17, lineHeight: 1.6,
+                    color: C.muted, fontWeight: 500,
+                  }}>{data.sub}</p>
 
-              <h2
-                style={{
-                  margin: 0,
-                  fontSize: 42,
-                  fontWeight: 950,
-                  letterSpacing: "-0.055em",
-                  lineHeight: 1.08,
-                }}
-              >
-                {activeModule.name}
-              </h2>
+                  <ul style={{
+                    listStyle: "none", padding: 0, margin: "0 0 24px",
+                    display: "grid", gap: 10,
+                  }}>
+                    {data.features.map((f, i) => (
+                      <li key={i} style={{
+                        display: "flex",
+                        alignItems: "flex-start",
+                        gap: 12,
+                        fontSize: 15,
+                        color: C.ink,
+                        fontWeight: 600,
+                        lineHeight: 1.5,
+                      }}>
+                        <svg viewBox="0 0 24 24" fill="none" stroke={accent} strokeWidth="2.5" style={{ flexShrink: 0, width: 20, height: 20, marginTop: 2 }}>
+                          <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                        <span>{f}</span>
+                      </li>
+                    ))}
+                  </ul>
 
-              <p
-                style={{
-                  marginTop: 16,
-                  color: T.muted,
-                  fontSize: 17,
-                  lineHeight: 1.75,
-                  fontWeight: 650,
-                }}
-              >
-                {activeModule.desc}
-              </p>
-
-              <div style={{ display: "grid", gap: 14, marginTop: 28 }}>
-                {activeModule.benefits.map((b, i) => (
-                  <div
-                    key={i}
-                    style={{
+                  {data.useCase && (
+                    <div style={{
+                      background: "#fff",
+                      border: `1px solid ${C.hairline}`,
+                      borderLeft: `4px solid ${accent}`,
+                      borderRadius: 14,
                       padding: 18,
-                      borderRadius: 20,
-                      background: "rgba(255,255,255,.92)",
-                      border: "1px solid " + T.hairline,
-                      fontWeight: 850,
-                      color: T.ink,
-                    }}
-                  >
-                    <span style={{ color: themeColor, marginRight: isRTL ? 0 : 10, marginLeft: isRTL ? 10 : 0, fontWeight: 950 }}>
-                      ✓
-                    </span>
-                    {b}
-                  </div>
-                ))}
-              </div>
-            </div>
+                      marginBottom: 26,
+                      boxShadow: "0 8px 24px rgba(58,5,9,0.05)",
+                    }}>
+                      <div style={{
+                        fontSize: 11, fontWeight: 800,
+                        letterSpacing: "0.14em",
+                        textTransform: "uppercase",
+                        color: accent, marginBottom: 6,
+                      }}>{lang === "AR" ? "حالة استخدام" : (lang === "EN" ? "Customer story" : "Müşteri hikâyesi")}</div>
+                      <div style={{ fontSize: 15, color: C.ink, lineHeight: 1.55, fontWeight: 600 }}>
+                        {data.useCase}
+                      </div>
+                    </div>
+                  )}
 
-            <div
-              style={{
-                borderRadius: 36,
-                padding: 34,
-                background: "linear-gradient(135deg, " + themeDeep + ", " + themeNight + ")",
-                color: "#fff",
-                boxShadow: heavyShadow,
-              }}
-            >
-              <div style={{ opacity: 0.72, fontSize: 13, fontWeight: 950, letterSpacing: "1.5px" }}>
-                {t.livePanel}
-              </div>
-
-              <div
-                style={{
-                  marginTop: 24,
-                  display: "grid",
-                  gridTemplateColumns: "1fr .75fr",
-                  gap: 18,
-                }}
-              >
-                <div
-                  style={{
-                    padding: 24,
-                    borderRadius: 26,
-                    background: "rgba(255,255,255,.10)",
-                    border: "1px solid rgba(255,255,255,.14)",
-                  }}
-                >
-                  <div style={{ opacity: 0.72, fontSize: 13, fontWeight: 850 }}>
-                    {t.aiInsight}
-                  </div>
-                  <h3
-                    style={{
-                      margin: "10px 0 0",
-                      fontSize: 26,
-                      lineHeight: 1.18,
-                      fontWeight: 950,
-                      letterSpacing: "-0.04em",
-                    }}
-                  >
-                    {activeModule.insight}
-                  </h3>
-                </div>
-
-                <div
-                  style={{
-                    padding: 24,
-                    borderRadius: 26,
-                    background: "rgba(255,255,255,.10)",
-                    border: "1px solid rgba(255,255,255,.14)",
-                    display: "grid",
-                    alignContent: "center",
-                  }}
-                >
-                  <div
-                    style={{
-                      fontSize: 42,
-                      fontWeight: 950,
-                      fontFamily: "'Inter Tight', system-ui, sans-serif",
-                      fontVariantNumeric: "tabular-nums",
-                      letterSpacing: "-0.03em",
-                    }}
-                  >
-                    {activeModule.metric}
-                  </div>
-                  <div style={{ opacity: 0.72, fontWeight: 850, fontSize: 13, marginTop: 4 }}>
-                    {activeModule.metricLabel}
+                  <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+                    <Link to="/register" style={{
+                      display: "inline-flex", alignItems: "center", gap: 10,
+                      padding: "14px 24px", borderRadius: 14,
+                      background: ctaGradient, color: "#fff",
+                      fontSize: 14, fontWeight: 900, textDecoration: "none",
+                      boxShadow: ctaShadow, letterSpacing: "0.04em",
+                    }}>
+                      <span>{isAr ? "ابدأ مجاناً" : (lang === "EN" ? "Try free" : "Ücretsiz dene")}</span>
+                      <span aria-hidden="true">{isRTL ? "←" : "→"}</span>
+                    </Link>
+                    <Link to="/pricing" style={{
+                      display: "inline-flex", alignItems: "center",
+                      padding: "14px 22px", borderRadius: 14,
+                      background: "#fff", color: C.ink,
+                      fontSize: 14, fontWeight: 800, textDecoration: "none",
+                      border: `1px solid ${C.hairline}`,
+                    }}>
+                      {isAr ? "اطّلع على الأسعار" : (lang === "EN" ? "See pricing" : "Fiyatlandırmaya bak")}
+                    </Link>
                   </div>
                 </div>
-              </div>
 
-              <div
-                style={{
-                  marginTop: 22,
-                  borderRadius: 26,
-                  padding: 24,
-                  background: "rgba(255,255,255,.08)",
-                  border: "1px solid rgba(255,255,255,.13)",
-                }}
-              >
-                <svg viewBox="0 0 360 170" width="100%" height="170" preserveAspectRatio="none">
-                  <defs>
-                    <linearGradient id="barGradFeat" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor={themeBright} stopOpacity="1" />
-                      <stop offset="100%" stopColor={themeColor} stopOpacity="1" />
-                    </linearGradient>
-                  </defs>
-                  {barHeights.map((h, i) => {
-                    const barWidth = 30;
-                    const gap = 12;
-                    const x = i * (barWidth + gap) + 8;
-                    const y = 170 - h - 6;
-                    return (
-                      <rect
-                        key={i}
-                        x={x}
-                        y={y}
-                        width={barWidth}
-                        height={h}
-                        rx={10}
-                        fill="url(#barGradFeat)"
-                        opacity={0.85 + (i / barHeights.length) * 0.15}
-                      />
-                    );
-                  })}
-                </svg>
-              </div>
-
-              <div
-                style={{
-                  marginTop: 22,
-                  padding: 20,
-                  borderRadius: 24,
-                  background: "#fff",
-                  color: T.ink,
-                  fontWeight: 900,
-                  lineHeight: 1.55,
-                }}
-              >
-                {t.nextAction}
-              </div>
-
-              <div style={{ marginTop: 18, display: "flex", justifyContent: isRTL ? "flex-start" : "flex-end" }}>
-                <Link
-                  to="/onboarding"
-                  style={{
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: 8,
-                    borderRadius: 18,
-                    padding: "13px 22px",
-                    color: "#fff",
-                    background: "rgba(255,255,255,.14)",
-                    border: "1px solid rgba(255,255,255,.22)",
-                    textDecoration: "none",
-                    fontSize: 14,
-                    fontWeight: 950,
-                    letterSpacing: "0.3px",
-                    backdropFilter: "blur(8px)",
-                  }}
-                >
-                  {t.runThis} {arrow}
-                </Link>
-              </div>
-            </div>
-          </div>
-
-          {/* DANGEROUS / HARD-TO-CATCH SECTION */}
-          <div
-            style={{
-              borderRadius: 40,
-              padding: 44,
-              background: "linear-gradient(135deg, " + themeDeep + ", " + themeNight + ")",
-              color: "#fff",
-              boxShadow: heavyShadow,
-              marginBottom: 78,
-            }}
-          >
-            <div
-              style={{
-                opacity: 0.75,
-                fontSize: 13,
-                fontWeight: 950,
-                letterSpacing: "1.5px",
-                marginBottom: 10,
-              }}
-            >
-              {t.dangerEyebrow}
-            </div>
-
-            <h2
-              style={{
-                margin: 0,
-                fontSize: 42,
-                fontWeight: 950,
-                letterSpacing: "-0.055em",
-                maxWidth: 860,
-                lineHeight: 1.1,
-              }}
-            >
-              {t.dangerTitle}
-            </h2>
-
-            <div
-              style={{
-                marginTop: 32,
-                display: "grid",
-                gridTemplateColumns: "repeat(4,1fr)",
-                gap: 16,
-              }}
-            >
-              {[
-                [t.layer1Title, t.layer1Desc],
-                [t.layer2Title, t.layer2Desc],
-                [t.layer3Title, t.layer3Desc],
-                [t.layer4Title, t.layer4Desc],
-              ].map((row, i) => (
-                <div
-                  key={i}
-                  style={{
-                    borderRadius: 26,
-                    padding: 24,
-                    background: "rgba(255,255,255,.08)",
-                    border: "1px solid rgba(255,255,255,.14)",
-                  }}
-                >
-                  <h3 style={{ margin: 0, fontSize: 20, fontWeight: 950, letterSpacing: "-0.03em" }}>
-                    {row[0]}
-                  </h3>
-                  <p style={{ margin: "10px 0 0", opacity: 0.78, lineHeight: 1.65, fontWeight: 650 }}>
-                    {row[1]}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* USE CASES */}
-          <div style={{ marginBottom: 78 }}>
-            <div style={{ textAlign: "center", maxWidth: 780, margin: "0 auto 34px" }}>
-              <div
-                style={{
-                  color: themeColor,
-                  fontSize: 13,
-                  fontWeight: 950,
-                  letterSpacing: "1.5px",
-                  marginBottom: 8,
-                }}
-              >
-                {t.useEyebrow}
-              </div>
-              <h2 style={{ margin: 0, fontSize: 42, fontWeight: 950, letterSpacing: "-0.05em", lineHeight: 1.1 }}>
-                {t.useTitle}
-              </h2>
-            </div>
-
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 18 }}>
-              {[
-                [t.use1Title, t.use1Desc, t.use1Metric],
-                [t.use2Title, t.use2Desc, t.use2Metric],
-                [t.use3Title, t.use3Desc, t.use3Metric],
-                [t.use4Title, t.use4Desc, t.use4Metric],
-              ].map((row, i) => (
-                <div key={i} style={{ ...cardBase, padding: 26, display: "flex", flexDirection: "column" }}>
-                  <h3 style={{ margin: 0, fontSize: 22, fontWeight: 950, letterSpacing: "-0.035em" }}>
-                    {row[0]}
-                  </h3>
-                  <p style={{ marginTop: 12, color: T.muted, lineHeight: 1.65, fontWeight: 650, flex: 1 }}>
-                    {row[1]}
-                  </p>
-                  <div
-                    style={{
-                      marginTop: 18,
-                      alignSelf: isRTL ? "flex-end" : "flex-start",
-                      padding: "8px 14px",
-                      borderRadius: 999,
-                      background: isArabic ? "rgba(0,108,53,.10)" : "rgba(227,10,23,.08)",
-                      color: themeColor,
-                      fontSize: 13,
-                      fontWeight: 950,
-                      letterSpacing: "0.3px",
-                      fontFamily: "'Inter Tight', system-ui, sans-serif",
-                      fontVariantNumeric: "tabular-nums",
-                    }}
-                  >
-                    {row[2]}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* COMPARISON */}
-          <div style={{ ...cardBase, padding: 38, marginBottom: 78 }}>
-            <div style={{ textAlign: "center", maxWidth: 780, margin: "0 auto 30px" }}>
-              <div
-                style={{
-                  color: themeColor,
-                  fontSize: 13,
-                  fontWeight: 950,
-                  letterSpacing: "1.5px",
-                  marginBottom: 8,
-                }}
-              >
-                {t.cmpEyebrow}
-              </div>
-              <h2 style={{ margin: 0, fontSize: 38, fontWeight: 950, letterSpacing: "-0.05em", lineHeight: 1.12 }}>
-                {t.cmpTitle}
-              </h2>
-            </div>
-
-            {cmpRows.map((row, i) => (
-              <div
-                key={i}
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "1fr 1fr",
-                  gap: 16,
-                  padding: "12px 0",
-                  borderTop: "1px solid " + T.hairline,
-                }}
-              >
-                <div
-                  style={{
-                    padding: 18,
-                    borderRadius: 18,
-                    background: "rgba(0,0,0,.035)",
-                    color: T.muted,
-                    fontWeight: 850,
-                  }}
-                >
-                  {row[0]}
-                </div>
-
-                <div
-                  style={{
-                    padding: 18,
-                    borderRadius: 18,
-                    background: isArabic ? "rgba(0,108,53,.08)" : "rgba(227,10,23,.07)",
-                    color: T.ink,
-                    fontWeight: 950,
-                  }}
-                >
-                  {row[1]}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          {/* COMPLIANCE TRUST STRIP */}
-          <div
-            style={{
-              borderRadius: 40,
-              padding: 42,
-              marginBottom: 78,
-              background: isArabic
-                ? "linear-gradient(135deg, rgba(244,251,247,.96), rgba(255,255,255,.92))"
-                : "linear-gradient(135deg, rgba(255,247,244,.96), rgba(255,255,255,.92))",
-              border: "1px solid " + T.hairline,
-              boxShadow: "0 28px 74px rgba(58,5,9,.10)",
-              backdropFilter: "blur(18px)",
-            }}
-          >
-            <div style={{ textAlign: "center", maxWidth: 820, margin: "0 auto 34px" }}>
-              <div
-                style={{
-                  color: themeColor,
-                  fontSize: 13,
-                  fontWeight: 950,
-                  letterSpacing: "1.5px",
-                  marginBottom: 10,
-                  textTransform: "uppercase",
-                }}
-              >
-                {t.trustEyebrow}
-              </div>
-
-              <h2
-                style={{
-                  margin: 0,
-                  fontSize: 42,
-                  fontWeight: 950,
-                  letterSpacing: "-0.05em",
-                  color: T.ink,
-                  lineHeight: 1.1,
-                }}
-              >
-                {t.trustTitle}
-              </h2>
-
-              <p
-                style={{
-                  margin: "14px auto 0",
-                  maxWidth: 720,
-                  color: T.muted,
-                  fontSize: 16,
-                  lineHeight: 1.75,
-                  fontWeight: 650,
-                }}
-              >
-                {t.trustSub}
-              </p>
-            </div>
-
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(3, 1fr)",
-                gap: 16,
-              }}
-            >
-              {[
-                [t.trust1Title, t.trust1Desc],
-                [t.trust2Title, t.trust2Desc],
-                [t.trust3Title, t.trust3Desc],
-                [t.trust4Title, t.trust4Desc],
-                [t.trust5Title, t.trust5Desc],
-                [t.trust6Title, t.trust6Desc],
-              ].map((row, i) => {
-                const isHighlighted = i === 0;
-                return (
-                  <div
-                    key={i}
-                    style={{
-                      borderRadius: 26,
-                      padding: 24,
-                      background: isHighlighted
-                        ? "linear-gradient(135deg, " + themeColor + ", " + themeDeep + ")"
-                        : "rgba(255,255,255,.88)",
-                      color: isHighlighted ? "#fff" : T.ink,
-                      border: "1px solid " + T.hairline,
-                      boxShadow: isHighlighted
-                        ? (isArabic ? "0 24px 64px rgba(0,108,53,.24)" : "0 24px 64px rgba(227,10,23,.24)")
-                        : "0 16px 40px rgba(58,5,9,.06)",
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: 42,
-                        height: 42,
-                        borderRadius: 16,
-                        display: "grid",
-                        placeItems: "center",
-                        marginBottom: 16,
-                        background: isHighlighted
-                          ? "rgba(255,255,255,.18)"
-                          : (isArabic ? "rgba(0,108,53,.10)" : "rgba(227,10,23,.08)"),
-                        color: isHighlighted ? "#fff" : themeColor,
-                        fontSize: 18,
-                        fontWeight: 950,
-                      }}
-                    >
-                      ✓
+                {/* Right — mockup card + stats */}
+                <div>
+                  <div style={{
+                    background: "#fff",
+                    border: `1px solid ${C.hairline}`,
+                    borderRadius: 24,
+                    padding: 26,
+                    boxShadow: "0 24px 60px rgba(58,5,9,0.08)",
+                    position: "relative",
+                    overflow: "hidden",
+                  }}>
+                    <div style={{
+                      position: "absolute",
+                      top: 0, left: 0, right: 0,
+                      height: 4,
+                      background: ctaGradient,
+                    }} />
+                    <div style={{
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      marginBottom: 18,
+                      paddingBottom: 14,
+                      borderBottom: `1px solid ${C.hairline}`,
+                    }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                        <div style={{
+                          width: 36, height: 36, borderRadius: 10,
+                          background: `${accent}18`, color: accent,
+                          display: "grid", placeItems: "center", fontSize: 18,
+                        }}>{TABS.find((t) => t.key === activeTab)?.icon}</div>
+                        <div style={{ fontWeight: 900, fontSize: 14, color: C.ink, letterSpacing: "-0.01em" }}>
+                          Zyrix • {(TABS.find((t) => t.key === activeTab)?.labels[lang]) || activeTab}
+                        </div>
+                      </div>
+                      <span style={{
+                        fontSize: 10, fontWeight: 800, padding: "3px 10px", borderRadius: 999,
+                        background: C.emeraldSoft, color: C.emerald, textTransform: "uppercase", letterSpacing: "0.06em",
+                      }}>● Live</span>
                     </div>
 
-                    <h3
-                      style={{
-                        margin: 0,
-                        fontSize: 20,
-                        fontWeight: 950,
-                        letterSpacing: "-0.035em",
-                        lineHeight: 1.25,
-                      }}
-                    >
-                      {row[0]}
-                    </h3>
+                    {data.stats && data.stats.length > 0 && (
+                      <div style={{
+                        display: "grid",
+                        gridTemplateColumns: `repeat(${Math.min(3, data.stats.length)}, 1fr)`,
+                        gap: 10,
+                        marginBottom: 18,
+                      }}>
+                        {data.stats.map((s, i) => (
+                          <StatCard key={i} {...s} accent={accent} themeBg={T.bgTinted} />
+                        ))}
+                      </div>
+                    )}
 
-                    <p
-                      style={{
-                        margin: "10px 0 0",
-                        color: isHighlighted ? "rgba(255,255,255,.82)" : T.muted,
-                        fontSize: 14,
-                        lineHeight: 1.65,
-                        fontWeight: 650,
-                      }}
-                    >
-                      {row[1]}
-                    </p>
+                    <div style={{
+                      background: T.bgTinted,
+                      borderRadius: 14,
+                      padding: 16,
+                      fontSize: 12,
+                      color: C.muted,
+                      lineHeight: 1.6,
+                      fontWeight: 600,
+                    }}>
+                      {data.headline}
+                    </div>
                   </div>
-                );
-              })}
+
+                  {/* Bottom secondary card */}
+                  <div style={{
+                    marginTop: 16,
+                    background: `linear-gradient(135deg, ${isAr ? SA.green950 : C.wine950}, ${isAr ? SA.green900 : C.wine900})`,
+                    borderRadius: 22,
+                    padding: 22,
+                    color: "#fff",
+                  }}>
+                    <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: "0.14em", textTransform: "uppercase", color: "rgba(255,215,0,0.9)", marginBottom: 6 }}>
+                      {isAr ? "كل الباقات" : (lang === "EN" ? "All plans" : "Tüm planlar")}
+                    </div>
+                    <div style={{ fontSize: 15, fontWeight: 700, lineHeight: 1.5, color: "rgba(255,255,255,0.92)" }}>
+                      {isAr
+                        ? "هذه الميزة مشمولة في كل باقات Zyrix."
+                        : (lang === "EN"
+                            ? "This feature ships in every Zyrix plan."
+                            : "Bu özellik tüm Zyrix planlarında dahil.")}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </section>
+
+        {/* FINAL CTA */}
+        <section style={{
+          padding: "72px 24px 96px",
+          background: `linear-gradient(135deg, ${isAr ? SA.green950 : C.wine950}, ${isAr ? SA.green900 : C.wine900})`,
+          color: "#fff",
+        }}>
+          <div style={{ maxWidth: 720, margin: "0 auto", textAlign: "center" }}>
+            <h2 style={{
+              fontSize: "clamp(28px, 4vw, 42px)", fontWeight: 900,
+              letterSpacing: "-0.02em", margin: "0 0 14px",
+            }}>{isAr
+              ? "ابدأ بفوترة أذكى اليوم"
+              : (lang === "EN" ? "Start invoicing smarter today" : "Bugün daha akıllı faturalamaya başlayın")}</h2>
+            <p style={{
+              margin: "0 0 26px",
+              fontSize: 16, lineHeight: 1.7,
+              color: "rgba(255,255,255,0.85)", fontWeight: 500,
+            }}>{isAr
+              ? "أول 14 يوماً مجاناً. الإعداد في 10 دقائق."
+              : (lang === "EN" ? "First 14 days free. 10-minute setup." : "İlk 14 gün ücretsiz. 10 dakikada kurulum.")}</p>
+            <div style={{ display: "flex", gap: 14, justifyContent: "center", flexWrap: "wrap" }}>
+              <Link to="/register" style={{
+                display: "inline-flex", alignItems: "center", gap: 10,
+                padding: "16px 28px", borderRadius: 16,
+                background: "#fff", color: accent,
+                fontSize: 15, fontWeight: 900, textDecoration: "none",
+                boxShadow: "0 18px 44px rgba(0,0,0,0.30)",
+              }}>
+                <span>{isAr ? "ابدأ مجاناً" : (lang === "EN" ? "Try free" : "Ücretsiz dene")}</span>
+                <span aria-hidden="true">{isRTL ? "←" : "→"}</span>
+              </Link>
+              <Link to="/contact" style={{
+                display: "inline-flex", alignItems: "center",
+                padding: "16px 24px", borderRadius: 16,
+                background: "rgba(255,255,255,0.10)", color: "#fff",
+                fontSize: 15, fontWeight: 700, textDecoration: "none",
+                border: "1px solid rgba(255,255,255,0.22)",
+              }}>{isAr ? "تحدّث مع خبير" : (lang === "EN" ? "Talk to an expert" : "Uzmanla görüş")}</Link>
             </div>
           </div>
+        </section>
 
-          {/* FINAL CTA */}
-          <div
-            style={{
-              borderRadius: 40,
-              padding: 38,
-              background: "linear-gradient(135deg, " + themeDeep + ", " + themeNight + ")",
-              color: "#fff",
-              textAlign: "center",
-              boxShadow: heavyShadow,
-            }}
-          >
-            <div
-              style={{
-                opacity: 0.75,
-                fontSize: 13,
-                fontWeight: 950,
-                letterSpacing: "1.5px",
-                marginBottom: 10,
-              }}
-            >
-              {t.finalEyebrow}
-            </div>
-
-            <h2
-              style={{
-                margin: 0,
-                fontSize: 38,
-                fontWeight: 950,
-                letterSpacing: "-0.055em",
-                lineHeight: 1.08,
-              }}
-            >
-              {t.finalTitle}
-            </h2>
-
-            <p
-              style={{
-                margin: "14px auto 0",
-                maxWidth: 650,
-                opacity: 0.78,
-                fontSize: 17,
-                lineHeight: 1.7,
-                fontWeight: 650,
-              }}
-            >
-              {t.finalSub}
-            </p>
-
-            <div style={{ marginTop: 22, display: "flex", justifyContent: "center", gap: 14, flexWrap: "wrap" }}>
-              <Link
-                to="/onboarding"
-                style={{
-                  borderRadius: 22,
-                  padding: "18px 32px",
-                  color: T.ink,
-                  background: "#fff",
-                  textDecoration: "none",
-                  fontSize: 17,
-                  fontWeight: 950,
-                }}
-              >
-                {t.finalCta1} {arrow}
-              </Link>
-
-              <Link
-                to="/pricing"
-                style={{
-                  borderRadius: 22,
-                  padding: "19px 34px",
-                  color: "#fff",
-                  background: "rgba(255,255,255,.10)",
-                  border: "1px solid rgba(255,255,255,.18)",
-                  textDecoration: "none",
-                  fontSize: 17,
-                  fontWeight: 950,
-                }}
-              >
-                {t.finalCta2}
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-    </main>
+        <style>{`
+          @keyframes featTabFade {
+            from { opacity: 0; transform: translateY(6px); }
+            to   { opacity: 1; transform: translateY(0); }
+          }
+          @media (max-width: 880px) {
+            .feat-tabpanel { grid-template-columns: 1fr !important; gap: 24px !important; }
+          }
+        `}</style>
+      </main>
       <FooterV2 />
     </>
   );
