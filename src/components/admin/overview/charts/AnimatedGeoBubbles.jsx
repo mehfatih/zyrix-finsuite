@@ -26,7 +26,14 @@ const COUNTRY_POSITIONS = {
   IR: { x: 280, y: 110, label: "Iran" },
 };
 
-export default function AnimatedGeoBubbles({ regions }) {
+export default function AnimatedGeoBubbles({
+  regions,
+  // Optional formatter for the numeric value rendered in tooltips and
+  // pill chips. Default: raw count. Revenue Overview passes a currency
+  // formatter so the same component renders ₺X.XK instead of a number.
+  valueLabel,
+}) {
+  const fmt = (v) => (valueLabel ? valueLabel(v) : v);
   const max = Math.max(1, ...regions.map((r) => r.count));
   const [appeared, setAppeared] = useState([]);
   const [hovered, setHovered] = useState(null);
@@ -142,7 +149,7 @@ export default function AnimatedGeoBubbles({ regions }) {
                       fontWeight="700"
                       textAnchor="middle"
                     >
-                      {region.name}: {region.count}
+                      {region.name}: {fmt(region.count)}
                     </text>
                   </g>
                 )}
@@ -180,7 +187,7 @@ export default function AnimatedGeoBubbles({ regions }) {
             }}
           >
             <span style={{ fontWeight: 700, color: "#2DD4BF" }}>{region.code}</span>
-            <span style={{ color: "#111827", fontWeight: 600 }}>{region.count}</span>
+            <span style={{ color: "#111827", fontWeight: 600 }}>{fmt(region.count)}</span>
           </div>
         ))}
       </div>

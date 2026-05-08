@@ -8,8 +8,10 @@
 // ================================================================
 import React, { useState, useEffect } from "react";
 
-// Categorize reasons into X-axis buckets so the scatter spreads.
-const REASON_CATEGORIES = {
+// Default X-axis category map (Customer Overview). Revenue Overview
+// passes its own categoryMap (Card / Funds / Bank / Network) so the
+// same scatter component is reused without polluting either page.
+const DEFAULT_REASON_CATEGORIES = {
   "Payment failed":     { x: 0.15, label: "Billing" },
   "Login drop":         { x: 0.40, label: "Engagement" },
   "Support escalation": { x: 0.65, label: "Support" },
@@ -18,15 +20,28 @@ const REASON_CATEGORIES = {
   "NPS detractor":      { x: 0.75, label: "Sentiment" },
 };
 
-const getCategoryX = (reason) => REASON_CATEGORIES[reason]?.x ?? 0.5;
-
 const riskColor = (risk) => {
   if (risk >= 75) return "#EF4444";
   if (risk >= 65) return "#F59E0B";
   return "#FBBF24";
 };
 
-export default function AnimatedRiskList({ customers }) {
+export default function AnimatedRiskList({
+  customers,
+  // Override map of reason → { x: 0..1, label }. Falls back to the
+  // customer-overview default. Both pages stay honest about their
+  // own X-axis vocabulary.
+  categoryMap,
+  // Y-axis label rotated on the left of the plot. Default 'RISK';
+  // Revenue page uses 'OVERDUE'.
+  yAxisLabel = "RISK",
+  // Top-band label inside the plot. Default 'DANGER'; Revenue page
+  // uses 'CRITICAL'.
+  dangerLabel = "DANGER",
+}) {
+  const cats = categoryMap || DEFAULT_REASON_CATEGORIES;
+  const getCategoryX = (reason) => cats[reason]?.x ?? 0.5;
+
   const [appeared, setAppeared] = useState([]);
   const [hovered, setHovered] = useState(null);
 
@@ -57,7 +72,7 @@ export default function AnimatedRiskList({ customers }) {
           <text x={PAD.l - 6} y={(PAD.t + H - PAD.b) / 2 + 4} fill="#6B7280" fontSize="9" fontWeight="700" textAnchor="end">50%</text>
           <text x={PAD.l - 6} y={H - PAD.b + 4} fill="#6B7280" fontSize="9" fontWeight="700" textAnchor="end">0%</text>
           <text x={8} y={H / 2} fill="#6B7280" fontSize="9" fontWeight="700"
-                transform={`rotate(-90 8 ${H / 2})`} textAnchor="middle">RISK</text>
+                transform={`rotate(-90 8 ${H / 2})`} textAnchor="middle">{yAxisLabel}</text>
 
           {/* X-axis */}
           <line x1={PAD.l} y1={H - PAD.b} x2={W - PAD.r} y2={H - PAD.b} stroke="rgba(0,0,0,0.15)" strokeWidth="1" />
@@ -71,7 +86,7 @@ export default function AnimatedRiskList({ customers }) {
             height={(H - PAD.b - PAD.t) * 0.25}
             fill="rgba(239,68,68,0.06)"
           />
-          <text x={W - PAD.r - 6} y={PAD.t + 12} fill="#EF4444" fontSize="9" fontWeight="700" textAnchor="end">DANGER</text>
+          <text x={W - PAD.r - 6} y={PAD.t + 12} fill="#EF4444" fontSize="9" fontWeight="700" textAnchor="end">{dangerLabel}</text>
 
           {/* Bubbles */}
           {customers.map((customer, i) => {

@@ -102,6 +102,7 @@ const AdminCustomerImpersonate = React.lazy(() => import("./pages/admin/customer
 const AdminCustomerBulkOps     = React.lazy(() => import("./pages/admin/customers/CustomerBulkOpsPage.jsx"));
 const AdminCustomerMerge       = React.lazy(() => import("./pages/admin/customers/CustomerMergePage.jsx"));
 // Cluster B — Revenue
+const AdminRevenueOverview   = React.lazy(() => import("./pages/admin/revenue/RevenueOverviewPage.jsx"));
 const AdminRevenueDashboard  = React.lazy(() => import("./pages/admin/revenue/RevenueDashboardPage.jsx"));
 const AdminSubscriptions     = React.lazy(() => import("./pages/admin/revenue/SubscriptionsPage.jsx"));
 const AdminFailedPayments    = React.lazy(() => import("./pages/admin/revenue/FailedPaymentsPage.jsx"));
@@ -272,6 +273,7 @@ export default function App() {
               <Route path="customers/:id"         element={<AdminCustomerDetail />} />
 
               {/* Cluster B — Revenue */}
+              <Route path="revenue/overview"         element={<AdminRevenueOverview />} />
               <Route path="revenue"                  element={<AdminRevenueDashboard />} />
               <Route path="revenue/subscriptions"    element={<AdminSubscriptions />} />
               <Route path="revenue/failed-payments"  element={<AdminFailedPayments />} />

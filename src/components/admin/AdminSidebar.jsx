@@ -33,6 +33,7 @@ const GROUPS = [
     label: "Revenue",
     icon: "💰",
     items: [
+      { to: "/admin/revenue/overview",         icon: "📈", label: "Overview",            perm: PERMISSIONS.REVENUE_VIEW },
       { to: "/admin/revenue",                  icon: "📊", label: "Revenue Dashboard",  perm: PERMISSIONS.REVENUE_VIEW },
       { to: "/admin/revenue/subscriptions",    icon: "🔁", label: "Subscriptions",      perm: PERMISSIONS.SUBSCRIPTION_VIEW },
       { to: "/admin/revenue/failed-payments",  icon: "⚠",  label: "Failed Payments",    perm: PERMISSIONS.SUBSCRIPTION_VIEW },

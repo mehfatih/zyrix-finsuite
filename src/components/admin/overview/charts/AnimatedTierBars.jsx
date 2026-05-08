@@ -39,7 +39,16 @@ const renderActiveShape = (props) => {
   );
 };
 
-export default function AnimatedTierBars({ tiers, gradient = [] }) {
+export default function AnimatedTierBars({
+  tiers,
+  gradient = [],
+  // Which numeric field on each tier the donut weights by. Default
+  // "count" matches Customer Overview; Revenue Overview passes "mrr".
+  valueKey = "count",
+  // Optional formatter for the center label's big number. Falls back
+  // to toLocaleString() so the existing call sites stay unchanged.
+  valueFormatter,
+}) {
   // tiers = [{ name, count, mrr, color }]
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -51,8 +60,9 @@ export default function AnimatedTierBars({ tiers, gradient = [] }) {
     return () => clearInterval(id);
   }, [tiers.length]);
 
-  const total = tiers.reduce((s, t) => s + t.count, 0) || 1;
+  const total = tiers.reduce((s, t) => s + (t[valueKey] || 0), 0) || 1;
   const active = tiers[activeIndex];
+  const fmt = (v) => (valueFormatter ? valueFormatter(v) : v.toLocaleString());
 
   return (
     <div style={{ display: "flex", alignItems: "center", gap: "20px", minHeight: "260px", flexWrap: "wrap" }}>
@@ -62,7 +72,7 @@ export default function AnimatedTierBars({ tiers, gradient = [] }) {
           <PieChart>
             <Pie
               data={tiers}
-              dataKey="count"
+              dataKey={valueKey}
               nameKey="name"
               cx="50%"
               cy="50%"
@@ -116,7 +126,7 @@ export default function AnimatedTierBars({ tiers, gradient = [] }) {
             marginTop: "4px",
             transition: "color 300ms ease",
           }}>
-            {active?.count?.toLocaleString() || total.toLocaleString()}
+            {active ? fmt(active[valueKey] || 0) : fmt(total)}
           </div>
           <div style={{
             fontSize: "11px",
@@ -124,7 +134,7 @@ export default function AnimatedTierBars({ tiers, gradient = [] }) {
             fontWeight: 600,
             marginTop: "2px",
           }}>
-            {active ? `${((active.count / total) * 100).toFixed(1)}%` : "customers"}
+            {active ? `${(((active[valueKey] || 0) / total) * 100).toFixed(1)}%` : "share"}
           </div>
         </div>
       </div>
@@ -170,10 +180,12 @@ export default function AnimatedTierBars({ tiers, gradient = [] }) {
               </div>
               <div style={{ textAlign: "end" }}>
                 <div style={{ fontSize: "13px", fontWeight: 700, color: "#111827" }}>
-                  {tier.count}
+                  {valueKey === "mrr" ? fmt(tier.mrr || 0) : tier.count}
                 </div>
                 <div style={{ fontSize: "11px", color: "#6B7280", fontWeight: 500 }}>
-                  ₺{(tier.mrr / 1000).toFixed(0)}K MRR
+                  {valueKey === "mrr"
+                    ? `${tier.count} customers`
+                    : `₺${(tier.mrr / 1000).toFixed(0)}K MRR`}
                 </div>
               </div>
             </div>
