@@ -17,7 +17,7 @@ const GROUPS = [
   },
   {
     id: "customers",
-    label: "Cluster A · Customers",
+    label: "Customers",
     icon: "👥",
     items: [
       { to: "/admin/customers/overview",   icon: "📈", label: "Overview",         perm: PERMISSIONS.CUSTOMER_VIEW },
@@ -30,7 +30,7 @@ const GROUPS = [
   },
   {
     id: "revenue",
-    label: "Cluster B · Revenue",
+    label: "Revenue",
     icon: "💰",
     items: [
       { to: "/admin/revenue",                  icon: "📊", label: "Revenue Dashboard",  perm: PERMISSIONS.REVENUE_VIEW },
@@ -46,7 +46,7 @@ const GROUPS = [
   },
   {
     id: "plans",
-    label: "Cluster C · Plans",
+    label: "Plans",
     icon: "💎",
     items: [
       { to: "/admin/plans",              icon: "💎", label: "Plans Editor",     perm: PERMISSIONS.PLAN_VIEW },
@@ -59,7 +59,7 @@ const GROUPS = [
   },
   {
     id: "support",
-    label: "Cluster D · Support",
+    label: "Support",
     icon: "💬",
     items: [
       { to: "/admin/ops/tickets",         icon: "🎫", label: "Tickets Queue",       perm: PERMISSIONS.SUPPORT_VIEW },
@@ -76,7 +76,7 @@ const GROUPS = [
   },
   {
     id: "analytics",
-    label: "Cluster E · Analytics",
+    label: "Analytics",
     icon: "📈",
     items: [
       { to: "/admin/analytics/product",      icon: "📊", label: "Product Analytics",  perm: PERMISSIONS.ANALYTICS_VIEW },
@@ -94,7 +94,7 @@ const GROUPS = [
   },
   {
     id: "compliance",
-    label: "Cluster F · Compliance",
+    label: "Compliance",
     icon: "🛡",
     items: [
       { to: "/admin/compliance/kvkk",            icon: "🇹🇷", label: "KVKK Requests",           perm: PERMISSIONS.KVKK_RESPOND },
@@ -109,7 +109,7 @@ const GROUPS = [
   },
   {
     id: "system",
-    label: "Cluster G · System",
+    label: "System",
     icon: "⚙",
     items: [
       { to: "/admin/system/health",     icon: "❤️", label: "System Health",       perm: PERMISSIONS.SYSTEM_VIEW },
@@ -128,7 +128,7 @@ const GROUPS = [
   },
   {
     id: "marketing",
-    label: "Cluster H · Marketing",
+    label: "Marketing",
     icon: "📣",
     items: [
       { to: "/admin/marketing/reviews",    icon: "⭐", label: "Reviews",            perm: PERMISSIONS.REVIEW_MODERATE },
@@ -145,7 +145,7 @@ const GROUPS = [
   },
   {
     id: "musavir",
-    label: "Cluster I · Mali Müşavir",
+    label: "Mali Müşavir",
     icon: "🧮",
     items: [
       { to: "/admin/musavir/partners",      icon: "🤝", label: "Partners Directory", perm: PERMISSIONS.MUSAVIR_VIEW },
@@ -191,7 +191,7 @@ export default function AdminSidebar({ admin, onLogout }) {
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
           <div style={{ width: 36, height: 36, borderRadius: 10, background: `linear-gradient(135deg, ${brand.base}, ${brand.dark})`, color: "#fff", display: "grid", placeItems: "center", fontSize: 18, fontWeight: 900 }}>Z</div>
           <div style={{ minWidth: 0 }}>
-            <div style={{ fontSize: 9, fontWeight: 800, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.12em" }}>Zyrix Admin</div>
+            <div style={{ fontSize: 9, fontWeight: 800, color: "rgba(255, 255, 255, 0.7)", textTransform: "uppercase", letterSpacing: "0.12em" }}>Zyrix Admin</div>
             <div style={{ fontSize: 13, fontWeight: 800, color: "#fff", marginTop: 2 }}>Operations Center</div>
           </div>
         </div>
@@ -200,8 +200,8 @@ export default function AdminSidebar({ admin, onLogout }) {
       {/* Admin info */}
       {admin && (
         <div style={{ padding: "14px 18px", borderBottom: "1px solid rgba(255,255,255,0.08)", background: "rgba(255,255,255,0.02)" }}>
-          <div style={{ fontSize: 12, color: "#fff", fontWeight: 700, marginBottom: 4 }}>{admin.fullName || admin.email}</div>
-          <div style={{ fontSize: 10, color: "#94A3B8", marginBottom: 8 }}>{admin.email}</div>
+          <div style={{ fontSize: 15, color: "#FFFFFF", fontWeight: 700, marginBottom: 4 }}>{admin.fullName || admin.email}</div>
+          <div style={{ fontSize: 13, color: "rgba(255, 255, 255, 0.75)", marginBottom: 8 }}>{admin.email}</div>
           <span style={{ fontSize: 9, fontWeight: 800, color: "#fff", background: `linear-gradient(135deg, ${role.base}, ${role.dark})`, padding: "3px 10px", borderRadius: 999, textTransform: "uppercase", letterSpacing: "0.08em" }}>
             {role.label}
           </span>
@@ -223,13 +223,13 @@ export default function AdminSidebar({ admin, onLogout }) {
                   style={{
                     width: "100%", display: "flex", alignItems: "center", gap: 10,
                     padding: "8px 10px", background: "transparent", border: "none",
-                    color: "#94A3B8", fontSize: 11, fontWeight: 800,
-                    textTransform: "uppercase", letterSpacing: "0.06em",
+                    color: "#FFFFFF", fontSize: 12, fontWeight: 700,
+                    textTransform: "uppercase", letterSpacing: "0.05em",
                     cursor: "pointer", textAlign: "start",
                     borderRadius: 8,
                   }}
-                  onMouseEnter={(e) => { e.currentTarget.style.color = "#fff"; e.currentTarget.style.background = "rgba(255,255,255,0.04)"; }}
-                  onMouseLeave={(e) => { e.currentTarget.style.color = "#94A3B8"; e.currentTarget.style.background = "transparent"; }}
+                  onMouseEnter={(e) => { e.currentTarget.style.background = "rgba(255, 255, 255, 0.08)"; }}
+                  onMouseLeave={(e) => { e.currentTarget.style.background = "transparent"; }}
                 >
                   <span>{g.icon}</span>
                   <span style={{ flex: 1 }}>{g.label}</span>
@@ -243,15 +243,17 @@ export default function AdminSidebar({ admin, onLogout }) {
                       key={item.to}
                       to={item.to}
                       end
+                      className="admin-nav-link"
                       style={({ isActive }) => ({
                         display: "flex", alignItems: "center", gap: 10,
                         padding: "8px 12px", borderRadius: 8,
                         textDecoration: "none",
-                        background: isActive ? `linear-gradient(90deg, ${brand.base}30, ${brand.base}06)` : "transparent",
-                        color: isActive ? "#fff" : "#CBD5E1",
-                        fontSize: 12, fontWeight: isActive ? 700 : 500,
-                        borderInlineStart: isActive ? `2px solid ${brand.base}` : "2px solid transparent",
+                        background: isActive ? "rgba(227, 10, 23, 0.25)" : "transparent",
+                        color: "#FFFFFF",
+                        fontSize: 14, fontWeight: isActive ? 700 : 500,
+                        borderInlineStart: isActive ? "3px solid #E30A17" : "3px solid transparent",
                         marginBottom: 1,
+                        transition: "background 150ms ease",
                       })}
                     >
                       <span style={{ fontSize: 13 }}>{item.icon}</span>
@@ -274,12 +276,19 @@ export default function AdminSidebar({ admin, onLogout }) {
         >
           ⏻ Sign out
         </button>
-        <div style={{ marginTop: 10, fontSize: 9, color: "#475569", textAlign: "center" }}>
+        <div style={{ marginTop: 10, fontSize: 9, color: "rgba(255, 255, 255, 0.4)", textAlign: "center" }}>
           v1.3.0 · Phase 14
         </div>
       </div>
 
       <style>{`
+        /* Hover bg for inactive nav items. NavLink is using an inline-style
+           callback so we have to !important past the inline transparent bg
+           it sets in its non-active branch. Active items keep their wine
+           red tint (we don't override on hover). */
+        .admin-nav-link:not(.active):hover {
+          background: rgba(255, 255, 255, 0.08) !important;
+        }
         @media (max-width: 900px) {
           .admin-sidebar { position: fixed; insetInlineStart: -280px; transition: insetInlineStart .25s; z-index: 100; }
           .admin-sidebar.open { insetInlineStart: 0; }

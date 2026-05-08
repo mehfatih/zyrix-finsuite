@@ -1,21 +1,49 @@
 /* ================================================================
-   index.css — global typography hardening.
-   Keeps text crisp across every page (admin, marketing, dashboard)
-   by enforcing antialiased smoothing, killing inherited text-shadow,
-   and letting browsers run their best legibility pass on headings.
+   index.css — global typography hardening / anti-blur.
+   Keeps text crisp across every page (admin, marketing, dashboard).
    ================================================================ */
 
-html, body {
+/* === ANTI-BLUR / CRISP TEXT === */
+html, body, #root {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   -webkit-text-size-adjust: 100%;
+  font-feature-settings: "kern" 1, "liga" 1;
 }
 
-h1, h2, h3, h4, h5, h6, p, span, a, button, td, th, label, div {
-  text-shadow: none !important;
+/* Kill text-shadow everywhere unless explicitly needed.
+   Decorative landing-page text-shadows still get explicit inline styles
+   that win over this rule (no !important here, so opt-ins still work). */
+*,
+*::before,
+*::after {
+  text-shadow: none;
 }
 
+/* Kill any inherited filter on text elements — a parent with `filter:`
+   re-rasterises descendants and softens text. */
+h1, h2, h3, h4, h5, h6,
+p, span, a, button, td, th, label, li, div {
+  filter: none;
+  -webkit-filter: none;
+}
+
+/* Neutralise will-change on layout containers. will-change forces GPU
+   compositing and softens text on some browsers / DPI combos. */
+.admin-content, .sidebar, .nav, header, main {
+  will-change: auto;
+}
+
+/* Tighten heading letter-spacing for crispness. */
 h1, h2, h3, h4 {
   letter-spacing: -0.01em;
+  font-weight: 700;
+}
+
+/* Force GPU subpixel-snap for transformed elements so animation
+   targets don't smear into half-pixel positions. */
+[style*="transform"], .transform {
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }
