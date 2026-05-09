@@ -17,6 +17,9 @@ const ChartsShowcase        = React.lazy(() => import("./pages/v2/_dev/ChartsSho
 // Sprint D-3 — insights recipients + share history pages
 const RecipientsPage        = React.lazy(() => import("./pages/v2/insights/RecipientsPage.jsx"));
 const SharesPage            = React.lazy(() => import("./pages/v2/insights/SharesPage.jsx"));
+// Sprint D-4 — notification archive + preferences pages
+const NotificationArchivePage     = React.lazy(() => import("./pages/v2/notifications/NotificationArchivePage.jsx"));
+const NotificationPreferencesPage = React.lazy(() => import("./pages/v2/notifications/NotificationPreferencesPage.jsx"));
 
 // ── Eagerly loaded (auth + always-on) ──────────────────────────
 import LoginPage          from "./pages/LoginPage";
@@ -288,6 +291,8 @@ export default function App() {
             <Route path="/v2/_dev/charts"     element={<ChartsShowcase />} />
             <Route path="/insights/recipients" element={<RequireAuth><RecipientsPage /></RequireAuth>} />
             <Route path="/insights/shares"     element={<RequireAuth><SharesPage /></RequireAuth>} />
+            <Route path="/notifications"           element={<RequireAuth><NotificationArchivePage /></RequireAuth>} />
+            <Route path="/settings/notifications"  element={<RequireAuth><NotificationPreferencesPage /></RequireAuth>} />
             <Route path="/payment"      element={<RequireAuth><PaymentPage /></RequireAuth>} />
             {/* Phase 14 — Admin Operations Center (separate auth) */}
             <Route path="/admin/login"  element={<AdminLoginPage />} />
