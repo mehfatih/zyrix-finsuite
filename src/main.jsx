@@ -6,6 +6,7 @@ import { CountryProvider } from './hooks/useCountry.jsx';
 import "./index.css";
 import "./styles/mobile-fixes.css";
 import "./styles/a11y.css";
+import "./styles/cinematic.css";
 import { initAnalytics } from "./utils/analytics";
 import { initErrorReporting } from "./utils/errorReporting";
 import { initWebVitals } from "./utils/performance";

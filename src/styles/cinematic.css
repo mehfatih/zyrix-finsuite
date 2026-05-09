@@ -1,0 +1,104 @@
+/* ================================================================
+   cinematic.css — CSS variables + keyframes for the cinematic system.
+   Imported once from main.jsx; consumed by foundation components and
+   cinematic charts via either CSS var (`var(--cn-electric-cyan)`) or
+   keyframe name (`animation: cn-aurora-drift 28s ...`).
+   ================================================================ */
+
+:root {
+  /* Backgrounds */
+  --cn-deep-space-1: #0A0E27;
+  --cn-deep-space-2: #0D1230;
+  --cn-deep-space-3: #131838;
+
+  /* Accents */
+  --cn-electric-cyan: #00D9FF;
+  --cn-cyan-glow:     #5DFAFF;
+  --cn-plasma-violet: #9D4EDD;
+  --cn-violet-glow:   #C084FC;
+  --cn-neon-mint:     #06FFA5;
+  --cn-mint-glow:     #5BFFC5;
+  --cn-solar-amber:   #FFB800;
+  --cn-amber-glow:    #FFD45C;
+  --cn-crimson-glow:  #FF3D5A;
+  --cn-crimson-deep:  #C92740;
+
+  /* Text */
+  --cn-pearl-white: #F8FAFC;
+  --cn-pearl-dim:   #CBD5E1;
+  --cn-pearl-faint: #64748B;
+
+  /* Glass tints */
+  --cn-glass-1:             rgba(255, 255, 255, 0.05);
+  --cn-glass-2:             rgba(255, 255, 255, 0.08);
+  --cn-glass-3:             rgba(255, 255, 255, 0.12);
+  --cn-glass-border:        rgba(255, 255, 255, 0.10);
+  --cn-glass-border-strong: rgba(255, 255, 255, 0.18);
+}
+
+/* ─── Keyframes ────────────────────────────────────────────── */
+
+@keyframes cn-aurora-drift {
+  0%, 100% { transform: translate3d(0%, 0%, 0) scale(1); opacity: 0.85; }
+  33%      { transform: translate3d(2%, -2%, 0) scale(1.04); opacity: 1; }
+  66%      { transform: translate3d(-1.5%, 1%, 0) scale(0.98); opacity: 0.92; }
+}
+
+@keyframes cn-aurora-rotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes cn-pulse-soft {
+  0%, 100% { transform: scale(1);    opacity: 1; }
+  50%      { transform: scale(1.08); opacity: 0.7; }
+}
+
+@keyframes cn-pulse-ring {
+  0%   { transform: scale(0.9); opacity: 0.85; }
+  100% { transform: scale(1.7); opacity: 0;    }
+}
+
+@keyframes cn-heartbeat {
+  0%, 28%, 100% { transform: scale(1); }
+  14%           { transform: scale(1.18); }
+  20%           { transform: scale(0.96); }
+}
+
+@keyframes cn-shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+@keyframes cn-fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes cn-glow-breathe {
+  0%, 100% { filter: brightness(1)    saturate(1); }
+  50%      { filter: brightness(1.25) saturate(1.15); }
+}
+
+@keyframes cn-aurora-border {
+  0%, 100% { background-position:   0% 50%; }
+  50%      { background-position: 100% 50%; }
+}
+
+/* Texture noise overlay — apply via `cn-noise` class on a
+   positioned ancestor (parent must have `position: relative`).
+   3-5% opacity; mix-blend-mode overlay prevents banding on gradients. */
+.cn-noise {
+  position: relative;
+}
+.cn-noise::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.04 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  opacity: 0.55;
+  mix-blend-mode: overlay;
+  border-radius: inherit;
+  z-index: 1;
+}
