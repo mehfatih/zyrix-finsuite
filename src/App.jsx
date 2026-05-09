@@ -7,6 +7,7 @@ import ImpersonationBanner from "./components/ImpersonationBanner.jsx";
 // Phase 15 — Customer Dashboard V2 foundation
 import { FeatureFlagsProvider } from "./contexts/FeatureFlagsContext.jsx";
 import { CmdKProvider } from "./contexts/CmdKContext.jsx";
+import { UndoProvider } from "./contexts/UndoContext.jsx";
 import FeatureFlagDrawer from "./components/v2/FeatureFlagDrawer.jsx";
 import DashboardSwitchPill from "./components/v2/DashboardSwitchPill.jsx";
 const DashboardV2Page = React.lazy(() => import("./pages/v2/DashboardV2Page.jsx"));
@@ -232,6 +233,7 @@ export default function App() {
     <AuthProvider>
       <FeatureFlagsProvider>
       <CmdKProvider>
+      <UndoProvider>
       <BrowserRouter>
         <ScrollToTop />
         <ImpersonationBanner />
@@ -467,6 +469,7 @@ export default function App() {
           </Routes>
         </Suspense>
       </BrowserRouter>
+      </UndoProvider>
       </CmdKProvider>
       </FeatureFlagsProvider>
     </AuthProvider>
