@@ -208,3 +208,47 @@ HIDE rather than dead-link. Re-enable when URL routing is wired.
 ### User-facing rule
 The V2 sidebar now never offers a click that 404s. Only the OPERASYON tier
 is visible until URL routing is implemented for the AI/Growth tiers.
+
+## Prompt 5 — Real KPI data
+
+### Backend (zyrix-finsuite-backend, branch: main)
+- `src/services/customer/kpiComputations.ts` (new — 12 real KPI computations + registry)
+- `src/controllers/customer/kpiValuesController.ts` (new)
+- Touched: `src/routes/customer/dashboardPrefs.ts` (added `GET /kpi-values`)
+
+### Frontend (zyrix-finsuite, branch: main)
+- Touched: `src/api/v2/kpiData.js` (mock body replaced with real fetch)
+
+### Schema mapping (real → spec placeholders)
+- `Invoice.totalAmount` → **`Invoice.total`**
+- `Invoice.paidAt` → **`Invoice.paidDate`**
+- `Invoice.customerId` (FK) → **not present** — `top_customer_revenue` groups by `customerName` (string)
+- `Customer.status` → **not present** — no filter applied; ARPU and ai/health KPIs use total customer count
+- `Customer.lifetime` → **`Customer.totalSpent`** (aggregate field)
+- `Expense.incurredAt` → **`Expense.date`**
+- `PurchaseInvoice` → **not present** — `Expense` used as COGS proxy for `gross_margin`
+- `CashAccount.balance` → **derived** from sum(BankTransaction IN) − sum(BankTransaction OUT)
+- `TaxObligation` → **`TaxEvent`** with `isSubmitted: false` filter (no status enum)
+- `unauthorized()` / `badRequest()` helpers → **not present** — inline `res.status().json()`
+
+### KPIs computed from real data (12)
+`mrr`, `mrr_growth_pct`, `top_customer_revenue`, `arpu`, `gross_margin`,
+`new_customers_30d`, `cash_balance`, `cash_runway`, `overdue_receivables`,
+`pending_invoices`, `customer_health_pct`, `tax_burden`
+
+### KPIs returning EMPTY
+- **`payable_30d`** — no `PurchaseInvoice` model and `Expense` lacks `dueDate`/`status`
+- `churn_rate`, `nrr` — no subscription analytics for merchants's customers
+- `ai_actions_taken_today`, `predictions_accuracy_30d`, `automation_savings_hours` — no AI ops log
+- `crisis_risk_score`, `hidden_cash_found_30d` — no risk/intelligence model
+- `inventory_turnover`, `service_utilization` — no operations metrics
+- `kdv_load`, `vat_load`, `zatca_compliance` — placeholder until detailed tax computations land
+
+### Perf
+Typical 4-KPI request fans out via `Promise.all` to 4 parallel queries. Read-only. No new indexes — existing FK indexes on `merchantId` cover the queries.
+
+### Safety guarantees
+- Read-only — no mutations
+- Per-KPI try/catch — single failure returns EMPTY for that id, never breaks the response
+- Frontend coerces `null`/missing → `0` so cards render zeros instead of crashing
+- Token: frontend tries `zyrix_token` (codebase actual) → `customerToken` → `token` (legacy fallbacks)
