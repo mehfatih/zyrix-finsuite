@@ -10,7 +10,9 @@ import { CmdKProvider } from "./contexts/CmdKContext.jsx";
 import { UndoProvider } from "./contexts/UndoContext.jsx";
 import FeatureFlagDrawer from "./components/v2/FeatureFlagDrawer.jsx";
 import DashboardSwitchPill from "./components/v2/DashboardSwitchPill.jsx";
-const DashboardV2Page = React.lazy(() => import("./pages/v2/DashboardV2Page.jsx"));
+const DashboardV2Page       = React.lazy(() => import("./pages/v2/DashboardV2Page.jsx"));
+// Sprint D-1 — internal cinematic showcase routes (not surfaced in navigation).
+const FoundationShowcase    = React.lazy(() => import("./pages/v2/_dev/FoundationShowcase.jsx"));
 
 // ── Eagerly loaded (auth + always-on) ──────────────────────────
 import LoginPage          from "./pages/LoginPage";
@@ -278,6 +280,7 @@ export default function App() {
             <Route path="/register"     element={<RegisterPage />} />
             <Route path="/dashboard/*"  element={<RequireAuth><CustomerDashboard /></RequireAuth>} />
             <Route path="/v2/dashboard" element={<RequireAuth><DashboardV2Page /></RequireAuth>} />
+            <Route path="/v2/_dev/foundation" element={<FoundationShowcase />} />
             <Route path="/payment"      element={<RequireAuth><PaymentPage /></RequireAuth>} />
             {/* Phase 14 — Admin Operations Center (separate auth) */}
             <Route path="/admin/login"  element={<AdminLoginPage />} />
