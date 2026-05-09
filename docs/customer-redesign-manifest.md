@@ -78,6 +78,38 @@ WHERE table_name = 'customer_dashboard_preferences' ORDER BY ordinal_position;
 
 All flags default OFF. The legacy `/dashboard` works exactly as before. Nothing user-visible changes until the user explicitly enables a flag via the violet gear at bottom-left, or clicks the "Yeni Panoyu Dene" pill at top-right.
 
+## Prompt 2 additions
+
+### Frontend (zyrix-finsuite, branch: feature/customer-redesign)
+- `src/config/v2/sidebarRegistry.js` (registry + flat list + legacy redirects)
+- `src/components/v2/sidebar/SidebarV2.jsx` (premium navy 3-tier sidebar)
+- `src/components/v2/cmdk/CommandPalette.jsx` (Cmd+K modal — parses `data.suggestion` envelope)
+- `src/contexts/CmdKContext.jsx` (provider + global ⌘K listener, lazy-mounts the modal)
+- `src/components/v2/CustomerLayoutV2.jsx` (sidebar + main wrapper, gated by `newSidebarV2` flag)
+- Touched: `src/pages/v2/DashboardV2Page.jsx` — now wraps content in `CustomerLayoutV2`, hydrates user from `zyrix_user` localStorage, signs out by clearing `zyrix_token` + `zyrix_user`.
+- Touched: `src/App.jsx` — wrapped existing tree with `<CmdKProvider>` between `FeatureFlagsProvider` and `BrowserRouter`.
+
+### Backend (zyrix-finsuite-backend, branch: feature/customer-redesign)
+- `src/controllers/customer/cmdkController.ts` (Gemini 2.0 Flash intent classifier; uses `req.merchant.id`; returns `{ success: true, data: { suggestion } }`; 4s timeout with graceful null fallback).
+- `src/routes/customer/cmdk.ts` (`POST /cmdk-intent` behind the standard `authenticate` middleware).
+- Touched: `src/index.ts` — mounted at `app.use('/api/customer', customerCmdkRoutes)` so the final URL is `POST /api/customer/cmdk-intent`.
+
+### Feature flags now functional
+- `newSidebarV2` — when ON, V2 pages render the new navy sidebar via `CustomerLayoutV2`.
+- `cmdKPalette` — Cmd+K listener is always-on globally once the provider mounts; the toggle is informational for now (no UI hides it).
+
+### Behavioral changes
+- New keyboard shortcut: ⌘K / Ctrl+K opens command palette globally (lazy-mounts on first use).
+- `/v2/dashboard` renders the new layout when `customerDashboardV2` + `newSidebarV2` are both ON.
+- Legacy entries (Faturalar/E-Fatura/Bankalar/Çek/Stok eski) hidden from sidebar but discoverable in Cmd+K with `→ <new route>` hint.
+
+### Prompt 2 deviations from spec
+- **Customer token storage**: spec read `customerToken` / `token`; this codebase actually uses `zyrix_token` (and `zyrix_user`). Frontend reads `zyrix_token` first, falls back to the legacy keys.
+- **Backend response envelope**: spec returned `{ ok: true, suggestion }`; aligned with project convention `{ success: true, data: { suggestion } }`. Frontend parses `json.data.suggestion`.
+- **Customer auth middleware**: spec referenced `authMiddleware`; used the actual `authenticate` from `src/middleware/auth.ts` consistent with Prompt 1.
+- **Gemini API key**: read from `env.geminiApiKey` (existing wrapper) instead of `process.env.GEMINI_API_KEY` directly.
+- **Emoji removal in palette section header**: dropped the ✨ from "AI ÖNERİSİ" section title to match Bible §11 (Lucide icons in chrome, no emojis). The Sparkles icon next to the row already conveys AI.
+
 ## Deviations from Prompt 1 spec
 - **Prisma client import path**: spec used `'../../lib/prisma'`; this codebase uses `'../../config/database'`. Followed the codebase.
 - **Customer auth middleware**: spec used `authMiddleware` reading `req.user.userId`; this codebase uses `authenticate` reading `req.merchant.id`. Followed the codebase.
