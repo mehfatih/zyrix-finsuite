@@ -173,3 +173,38 @@ All flags default OFF. The legacy `/dashboard` works exactly as before. Nothing 
 - **Pill placement**: spec said "next to the PRODUCTION badge in the customer header"; that badge actually lives in `AdminTopBar.jsx` (admin-only). Per user direction, mounted as a top-right floating pill on `/dashboard` and `/v2/dashboard` only.
 - **Animations.js useCountUp hook**: spec used a conditional `require('react')` for SSR safety; rewrote with standard ESM imports and `useState`/`useEffect` since this is a client-only Vite app.
 - **Response envelope**: spec used `{ ok: true, ... }`; aligned with the rest of this codebase's `{ success: true, data: { ... } }`.
+
+## Prompt 4 patch — V2 sidebar route reconciliation
+
+Audited V2 `sidebarRegistry.js` against the actual router on 2026-05-09. Of
+55 original entries: 1 KEEP, 43 REDIRECT to `/dashboard`, 11 hub-level HIDE
+(covering 35 children + 2 single-route hubs).
+
+### Tier 1 — REDIRECT (43)
+All children of Satış / Alış / Müşteriler / Nakit & Banka / E-Fatura & Vergi /
+Stok & Ürün / Raporlar now point to `/dashboard`. The legacy CustomerDashboard
+shell renders, so no 404 — but each click currently lands on the dashboard
+home rather than the originally-intended sub-page. A future prompt will
+teach CustomerDashboard.jsx to read URL → internal `page` state and re-point
+these to their real targets.
+
+### Tier 2 — HIDE entire hubs (Zekâ)
+- ai-copilot, tahminler, musteri-dna, risk-saglik, sesli-iletisim
+The underlying features are mostly implemented inside CustomerDashboard but
+are not URL-addressable. Per patch guidance for Tier 2 ai-flagged entries,
+HIDE rather than dead-link. Re-enable when URL routing is wired.
+
+### Tier 3 — HIDE entire hubs (Büyüme)
+- pazar-yeri, ekosistem, capital, universite
+
+### Code changes
+- `src/config/v2/sidebarRegistry.js`: Tier 1 child `route` fields rewritten
+  to `/dashboard`; `hidden: true` on all Tier 2/3 hubs and 2 single-route
+  hubs (capital, universite); `flattenSidebar()` now skips hidden entries.
+- `src/components/v2/sidebar/SidebarV2.jsx`: tier-level filter drops hidden
+  hubs and hubs whose children are all hidden; `Hub` child loop filters
+  hidden children.
+
+### User-facing rule
+The V2 sidebar now never offers a click that 404s. Only the OPERASYON tier
+is visible until URL routing is implemented for the AI/Growth tiers.

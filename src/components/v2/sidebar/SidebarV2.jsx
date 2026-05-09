@@ -181,18 +181,24 @@ export default function SidebarV2({
               </div>
             )}
 
-            {tier.hubs.map((hub) => (
-              <Hub
-                key={hub.id}
-                hub={hub}
-                language={language}
-                collapsed={collapsed}
-                isOpen={openHubs[hub.id]}
-                isActive={isActive}
-                onToggle={() => toggleHub(hub.id)}
-                onNavigate={(r) => navigate(r)}
-              />
-            ))}
+            {tier.hubs
+              .filter((hub) => {
+                if (hub.hidden) return false;
+                if (!hub.children) return true;
+                return hub.children.some((c) => !c.hidden);
+              })
+              .map((hub) => (
+                <Hub
+                  key={hub.id}
+                  hub={hub}
+                  language={language}
+                  collapsed={collapsed}
+                  isOpen={openHubs[hub.id]}
+                  isActive={isActive}
+                  onToggle={() => toggleHub(hub.id)}
+                  onNavigate={(r) => navigate(r)}
+                />
+              ))}
           </div>
         ))}
       </nav>
@@ -319,7 +325,7 @@ function Hub({ hub, language, collapsed, isOpen, isActive, onToggle, onNavigate 
       {/* Children (only if expanded and not collapsed) */}
       {hasChildren && isOpen && !collapsed && (
         <div style={{ paddingInlineStart: '20px', marginBottom: '4px' }}>
-          {hub.children.map((child) => {
+          {hub.children.filter((c) => !c.hidden).map((child) => {
             const active = isActive(child.route);
             return (
               <button

@@ -34,12 +34,12 @@ export const SIDEBAR_REGISTRY = [
         icon: 'TrendingUp',
         labels: { tr: 'Satış', en: 'Sales', ar: 'المبيعات' },
         children: [
-          { id: 'satis-faturalari', route: '/sales/invoices',  labels: { tr: 'Satış Faturaları', en: 'Sales Invoices', ar: 'فواتير البيع' } },
-          { id: 'siparisler',       route: '/sales/orders',    labels: { tr: 'Siparişler', en: 'Orders', ar: 'الطلبات' } },
-          { id: 'teklifler',        route: '/sales/quotes',    labels: { tr: 'Teklifler', en: 'Quotes', ar: 'العروض' } },
-          { id: 'esnaf-faturasi',   route: '/sales/retail',    labels: { tr: 'Esnaf Faturası', en: 'Retail Invoice', ar: 'فاتورة التجزئة' } },
-          { id: 'satis-hatti',      route: '/sales/pipeline',  labels: { tr: 'Satış Hattı', en: 'Sales Pipeline', ar: 'خط المبيعات' }, ai: true },
-          { id: 'klasik-ozet',      route: '/sales/classic',   labels: { tr: 'Klasik Özet', en: 'Classic Summary', ar: 'الملخص الكلاسيكي' } }
+          { id: 'satis-faturalari', route: '/dashboard',  labels: { tr: 'Satış Faturaları', en: 'Sales Invoices', ar: 'فواتير البيع' } },
+          { id: 'siparisler',       route: '/dashboard',  labels: { tr: 'Siparişler', en: 'Orders', ar: 'الطلبات' } },
+          { id: 'teklifler',        route: '/dashboard',  labels: { tr: 'Teklifler', en: 'Quotes', ar: 'العروض' } },
+          { id: 'esnaf-faturasi',   route: '/dashboard',  labels: { tr: 'Esnaf Faturası', en: 'Retail Invoice', ar: 'فاتورة التجزئة' } },
+          { id: 'satis-hatti',      route: '/dashboard',  labels: { tr: 'Satış Hattı', en: 'Sales Pipeline', ar: 'خط المبيعات' }, ai: true },
+          { id: 'klasik-ozet',      route: '/dashboard',  labels: { tr: 'Klasik Özet', en: 'Classic Summary', ar: 'الملخص الكلاسيكي' } }
         ]
       },
       {
@@ -47,11 +47,11 @@ export const SIDEBAR_REGISTRY = [
         icon: 'ShoppingCart',
         labels: { tr: 'Alış', en: 'Purchases', ar: 'المشتريات' },
         children: [
-          { id: 'alis-faturalari',   route: '/purchase/invoices',     labels: { tr: 'Alış Faturaları', en: 'Purchase Invoices', ar: 'فواتير الشراء' } },
-          { id: 'alis-siparisleri',  route: '/purchase/orders',       labels: { tr: 'Alış Siparişleri', en: 'Purchase Orders', ar: 'طلبات الشراء' } },
-          { id: 'hizmet-alimi',      route: '/purchase/services',     labels: { tr: 'Hizmet Alımı', en: 'Service Procurement', ar: 'شراء الخدمات' } },
-          { id: 'tedarikciler',      route: '/purchase/suppliers',    labels: { tr: 'Tedarikçiler', en: 'Suppliers', ar: 'الموردون' }, ai: true },
-          { id: 'giderler',          route: '/purchase/expenses',     labels: { tr: 'Giderler', en: 'Expenses', ar: 'المصروفات' } }
+          { id: 'alis-faturalari',   route: '/dashboard', labels: { tr: 'Alış Faturaları', en: 'Purchase Invoices', ar: 'فواتير الشراء' } },
+          { id: 'alis-siparisleri',  route: '/dashboard', labels: { tr: 'Alış Siparişleri', en: 'Purchase Orders', ar: 'طلبات الشراء' } },
+          { id: 'hizmet-alimi',      route: '/dashboard', labels: { tr: 'Hizmet Alımı', en: 'Service Procurement', ar: 'شراء الخدمات' } },
+          { id: 'tedarikciler',      route: '/dashboard', labels: { tr: 'Tedarikçiler', en: 'Suppliers', ar: 'الموردون' }, ai: true },
+          { id: 'giderler',          route: '/dashboard', labels: { tr: 'Giderler', en: 'Expenses', ar: 'المصروفات' } }
         ]
       },
       {
@@ -59,12 +59,12 @@ export const SIDEBAR_REGISTRY = [
         icon: 'Users',
         labels: { tr: 'Müşteriler', en: 'Customers', ar: 'العملاء' },
         children: [
-          { id: 'musteri-listesi', route: '/customers',           labels: { tr: 'Müşteri Listesi', en: 'Customer List', ar: 'قائمة العملاء' } },
-          { id: 'musteri-360',     route: '/customers/360',       labels: { tr: 'Müşteri 360°', en: 'Customer 360°', ar: 'نظرة 360' }, ai: true },
-          { id: 'musteri-skor',    route: '/customers/score',     labels: { tr: 'Müşteri Skor', en: 'Customer Score', ar: 'تقييم العميل' }, ai: true },
-          { id: 'anlasmalar',      route: '/customers/deals',     labels: { tr: 'Anlaşmalar', en: 'Deals', ar: 'الصفقات' } },
-          { id: 'gorevler',        route: '/customers/tasks',     labels: { tr: 'Görevler', en: 'Tasks', ar: 'المهام' } },
-          { id: 'musteri-portali', route: '/customers/portal',    labels: { tr: 'Müşteri Portalı', en: 'Customer Portal', ar: 'بوابة العميل' }, ai: true }
+          { id: 'musteri-listesi', route: '/dashboard', labels: { tr: 'Müşteri Listesi', en: 'Customer List', ar: 'قائمة العملاء' } },
+          { id: 'musteri-360',     route: '/dashboard', labels: { tr: 'Müşteri 360°', en: 'Customer 360°', ar: 'نظرة 360' }, ai: true },
+          { id: 'musteri-skor',    route: '/dashboard', labels: { tr: 'Müşteri Skor', en: 'Customer Score', ar: 'تقييم العميل' }, ai: true },
+          { id: 'anlasmalar',      route: '/dashboard', labels: { tr: 'Anlaşmalar', en: 'Deals', ar: 'الصفقات' } },
+          { id: 'gorevler',        route: '/dashboard', labels: { tr: 'Görevler', en: 'Tasks', ar: 'المهام' } },
+          { id: 'musteri-portali', route: '/dashboard', labels: { tr: 'Müşteri Portalı', en: 'Customer Portal', ar: 'بوابة العميل' }, ai: true }
         ]
       },
       {
@@ -72,11 +72,11 @@ export const SIDEBAR_REGISTRY = [
         icon: 'Wallet',
         labels: { tr: 'Nakit & Banka', en: 'Cash & Bank', ar: 'النقدية والبنوك' },
         children: [
-          { id: 'kasa',             route: '/cash/registers',       labels: { tr: 'Kasa Hesapları', en: 'Cash Registers', ar: 'حسابات الصندوق' } },
-          { id: 'banka-mutabakat',  route: '/cash/bank-recon',      labels: { tr: 'Banka Mutabakatı', en: 'Bank Reconciliation', ar: 'مطابقة البنك' }, ai: true },
-          { id: 'cek-senet',        route: '/cash/checks',          labels: { tr: 'Çek & Senet', en: 'Checks & Notes', ar: 'الشيكات والسندات' } },
-          { id: 'finansman',        route: '/cash/financing',       labels: { tr: 'Finansman', en: 'Financing', ar: 'التمويل' } },
-          { id: 'taksit',           route: '/cash/installments',    labels: { tr: 'Taksit', en: 'Installments', ar: 'الأقساط' } }
+          { id: 'kasa',             route: '/dashboard', labels: { tr: 'Kasa Hesapları', en: 'Cash Registers', ar: 'حسابات الصندوق' } },
+          { id: 'banka-mutabakat',  route: '/dashboard', labels: { tr: 'Banka Mutabakatı', en: 'Bank Reconciliation', ar: 'مطابقة البنك' }, ai: true },
+          { id: 'cek-senet',        route: '/dashboard', labels: { tr: 'Çek & Senet', en: 'Checks & Notes', ar: 'الشيكات والسندات' } },
+          { id: 'finansman',        route: '/dashboard', labels: { tr: 'Finansman', en: 'Financing', ar: 'التمويل' } },
+          { id: 'taksit',           route: '/dashboard', labels: { tr: 'Taksit', en: 'Installments', ar: 'الأقساط' } }
         ]
       },
       {
@@ -84,15 +84,15 @@ export const SIDEBAR_REGISTRY = [
         icon: 'Receipt',
         labels: { tr: 'E-Fatura & Vergi', en: 'E-Invoice & Tax', ar: 'الفواتير الإلكترونية والضرائب' },
         children: [
-          { id: 'giden-efatura',     route: '/einvoice/outgoing',     labels: { tr: 'Giden e-Fatura', en: 'Outgoing E-Invoices', ar: 'الفواتير الصادرة' } },
-          { id: 'gelen-efatura',     route: '/einvoice/incoming',     labels: { tr: 'Gelen e-Fatura', en: 'Incoming E-Invoices', ar: 'الفواتير الواردة' }, ai: true },
-          { id: 'earsiv',            route: '/einvoice/archive',      labels: { tr: 'e-Arşiv', en: 'E-Archive', ar: 'الأرشيف الإلكتروني' } },
-          { id: 'otomatik-faturalar',route: '/einvoice/auto',         labels: { tr: 'Otomatik Faturalar', en: 'Auto Invoices', ar: 'الفواتير التلقائية' }, ai: true },
-          { id: 'vergi-otopilot',    route: '/tax/autopilot',         labels: { tr: 'Vergi Otopilotu', en: 'Tax Autopilot', ar: 'الطيار الآلي للضريبة' }, ai: true },
-          { id: 'vergi-takvim',      route: '/tax/calendar',          labels: { tr: 'Vergi Takvimi', en: 'Tax Calendar', ar: 'تقويم الضرائب' } },
-          { id: 'kdv-rapor',         route: '/tax/vat-report',        labels: { tr: 'KDV Raporu', en: 'VAT Report', ar: 'تقرير ضريبة القيمة المضافة' } },
-          { id: 'mali-musavir',      route: '/tax/accountant',        labels: { tr: 'Mali Müşavir', en: 'Tax Advisor', ar: 'المستشار المالي' } },
-          { id: 'mevzuat-takip',     route: '/tax/regulations',       labels: { tr: 'Mevzuat Takibi', en: 'Regulation Tracking', ar: 'متابعة التشريعات' }, ai: true }
+          { id: 'giden-efatura',     route: '/dashboard', labels: { tr: 'Giden e-Fatura', en: 'Outgoing E-Invoices', ar: 'الفواتير الصادرة' } },
+          { id: 'gelen-efatura',     route: '/dashboard', labels: { tr: 'Gelen e-Fatura', en: 'Incoming E-Invoices', ar: 'الفواتير الواردة' }, ai: true },
+          { id: 'earsiv',            route: '/dashboard', labels: { tr: 'e-Arşiv', en: 'E-Archive', ar: 'الأرشيف الإلكتروني' } },
+          { id: 'otomatik-faturalar',route: '/dashboard', labels: { tr: 'Otomatik Faturalar', en: 'Auto Invoices', ar: 'الفواتير التلقائية' }, ai: true },
+          { id: 'vergi-otopilot',    route: '/dashboard', labels: { tr: 'Vergi Otopilotu', en: 'Tax Autopilot', ar: 'الطيار الآلي للضريبة' }, ai: true },
+          { id: 'vergi-takvim',      route: '/dashboard', labels: { tr: 'Vergi Takvimi', en: 'Tax Calendar', ar: 'تقويم الضرائب' } },
+          { id: 'kdv-rapor',         route: '/dashboard', labels: { tr: 'KDV Raporu', en: 'VAT Report', ar: 'تقرير ضريبة القيمة المضافة' } },
+          { id: 'mali-musavir',      route: '/dashboard', labels: { tr: 'Mali Müşavir', en: 'Tax Advisor', ar: 'المستشار المالي' } },
+          { id: 'mevzuat-takip',     route: '/dashboard', labels: { tr: 'Mevzuat Takibi', en: 'Regulation Tracking', ar: 'متابعة التشريعات' }, ai: true }
         ]
       },
       {
@@ -100,13 +100,13 @@ export const SIDEBAR_REGISTRY = [
         icon: 'Package',
         labels: { tr: 'Stok & Ürün', en: 'Inventory & Products', ar: 'المخزون والمنتجات' },
         children: [
-          { id: 'urun-katalogu',  route: '/inventory/products',   labels: { tr: 'Ürün Kataloğu', en: 'Product Catalog', ar: 'كتالوج المنتجات' } },
-          { id: 'hizmet-katalogu',route: '/inventory/services',   labels: { tr: 'Hizmet Kataloğu', en: 'Service Catalog', ar: 'كتالوج الخدمات' } },
-          { id: 'stok-hareket',   route: '/inventory/movements',  labels: { tr: 'Stok Hareketleri', en: 'Stock Movements', ar: 'حركات المخزون' } },
-          { id: 'stok-rapor',     route: '/inventory/reports',    labels: { tr: 'Stok Raporları', en: 'Stock Reports', ar: 'تقارير المخزون' }, ai: true },
-          { id: 'eirsaliye',      route: '/inventory/edispatch',  labels: { tr: 'e-İrsaliye', en: 'E-Dispatch', ar: 'مذكرة الشحن الإلكترونية' } },
-          { id: 'fis-okuma',      route: '/inventory/receipt-ocr',labels: { tr: 'Fiş Okuma', en: 'Receipt OCR', ar: 'قراءة الإيصالات' }, ai: true },
-          { id: 'personel-sgk',   route: '/inventory/payroll',    labels: { tr: 'Personel & SGK', en: 'Payroll & Social', ar: 'الموظفون والتأمين' } }
+          { id: 'urun-katalogu',  route: '/dashboard', labels: { tr: 'Ürün Kataloğu', en: 'Product Catalog', ar: 'كتالوج المنتجات' } },
+          { id: 'hizmet-katalogu',route: '/dashboard', labels: { tr: 'Hizmet Kataloğu', en: 'Service Catalog', ar: 'كتالوج الخدمات' } },
+          { id: 'stok-hareket',   route: '/dashboard', labels: { tr: 'Stok Hareketleri', en: 'Stock Movements', ar: 'حركات المخزون' } },
+          { id: 'stok-rapor',     route: '/dashboard', labels: { tr: 'Stok Raporları', en: 'Stock Reports', ar: 'تقارير المخزون' }, ai: true },
+          { id: 'eirsaliye',      route: '/dashboard', labels: { tr: 'e-İrsaliye', en: 'E-Dispatch', ar: 'مذكرة الشحن الإلكترونية' } },
+          { id: 'fis-okuma',      route: '/dashboard', labels: { tr: 'Fiş Okuma', en: 'Receipt OCR', ar: 'قراءة الإيصالات' }, ai: true },
+          { id: 'personel-sgk',   route: '/dashboard', labels: { tr: 'Personel & SGK', en: 'Payroll & Social', ar: 'الموظفون والتأمين' } }
         ]
       },
       {
@@ -114,11 +114,11 @@ export const SIDEBAR_REGISTRY = [
         icon: 'BarChart3',
         labels: { tr: 'Raporlar', en: 'Reports', ar: 'التقارير' },
         children: [
-          { id: 'aylik-rapor',     route: '/reports/monthly',     labels: { tr: 'Aylık Rapor', en: 'Monthly Report', ar: 'التقرير الشهري' } },
-          { id: 'vergi-takvim-r',  route: '/reports/tax-cal',     labels: { tr: 'Vergi Takvimi', en: 'Tax Calendar', ar: 'تقويم الضرائب' } },
-          { id: 'kdv-rapor-r',     route: '/reports/vat',         labels: { tr: 'KDV Raporu', en: 'VAT Report', ar: 'تقرير ضريبة القيمة' } },
-          { id: 'benchmark',       route: '/reports/benchmark',   labels: { tr: 'Benchmark', en: 'Benchmark', ar: 'المقارنة المعيارية' }, ai: true },
-          { id: 'mutabakat-otopilot', route: '/reports/recon-auto', labels: { tr: 'Mutabakat Otopilotu', en: 'Recon Autopilot', ar: 'الطيار الآلي للمطابقة' }, ai: true }
+          { id: 'aylik-rapor',     route: '/dashboard', labels: { tr: 'Aylık Rapor', en: 'Monthly Report', ar: 'التقرير الشهري' } },
+          { id: 'vergi-takvim-r',  route: '/dashboard', labels: { tr: 'Vergi Takvimi', en: 'Tax Calendar', ar: 'تقويم الضرائب' } },
+          { id: 'kdv-rapor-r',     route: '/dashboard', labels: { tr: 'KDV Raporu', en: 'VAT Report', ar: 'تقرير ضريبة القيمة' } },
+          { id: 'benchmark',       route: '/dashboard', labels: { tr: 'Benchmark', en: 'Benchmark', ar: 'المقارنة المعيارية' }, ai: true },
+          { id: 'mutabakat-otopilot', route: '/dashboard', labels: { tr: 'Mutabakat Otopilotu', en: 'Recon Autopilot', ar: 'الطيار الآلي للمطابقة' }, ai: true }
         ]
       }
     ]
@@ -135,6 +135,7 @@ export const SIDEBAR_REGISTRY = [
         id: 'ai-copilot',
         icon: 'Sparkles',
         ai: true,
+        hidden: true,
         labels: { tr: 'AI Co-Pilot', en: 'AI Co-Pilot', ar: 'المساعد الذكي' },
         children: [
           { id: 'gunluk-brifing',    route: '/ai/brief',          labels: { tr: 'Günlük Brifing', en: 'Daily Brief', ar: 'الإحاطة اليومية' } },
@@ -152,6 +153,7 @@ export const SIDEBAR_REGISTRY = [
       {
         id: 'tahminler',
         icon: 'TrendingUp',
+        hidden: true,
         labels: { tr: 'Tahminler', en: 'Predictions', ar: 'التنبؤات' },
         children: [
           { id: 'nakit-tahmin',  route: '/predictions/cash',     labels: { tr: 'Nakit Tahmini', en: 'Cash Forecast', ar: 'تنبؤ النقد' }, ai: true },
@@ -164,6 +166,7 @@ export const SIDEBAR_REGISTRY = [
       {
         id: 'musteri-dna',
         icon: 'Dna',
+        hidden: true,
         labels: { tr: 'Müşteri DNA', en: 'Customer DNA', ar: 'الحمض النووي للعميل' },
         children: [
           { id: 'dna',                 route: '/dna/profile',         labels: { tr: 'Müşteri DNA', en: 'Customer DNA', ar: 'الحمض النووي' }, ai: true },
@@ -180,6 +183,7 @@ export const SIDEBAR_REGISTRY = [
       {
         id: 'risk-saglik',
         icon: 'ShieldAlert',
+        hidden: true,
         labels: { tr: 'Risk & Sağlık', en: 'Risk & Health', ar: 'المخاطر والصحة' },
         children: [
           { id: 'is-sagligi',         route: '/risk/business-health', labels: { tr: 'İş Sağlığı', en: 'Business Health', ar: 'صحة العمل' }, ai: true },
@@ -192,6 +196,7 @@ export const SIDEBAR_REGISTRY = [
       {
         id: 'sesli-iletisim',
         icon: 'Mic',
+        hidden: true,
         labels: { tr: 'Sesli & İletişim', en: 'Voice & Comms', ar: 'الصوت والاتصالات' },
         children: [
           { id: 'sesli-mod',         route: '/voice/mode',         labels: { tr: 'Sesli Mod', en: 'Voice Mode', ar: 'الوضع الصوتي' }, ai: true },
@@ -213,6 +218,7 @@ export const SIDEBAR_REGISTRY = [
       {
         id: 'pazar-yeri',
         icon: 'Store',
+        hidden: true,
         labels: { tr: 'Pazar Yeri Hub', en: 'Marketplace Hub', ar: 'مركز السوق' },
         children: [
           { id: 'pazar-yeri-h',  route: '/market/hub',          labels: { tr: 'Pazar Yeri', en: 'Marketplace', ar: 'السوق' } },
@@ -224,6 +230,7 @@ export const SIDEBAR_REGISTRY = [
       {
         id: 'ekosistem',
         icon: 'Network',
+        hidden: true,
         labels: { tr: 'Ekosistem', en: 'Ecosystem', ar: 'النظام البيئي' },
         children: [
           { id: 'ai-kurucu-ortak',  route: '/ecosystem/cofounder',     labels: { tr: 'AI Kurucu Ortak', en: 'AI Co-Founder', ar: 'الشريك المؤسس الذكي' }, ai: true },
@@ -239,12 +246,14 @@ export const SIDEBAR_REGISTRY = [
         id: 'capital',
         route: '/capital',
         icon: 'Banknote',
+        hidden: true,
         labels: { tr: 'Capital', en: 'Capital', ar: 'رأس المال' }
       },
       {
         id: 'universite',
         route: '/university',
         icon: 'GraduationCap',
+        hidden: true,
         labels: { tr: 'Üniversite', en: 'University', ar: 'الجامعة' }
       }
     ]
@@ -274,6 +283,7 @@ export const flattenSidebar = () => {
   const out = [];
   for (const tier of SIDEBAR_REGISTRY) {
     for (const hub of tier.hubs) {
+      if (hub.hidden) continue;
       // Single-page hub
       if (hub.route && !hub.children) {
         out.push({
@@ -284,6 +294,7 @@ export const flattenSidebar = () => {
       // Hub with children
       if (hub.children) {
         for (const child of hub.children) {
+          if (child.hidden) continue;
           out.push({
             id: child.id, route: child.route, labels: child.labels,
             icon: hub.icon, ai: Boolean(child.ai), tier: tier.tier,
