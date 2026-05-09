@@ -299,3 +299,35 @@ Typical 4-KPI request fans out via `Promise.all` to 4 parallel queries. Read-onl
 - iPhone SE (375x667), Pixel 5 (393x851), iPad Mini (768x1024), iPad Pro (1024x1366), 1920x1080 desktop
 
 ### No new dependencies. Desktop layout at >=1024px remains pixel-identical.
+
+## Prompt 6 — Real AI Co-Pilot brief from Gemini
+
+### Backend (zyrix-finsuite-backend, branch: main)
+- src/services/customer/merchantSnapshot.ts (new — KPI snapshot for AI grounding via KPI_COMPUTATIONS registry)
+- src/controllers/customer/aiBriefController.ts (rewritten — real Gemini prompt with merchant numbers + route allowlist sanitizer + 60s/merchant rate limit on refresh)
+
+### Frontend (zyrix-finsuite, branch: main)
+- src/api/v2/aiBrief.js — UNCHANGED (already reads response.data.brief via unwrap() — Step 5 of the spec was a no-op)
+
+### Behavioral changes
+- AI Co-Pilot Strip cards now reference the merchant's actual numbers (MRR, cash runway, overdue receivables, customer health, tax burden, etc.)
+- Hallucinated routes from Gemini are rewritten via prefix-distance to the closest allowed route; no card ever ships with a 404 link
+- ALLOWED_ROUTES allowlist (16 routes including /dashboard, /v2/dashboard, /sales/invoices, /tax/calendar, /predictions/cash, /risk/hidden-cash, /einvoice/auto, /ai/cfo, /cash/bank-recon, /customers/score, etc.)
+- Refresh endpoint rate-limited to 1/60s per merchant to bound Gemini spend
+- Daily cache preserved — one Gemini call per merchant per day per focus area
+- 8s timeout on Gemini call with canned FALLBACK_BRIEF on timeout/error
+
+### Deviations from spec (preserved from inventory step)
+- env.geminiApiKey (not process.env.GEMINI_API_KEY) — matches existing env wrapper convention
+- aiBriefController object shape with getBrief/refresh methods (not bare named exports getAIBrief/refreshAIBrief) — preserves existing route file dashboardPrefs.ts
+- Inline res.status(401|400).json({success:false, error}) — no unauthorized()/badRequest() helpers exist in this codebase
+- h() wrapper + RequestHandler cast — matches sibling controllers (customerDashboardPrefsController, kpiValuesController)
+- Frontend untouched — Prompt 5 already aligned aiBrief.js to read data.brief via unwrap()
+
+### Schema names locked from Prompt 5
+merchantSnapshot.ts only directly hits prisma.invoice.count (createdAt, merchantId) and prisma.customer.count (merchantId) — both fields exist in real schema. All KPI field/model names live inside kpiComputations.ts (Prompt 5).
+
+### Operational notes
+- GEMINI_API_KEY is set in Railway production env vars (manual step done before deploy)
+- If quota or auth fails, controller returns canned FALLBACK_BRIEF and the UI keeps working (no crash)
+- NODE_ENV is still 'development' on production /health output — set NODE_ENV=production in Railway env vars (30-second manual step, not blocking)
