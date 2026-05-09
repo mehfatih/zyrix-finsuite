@@ -4,6 +4,11 @@ import { AuthProvider, RequireAuth, useAuth } from "./context/AuthContext";
 import ScrollToTop from "./components/ScrollToTop.jsx";
 import SkeletonScreen from "./components/dashboard/SkeletonScreen.jsx";
 import ImpersonationBanner from "./components/ImpersonationBanner.jsx";
+// Phase 15 — Customer Dashboard V2 foundation
+import { FeatureFlagsProvider } from "./contexts/FeatureFlagsContext.jsx";
+import FeatureFlagDrawer from "./components/v2/FeatureFlagDrawer.jsx";
+import DashboardSwitchPill from "./components/v2/DashboardSwitchPill.jsx";
+const DashboardV2Page = React.lazy(() => import("./pages/v2/DashboardV2Page.jsx"));
 
 // ── Eagerly loaded (auth + always-on) ──────────────────────────
 import LoginPage          from "./pages/LoginPage";
@@ -224,9 +229,12 @@ void SkeletonScreen;
 export default function App() {
   return (
     <AuthProvider>
+      <FeatureFlagsProvider>
       <BrowserRouter>
         <ScrollToTop />
         <ImpersonationBanner />
+        <DashboardSwitchPill />
+        <FeatureFlagDrawer />
         <a href="#main-content" className="skip-to-content" style={skipLinkStyle}>Skip to main content</a>
         <Suspense fallback={null}>
           <Routes>
@@ -265,6 +273,7 @@ export default function App() {
             <Route path="/login/otp"    element={<OtpLogin />} />
             <Route path="/register"     element={<RegisterPage />} />
             <Route path="/dashboard/*"  element={<RequireAuth><CustomerDashboard /></RequireAuth>} />
+            <Route path="/v2/dashboard" element={<RequireAuth><DashboardV2Page /></RequireAuth>} />
             <Route path="/payment"      element={<RequireAuth><PaymentPage /></RequireAuth>} />
             {/* Phase 14 — Admin Operations Center (separate auth) */}
             <Route path="/admin/login"  element={<AdminLoginPage />} />
@@ -456,6 +465,7 @@ export default function App() {
           </Routes>
         </Suspense>
       </BrowserRouter>
+      </FeatureFlagsProvider>
     </AuthProvider>
   );
 }
