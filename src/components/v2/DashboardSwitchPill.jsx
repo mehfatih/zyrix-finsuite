@@ -2,6 +2,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { Sparkles } from 'lucide-react';
 import { useFeatureFlags } from '@/contexts/FeatureFlagsContext';
 import { CUSTOMER_PALETTE } from '@/design-system-v2/colors';
+import { useViewport } from '@/hooks/v2/useIsMobile';
 
 /**
  * Floating pill at top-right of customer dashboard pages.
@@ -9,6 +10,7 @@ import { CUSTOMER_PALETTE } from '@/design-system-v2/colors';
  * V2 flags on and routes to the matching dashboard.
  */
 export default function DashboardSwitchPill() {
+  const { isMobile } = useViewport();
   const { setFlag } = useFeatureFlags();
   const navigate = useNavigate();
   const location = useLocation();
@@ -38,6 +40,7 @@ export default function DashboardSwitchPill() {
         position: 'fixed', top: '16px', right: '16px', zIndex: 9997,
         display: 'inline-flex', alignItems: 'center', gap: '6px',
         padding: '8px 14px', borderRadius: '999px',
+        minHeight: isMobile ? '44px' : undefined,
         background: onV2 ? CUSTOMER_PALETTE.accent.violet : CUSTOMER_PALETTE.bg.secondary,
         color:      onV2 ? '#FFFFFF' : CUSTOMER_PALETTE.accent.violet,
         border:     onV2 ? 'none' : `1px solid ${CUSTOMER_PALETTE.accent.violet}`,

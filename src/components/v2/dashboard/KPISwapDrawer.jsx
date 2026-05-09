@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { X, Check } from 'lucide-react';
 import { CUSTOMER_PALETTE } from '@/design-system-v2/colors';
 import { KPI_DEFINITIONS, labelOf } from '@/config/v2/kpiLibrary';
+import { useViewport } from '@/hooks/v2/useIsMobile';
 
 const SLOT_LABELS = ['Pozisyon 1', 'Pozisyon 2', 'Pozisyon 3', 'Pozisyon 4'];
 const CATEGORIES = [
@@ -49,6 +50,7 @@ const btnPrimary = (enabled) => ({
  *   - initialSelectedSlot  number 0..3 — slot the user clicked from a card
  */
 export default function KPISwapDrawer({ open, onClose, currentSlots, onSave, language = 'tr', initialSelectedSlot = 0 }) {
+  const { isMobile } = useViewport();
   const [slots, setSlots] = useState(currentSlots);
   const [selectedSlot, setSelectedSlot] = useState(initialSelectedSlot);
   const [activeCategory, setActiveCategory] = useState('operational');
@@ -100,7 +102,7 @@ export default function KPISwapDrawer({ open, onClose, currentSlots, onSave, lan
       />
       <aside style={{
         position: 'fixed', top: 0, right: 0, bottom: 0,
-        width: 'min(720px, 100vw)',
+        width: isMobile ? '100vw' : 'min(720px, 100vw)',
         background: CUSTOMER_PALETTE.bg.primary,
         zIndex: 10001,
         display: 'flex',
@@ -127,41 +129,63 @@ export default function KPISwapDrawer({ open, onClose, currentSlots, onSave, lan
           <button onClick={onClose} style={iconBtn}><X size={18} /></button>
         </header>
 
-        <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '280px 1fr', overflow: 'hidden' }}>
-          {/* Slot picker on left */}
-          <div style={{ padding: '20px', borderInlineEnd: `1px solid ${CUSTOMER_PALETTE.border.default}`, overflow: 'auto' }}>
-            <div style={subtitleStyle}>Pozisyonlar</div>
-            {SLOT_LABELS.map((label, idx) => {
-              const id = slots[idx];
-              const def = id && KPI_DEFINITIONS[id];
-              const isActive = selectedSlot === idx;
-              return (
-                <button
-                  key={idx}
-                  onClick={() => setSelectedSlot(idx)}
-                  style={{
-                    width: '100%',
-                    padding: '12px 14px',
-                    marginBottom: '8px',
-                    background: isActive ? CUSTOMER_PALETTE.accent.violetSoft : CUSTOMER_PALETTE.bg.secondary,
-                    border: `1px solid ${isActive ? CUSTOMER_PALETTE.accent.violet : CUSTOMER_PALETTE.border.subtle}`,
-                    borderRadius: '10px',
-                    cursor: 'pointer',
-                    textAlign: 'start',
-                    fontFamily: 'inherit'
-                  }}
-                >
-                  <div style={{
-                    fontSize: '10px', fontWeight: 800, letterSpacing: '0.06em',
-                    color: isActive ? CUSTOMER_PALETTE.accent.violet : CUSTOMER_PALETTE.text.tertiary,
-                    textTransform: 'uppercase', marginBottom: '4px'
-                  }}>{label}</div>
-                  <div style={{ fontSize: '14px', fontWeight: 700, color: CUSTOMER_PALETTE.text.primary }}>
-                    {def ? labelOf(id, language) : 'Boş'}
-                  </div>
-                </button>
-              );
-            })}
+        <div style={{
+          flex: 1,
+          display: isMobile ? 'flex' : 'grid',
+          flexDirection: isMobile ? 'column' : undefined,
+          gridTemplateColumns: isMobile ? undefined : '280px 1fr',
+          overflow: 'hidden'
+        }}>
+          {/* Slot picker — left column on desktop, horizontal scroller on mobile */}
+          <div style={{
+            padding: isMobile ? '12px' : '20px',
+            borderInlineEnd: isMobile ? 'none' : `1px solid ${CUSTOMER_PALETTE.border.default}`,
+            borderBottom: isMobile ? `1px solid ${CUSTOMER_PALETTE.border.default}` : 'none',
+            overflow: isMobile ? 'visible' : 'auto',
+            flexShrink: 0
+          }}>
+            {!isMobile && <div style={subtitleStyle}>Pozisyonlar</div>}
+            <div style={{
+              display: isMobile ? 'flex' : 'block',
+              gap: isMobile ? '8px' : 0,
+              overflowX: isMobile ? 'auto' : 'visible',
+              WebkitOverflowScrolling: isMobile ? 'touch' : undefined
+            }}>
+              {SLOT_LABELS.map((label, idx) => {
+                const id = slots[idx];
+                const def = id && KPI_DEFINITIONS[id];
+                const isActive = selectedSlot === idx;
+                return (
+                  <button
+                    key={idx}
+                    onClick={() => setSelectedSlot(idx)}
+                    style={{
+                      width: isMobile ? 'auto' : '100%',
+                      flex: isMobile ? '0 0 auto' : undefined,
+                      minWidth: isMobile ? '180px' : undefined,
+                      minHeight: isMobile ? '44px' : undefined,
+                      padding: '12px 14px',
+                      marginBottom: isMobile ? 0 : '8px',
+                      background: isActive ? CUSTOMER_PALETTE.accent.violetSoft : CUSTOMER_PALETTE.bg.secondary,
+                      border: `1px solid ${isActive ? CUSTOMER_PALETTE.accent.violet : CUSTOMER_PALETTE.border.subtle}`,
+                      borderRadius: '10px',
+                      cursor: 'pointer',
+                      textAlign: 'start',
+                      fontFamily: 'inherit'
+                    }}
+                  >
+                    <div style={{
+                      fontSize: '10px', fontWeight: 800, letterSpacing: '0.06em',
+                      color: isActive ? CUSTOMER_PALETTE.accent.violet : CUSTOMER_PALETTE.text.tertiary,
+                      textTransform: 'uppercase', marginBottom: '4px'
+                    }}>{label}</div>
+                    <div style={{ fontSize: '14px', fontWeight: 700, color: CUSTOMER_PALETTE.text.primary }}>
+                      {def ? labelOf(id, language) : 'Boş'}
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           {/* KPI library on right */}
@@ -192,7 +216,12 @@ export default function KPISwapDrawer({ open, onClose, currentSlots, onSave, lan
             </div>
 
             {/* KPI cards */}
-            <div style={{ padding: '14px 20px', display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '10px' }}>
+            <div style={{
+              padding: '14px 20px',
+              display: 'grid',
+              gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)',
+              gap: '10px'
+            }}>
               {(CATEGORIES.find((c) => c.key === activeCategory)?.ids || []).map((id) => {
                 const def = KPI_DEFINITIONS[id];
                 if (!def) return null;

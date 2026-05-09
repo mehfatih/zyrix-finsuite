@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Settings2, X } from 'lucide-react';
 import { useFeatureFlags } from '@/contexts/FeatureFlagsContext';
 import { CUSTOMER_PALETTE } from '@/design-system-v2/colors';
+import { useViewport } from '@/hooks/v2/useIsMobile';
 
 const FLAG_LABELS = {
   customerDashboardV2: 'Yeni Pano (V2 Dashboard)',
@@ -14,6 +15,7 @@ const FLAG_LABELS = {
 };
 
 export default function FeatureFlagDrawer() {
+  const { isMobile } = useViewport();
   const { flags, setFlag, resetAll } = useFeatureFlags();
   const [open, setOpen] = useState(false);
 
@@ -24,7 +26,9 @@ export default function FeatureFlagDrawer() {
         title="Yeni Tasarım Ayarları"
         style={{
           position: 'fixed', bottom: '20px', left: '20px', zIndex: 9998,
-          width: '44px', height: '44px', borderRadius: '50%',
+          width: isMobile ? '48px' : '44px',
+          height: isMobile ? '48px' : '44px',
+          borderRadius: '50%',
           background: CUSTOMER_PALETTE.accent.violet, color: '#FFF',
           border: 'none', cursor: 'pointer',
           boxShadow: '0 8px 24px rgba(124,58,237,0.35)',

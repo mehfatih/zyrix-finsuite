@@ -4,6 +4,7 @@ import * as Icons from 'lucide-react';
 import { Search, Sparkles, ArrowRight, FileText } from 'lucide-react';
 import { CUSTOMER_PALETTE } from '@/design-system-v2/colors';
 import { SIDEBAR_FLAT, LEGACY_REDIRECTS } from '@/config/v2/sidebarRegistry';
+import { useViewport } from '@/hooks/v2/useIsMobile';
 
 const labelOf = (entry, lang = 'tr') =>
   (entry.labels && (entry.labels[lang] || entry.labels.tr)) || entry.id;
@@ -46,6 +47,7 @@ const kbdStyleSm = {
 };
 
 export default function CommandPalette({ open, onClose, language = 'tr' }) {
+  const { isMobile } = useViewport();
   const navigate = useNavigate();
   const inputRef = useRef(null);
   const [query, setQuery] = useState('');
@@ -181,11 +183,12 @@ export default function CommandPalette({ open, onClose, language = 'tr' }) {
       />
       <div style={{
         position: 'fixed',
-        top: '14vh',
-        left: '50%',
-        transform: 'translateX(-50%)',
-        width: 'min(640px, 92vw)',
-        maxHeight: '70vh',
+        top: isMobile ? '4vh' : '14vh',
+        left: isMobile ? '4vw' : '50%',
+        right: isMobile ? '4vw' : 'auto',
+        transform: isMobile ? 'none' : 'translateX(-50%)',
+        width: isMobile ? 'auto' : 'min(640px, 92vw)',
+        maxHeight: isMobile ? '88vh' : '70vh',
         background: '#FFFFFF',
         borderRadius: '14px',
         boxShadow: '0 24px 60px rgba(15,23,42,0.30)',
@@ -210,7 +213,9 @@ export default function CommandPalette({ open, onClose, language = 'tr' }) {
             onChange={(e) => setQuery(e.target.value)}
             style={{
               flex: 1, border: 'none', outline: 'none',
-              fontSize: '15px', fontWeight: 500,
+              fontSize: isMobile ? '16px' : '15px',
+              fontWeight: 500,
+              padding: isMobile ? '4px 0' : 0,
               background: 'transparent', color: CUSTOMER_PALETTE.text.primary
             }}
           />

@@ -175,7 +175,11 @@ export default function DashboardV2Page() {
 
   return (
     <CustomerLayoutV2 user={user} language={language} onSignOut={handleSignOut}>
-      <div style={{ padding: '24px 28px 80px', maxWidth: '1480px', margin: '0 auto' }}>
+      <div style={{
+        padding: 'clamp(16px, 4vw, 28px) clamp(12px, 4vw, 28px) 80px',
+        maxWidth: '1480px',
+        margin: '0 auto'
+      }}>
         {/* Greeting */}
         <header style={{
           marginBottom: '20px',
@@ -206,7 +210,7 @@ export default function DashboardV2Page() {
         {/* KPI Grid */}
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 240px), 1fr))',
           gap: '16px'
         }}>
           {kpiSlots.map((id, idx) => (
@@ -234,7 +238,7 @@ export default function DashboardV2Page() {
         {/* 4 Charts (2x2) */}
         <section style={{
           marginTop: '24px',
-          display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(420px, 1fr))',
+          display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 380px), 1fr))',
           gap: '16px'
         }}>
           <ChartCard title="Gelir Dağılımı" subtitle="Bu ay · İlk 5 müşteri">

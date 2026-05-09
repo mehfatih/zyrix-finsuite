@@ -252,3 +252,50 @@ Typical 4-KPI request fans out via `Promise.all` to 4 parallel queries. Read-onl
 - Per-KPI try/catch — single failure returns EMPTY for that id, never breaks the response
 - Frontend coerces `null`/missing → `0` so cards render zeros instead of crashing
 - Token: frontend tries `zyrix_token` (codebase actual) → `customerToken` → `token` (legacy fallbacks)
+
+## Prompt 7 — Mobile polish for V2
+
+### Frontend
+- `src/hooks/v2/useIsMobile.js` (new — viewport hook with `useViewport()` and default `useIsMobile()` export)
+- 13 components updated with viewport branching:
+  - `src/components/v2/sidebar/SidebarV2.jsx` — early-return mobile branch with hamburger trigger + off-canvas drawer
+  - `src/components/v2/CustomerLayoutV2.jsx` — `paddingTop: 64px` on mobile main
+  - `src/pages/v2/DashboardV2Page.jsx` — `clamp(16px, 4vw, 28px)` padding; KPI grid uses `min(100
+## Prompt 7 — Mobile polish for V2
+
+### Frontend
+- src/hooks/v2/useIsMobile.js (new — viewport hook with useViewport() and default useIsMobile() export)
+- 13 components updated with viewport branching:
+  - src/components/v2/sidebar/SidebarV2.jsx — early-return mobile branch with hamburger trigger + off-canvas drawer
+  - src/components/v2/CustomerLayoutV2.jsx — paddingTop: 64px on mobile main
+  - src/pages/v2/DashboardV2Page.jsx — clamp(16px, 4vw, 28px) padding; KPI grid uses min(100%, 240px); charts grid uses min(100%, 380px)
+  - src/components/v2/dashboard/AICoPilotStrip.jsx — horizontal swipe carousel on mobile (flex + scroll-snap), grid on desktop
+  - src/components/v2/dashboard/KPISwapDrawer.jsx — full-screen on mobile, slot picker becomes horizontal scroller, library cards stack 1-column
+  - src/components/v2/cmdk/CommandPalette.jsx — modal sits at top:4vh, full-width minus 4vw insets, input font 16px on mobile (iOS zoom-on-focus prevention)
+  - src/components/v2/DashboardSwitchPill.jsx — minHeight 44px on mobile (tap target)
+  - src/components/v2/FeatureFlagDrawer.jsx — gear bumped to 48x48 on mobile (44 on desktop unchanged)
+  - src/contexts/UndoContext.jsx — toast width clamped to min(320px, calc(100vw - 32px)) and maxWidth: calc(100vw - 32px)
+  - src/components/v2/charts/RevenueDonut.jsx — donut + list stack vertically on mobile
+  - src/components/v2/charts/CashFlowSankey.jsx — wrapped in horizontal scroller, SVG minWidth: 480px
+  - src/components/v2/charts/CustomerBubbleMap.jsx — same horizontal scroller pattern
+  - src/components/v2/charts/InvoiceFunnel.jsx — stage-label width 60px on mobile (was 76px), added flex-shrink: 0
+  - src/components/v2/dashboard/TaxIntelligenceCalendar.jsx — colored dot instead of type code on mobile, onClick opens tooltip (was hover-only)
+
+### Behavioral changes (mobile <768px only)
+- Sidebar to off-canvas drawer triggered by top-left hamburger; backdrop dismisses; body scroll locked while open; auto-close on route change
+- KPI cards stack 1-column at narrow widths
+- Charts stack 1-column; Sankey + Bubble Map scroll horizontally inside their cards
+- AI Co-Pilot becomes swipe carousel with snap-to-start; cards take 86vw
+- KPI swap drawer goes full-screen; slot picker becomes horizontal scroller above library list
+- Cmd+K modal goes near-full-width with iOS-zoom-safe 16px input font
+- Tax Calendar shows colored dots instead of type codes; tap to open tooltip
+- All tap targets >=44px
+- Undo toast clamped to viewport - 32px
+
+### Skipped from spec
+- Step 9.3 swipe-to-dismiss bonus on undo toast (X button covers it)
+
+### Tested viewports
+- iPhone SE (375x667), Pixel 5 (393x851), iPad Mini (768x1024), iPad Pro (1024x1366), 1920x1080 desktop
+
+### No new dependencies. Desktop layout at >=1024px remains pixel-identical.

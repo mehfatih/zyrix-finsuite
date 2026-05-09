@@ -20,8 +20,13 @@ const CITIES = [
 export default function CustomerBubbleMap() {
   const max = Math.max(...CITIES.map((c) => c.revenue));
   return (
-    <div style={{ width: '100%', overflow: 'hidden' }}>
-      <svg viewBox="0 0 540 300" style={{ width: '100%', maxHeight: '240px' }}>
+    <div style={{
+      width: '100%',
+      overflowX: 'auto',
+      WebkitOverflowScrolling: 'touch',
+      paddingBottom: '8px'
+    }}>
+      <svg viewBox="0 0 540 300" style={{ width: '100%', minWidth: '480px', maxHeight: '240px' }}>
         <ellipse cx={270} cy={150} rx={250} ry={110} fill={CUSTOMER_PALETTE.bg.tertiary} />
 
         {CITIES.map((city, i) => {

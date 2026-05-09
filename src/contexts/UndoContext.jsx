@@ -69,7 +69,8 @@ export function UndoProvider({ children }) {
                 borderRadius: '12px',
                 boxShadow: '0 12px 30px rgba(15,23,42,0.30)',
                 display: 'flex', alignItems: 'center', gap: '10px',
-                minWidth: '320px',
+                minWidth: 'min(320px, calc(100vw - 32px))',
+                maxWidth: 'calc(100vw - 32px)',
                 animation: 'undo-in 300ms cubic-bezier(0.34, 1.56, 0.64, 1) both'
               }}>
                 <span style={{ fontSize: '13px', fontWeight: 600, flex: 1 }}>{u.label}</span>

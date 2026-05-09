@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { CUSTOMER_PALETTE } from '@/design-system-v2/colors';
+import { useViewport } from '@/hooks/v2/useIsMobile';
 
 const STAGES = [
   { key: 'draft',  label: 'Taslak',     count: 86, color: CUSTOMER_PALETTE.accent.violet },
@@ -9,6 +10,7 @@ const STAGES = [
 ];
 
 export default function InvoiceFunnel() {
+  const { isMobile } = useViewport();
   const [phase, setPhase] = useState(0);
 
   useEffect(() => {
@@ -27,7 +29,10 @@ export default function InvoiceFunnel() {
           <div key={s.key} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <div style={{
               fontSize: '11px', fontWeight: 700, color: CUSTOMER_PALETTE.text.tertiary,
-              textTransform: 'uppercase', letterSpacing: '0.05em', width: '76px', textAlign: 'end'
+              textTransform: 'uppercase', letterSpacing: '0.05em',
+              width: isMobile ? '60px' : '76px',
+              flexShrink: 0,
+              textAlign: 'end'
             }}>{s.label}</div>
             <div style={{ flex: 1, position: 'relative', height: '40px' }}>
               <div style={{

@@ -49,8 +49,13 @@ export default function CashFlowSankey() {
   }, [outflows, totalOut]);
 
   return (
-    <div style={{ width: '100%', overflowX: 'auto' }}>
-      <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', maxHeight: '240px' }}>
+    <div style={{
+      width: '100%',
+      overflowX: 'auto',
+      WebkitOverflowScrolling: 'touch',
+      paddingBottom: '8px'
+    }}>
+      <svg viewBox={`0 0 ${W} ${H}`} style={{ width: '100%', minWidth: '480px', maxHeight: '240px' }}>
         {inPositions.map((f, i) => (
           <g key={`in-${i}`}>
             <rect x={COL_LEFT - 70} y={f.y} width={70} height={f.h} fill={f.color} rx={4}

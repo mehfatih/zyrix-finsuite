@@ -1,6 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { Sparkles, AlertTriangle, TrendingUp, ArrowRight, RefreshCw } from 'lucide-react';
 import { CUSTOMER_PALETTE } from '@/design-system-v2/colors';
+import { useViewport } from '@/hooks/v2/useIsMobile';
 
 const SEVERITY_STYLE = {
   critical: {
@@ -51,6 +52,7 @@ const btnGhost = {
  *   - language      'tr'|'en'|'ar'
  */
 export default function AICoPilotStrip({ brief, loading, onRefresh, onChangeFocus, language = 'tr' }) {
+  const { isMobile } = useViewport();
   const cards = [
     { severity: 'critical',    data: brief?.criticalCard },
     { severity: 'attention',   data: brief?.attentionCard },
@@ -99,19 +101,35 @@ export default function AICoPilotStrip({ brief, loading, onRefresh, onChangeFocu
       </div>
 
       <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(3, 1fr)',
-        gap: '12px'
+        display: isMobile ? 'flex' : 'grid',
+        gridTemplateColumns: isMobile ? undefined : 'repeat(3, 1fr)',
+        gap: '12px',
+        ...(isMobile ? {
+          overflowX: 'auto',
+          scrollSnapType: 'x mandatory',
+          scrollPaddingInline: '12px',
+          WebkitOverflowScrolling: 'touch',
+          paddingInline: '12px',
+          paddingBottom: '4px',
+          marginInline: '-12px'
+        } : {})
       }}>
         {cards.map((c, i) => (
-          <CoPilotCard
+          <div
             key={c.severity}
-            severity={c.severity}
-            data={c.data}
-            language={language}
-            loading={loading}
-            delay={i * 80}
-          />
+            style={isMobile ? {
+              flex: '0 0 86%',
+              scrollSnapAlign: 'start'
+            } : undefined}
+          >
+            <CoPilotCard
+              severity={c.severity}
+              data={c.data}
+              language={language}
+              loading={loading}
+              delay={i * 80}
+            />
+          </div>
         ))}
       </div>
     </section>

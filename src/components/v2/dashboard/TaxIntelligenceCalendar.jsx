@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { ChevronLeft, ChevronRight, AlertTriangle } from 'lucide-react';
 import { CUSTOMER_PALETTE } from '@/design-system-v2/colors';
+import { useViewport } from '@/hooks/v2/useIsMobile';
 
 /**
  * AI-aware Tax Calendar.
@@ -53,6 +54,7 @@ function buildMonthGrid(monthStart) {
 }
 
 export default function TaxIntelligenceCalendar() {
+  const { isMobile } = useViewport();
   const [monthStart, setMonthStart] = useState(() => {
     const now = new Date();
     return new Date(now.getFullYear(), now.getMonth(), 1);
@@ -93,8 +95,9 @@ export default function TaxIntelligenceCalendar() {
           return (
             <div
               key={i}
-              onMouseEnter={() => event && setHovered({ date: dayKey(cell), event })}
-              onMouseLeave={() => setHovered(null)}
+              onClick={() => event && setHovered({ date: dayKey(cell), event })}
+              onMouseEnter={() => !isMobile && event && setHovered({ date: dayKey(cell), event })}
+              onMouseLeave={() => !isMobile && setHovered(null)}
               style={{
                 aspectRatio: '1',
                 background: chip ? chip.bg : 'transparent',
@@ -112,10 +115,18 @@ export default function TaxIntelligenceCalendar() {
                   <div style={{ fontSize: '12px', fontWeight: chip ? 700 : 500, color: chip ? chip.fg : CUSTOMER_PALETTE.text.secondary }}>
                     {cell.getDate()}
                   </div>
-                  {event && (
+                  {event && !isMobile && (
                     <div style={{ fontSize: '9px', fontWeight: 800, color: chip.fg, textTransform: 'uppercase', marginTop: '2px' }}>
                       {event.type}
                     </div>
+                  )}
+                  {event && isMobile && (
+                    <div style={{
+                      width: '6px', height: '6px',
+                      borderRadius: '50%',
+                      background: chip.fg,
+                      marginTop: '4px'
+                    }} />
                   )}
                 </>
               )}

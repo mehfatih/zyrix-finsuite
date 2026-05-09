@@ -1,5 +1,6 @@
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { CUSTOMER_PALETTE } from '@/design-system-v2/colors';
+import { useViewport } from '@/hooks/v2/useIsMobile';
 
 const COLORS = [
   CUSTOMER_PALETTE.accent.cyan,
@@ -18,10 +19,16 @@ const MOCK = [
 ];
 
 export default function RevenueDonut() {
+  const { isMobile } = useViewport();
   const total = MOCK.reduce((s, x) => s + x.value, 0);
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', height: '100%' }}>
+    <div style={{
+      display: 'grid',
+      gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
+      gap: isMobile ? '20px' : '16px',
+      height: '100%'
+    }}>
       <div style={{ position: 'relative' }}>
         <ResponsiveContainer width="100%" height={220}>
           <PieChart>

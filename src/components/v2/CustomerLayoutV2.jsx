@@ -2,6 +2,7 @@ import SidebarV2 from '@/components/v2/sidebar/SidebarV2';
 import { useCmdK } from '@/contexts/CmdKContext';
 import { useFlag } from '@/contexts/FeatureFlagsContext';
 import { CUSTOMER_PALETTE } from '@/design-system-v2/colors';
+import { useViewport } from '@/hooks/v2/useIsMobile';
 
 /**
  * Wraps V2 pages with the new sidebar.
@@ -11,6 +12,7 @@ import { CUSTOMER_PALETTE } from '@/design-system-v2/colors';
 export default function CustomerLayoutV2({ children, user, language = 'tr', onSignOut }) {
   const newSidebar = useFlag('newSidebarV2');
   const { openPalette } = useCmdK();
+  const { isMobile } = useViewport();
 
   if (!newSidebar) {
     return <>{children}</>;
@@ -30,7 +32,12 @@ export default function CustomerLayoutV2({ children, user, language = 'tr', onSi
         onOpenCmdK={openPalette}
         onSignOut={onSignOut}
       />
-      <main style={{ flex: 1, minWidth: 0, overflow: 'auto' }}>
+      <main style={{
+        flex: 1,
+        minWidth: 0,
+        overflow: 'auto',
+        paddingTop: isMobile ? '64px' : 0
+      }}>
         {children}
       </main>
     </div>

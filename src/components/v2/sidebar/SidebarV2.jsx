@@ -1,9 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import * as Icons from 'lucide-react';
-import { ChevronDown, ChevronRight, Search, Sparkles, LogOut, Settings } from 'lucide-react';
+import { ChevronDown, ChevronRight, Search, Sparkles, LogOut, Settings, Menu as MenuIcon, X as XIcon } from 'lucide-react';
 import { CUSTOMER_PALETTE } from '@/design-system-v2/colors';
 import { SIDEBAR_REGISTRY } from '@/config/v2/sidebarRegistry';
+import { useViewport } from '@/hooks/v2/useIsMobile';
 
 const DEFAULT_LANG = 'tr';
 const SIDEBAR_WIDTH = 268;
@@ -27,7 +28,9 @@ export default function SidebarV2({
 }) {
   const navigate = useNavigate();
   const location = useLocation();
+  const { isMobile } = useViewport();
   const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
   const [openHubs, setOpenHubs] = useState(() => {
     // Default: Tier 1 hubs open, Tier 2/3 collapsed
     const init = {};
@@ -38,6 +41,22 @@ export default function SidebarV2({
     });
     return init;
   });
+
+  // Auto-close mobile drawer on route change
+  useEffect(() => {
+    if (isMobile) setMobileOpen(false);
+  }, [location.pathname, isMobile]);
+
+  // Lock body scroll while mobile drawer is open
+  useEffect(() => {
+    if (!isMobile) return undefined;
+    if (mobileOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [isMobile, mobileOpen]);
 
   // Restore openHubs from localStorage
   useEffect(() => {
@@ -65,6 +84,214 @@ export default function SidebarV2({
 
   const width = collapsed ? SIDEBAR_WIDTH_COLLAPSED : SIDEBAR_WIDTH;
 
+  // ───────────────────────────────────────────────
+  // MOBILE: hamburger trigger + off-canvas drawer
+  // Desktop JSX below remains pixel-identical.
+  // ───────────────────────────────────────────────
+  if (isMobile) {
+    return (
+      <>
+        <button
+          onClick={() => setMobileOpen(true)}
+          aria-label="Menüyü aç"
+          style={{
+            position: 'fixed',
+            top: '12px',
+            insetInlineStart: '12px',
+            zIndex: 9994,
+            width: '44px',
+            height: '44px',
+            borderRadius: '12px',
+            background: CUSTOMER_PALETTE.bg.sidebar,
+            color: CUSTOMER_PALETTE.text.onSidebar,
+            border: 'none',
+            display: 'inline-flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '0 4px 12px rgba(15,23,42,0.18)',
+            cursor: 'pointer'
+          }}
+        >
+          <MenuIcon size={20} />
+        </button>
+
+        {mobileOpen && (
+          <>
+            <div
+              onClick={() => setMobileOpen(false)}
+              style={{
+                position: 'fixed', inset: 0,
+                background: 'rgba(15,23,42,0.55)',
+                zIndex: 9998,
+                animation: 'sidebar-backdrop-in 200ms ease both'
+              }}
+            />
+            <aside style={{
+              position: 'fixed',
+              top: 0, bottom: 0,
+              insetInlineStart: 0,
+              width: 'min(86vw, 320px)',
+              background: CUSTOMER_PALETTE.bg.sidebar,
+              color: CUSTOMER_PALETTE.text.onSidebar,
+              zIndex: 9999,
+              display: 'flex',
+              flexDirection: 'column',
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
+              animation: 'sidebar-slide-in 280ms cubic-bezier(0.4,0,0.2,1) both',
+              overflow: 'hidden'
+            }}>
+              <div style={{
+                height: '64px',
+                padding: '0 16px',
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                borderBottom: '1px solid rgba(255,255,255,0.06)'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div style={{
+                    width: '32px', height: '32px',
+                    borderRadius: '8px',
+                    background: `linear-gradient(135deg, ${CUSTOMER_PALETTE.accent.cyan}, ${CUSTOMER_PALETTE.accent.violet})`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    fontWeight: 800, fontSize: '14px', color: '#FFF'
+                  }}>Z</div>
+                  <div>
+                    <div style={{ fontSize: '13px', fontWeight: 800, lineHeight: 1.1 }}>FinSuite</div>
+                    <div style={{ fontSize: '10px', opacity: 0.65, lineHeight: 1.2 }}>v2 · beta</div>
+                  </div>
+                </div>
+                <button
+                  onClick={() => setMobileOpen(false)}
+                  aria-label="Menüyü kapat"
+                  style={{
+                    width: '44px', height: '44px',
+                    background: 'transparent', border: 'none',
+                    color: CUSTOMER_PALETTE.text.onSidebarMuted,
+                    cursor: 'pointer',
+                    borderRadius: '8px',
+                    display: 'inline-flex', alignItems: 'center', justifyContent: 'center'
+                  }}
+                >
+                  <XIcon size={20} />
+                </button>
+              </div>
+
+              <button
+                onClick={() => { setMobileOpen(false); onOpenCmdK?.(); }}
+                style={{
+                  margin: '12px',
+                  padding: '12px',
+                  display: 'flex', alignItems: 'center', gap: '8px',
+                  background: 'rgba(255,255,255,0.04)',
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  borderRadius: '10px',
+                  color: CUSTOMER_PALETTE.text.onSidebarMuted,
+                  fontSize: '14px',
+                  cursor: 'pointer',
+                  textAlign: 'start',
+                  minHeight: '44px',
+                  fontFamily: "'Plus Jakarta Sans', sans-serif"
+                }}
+              >
+                <Search size={16} />
+                <span style={{ flex: 1 }}>Ne yapmak istersin?</span>
+              </button>
+
+              <nav style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', padding: '4px 8px 24px' }}>
+                {SIDEBAR_REGISTRY
+                  .filter((tier) => !tier.hubs.every((h) => h.hidden))
+                  .map((tier) => (
+                    <div key={tier.tier} style={{ marginBottom: '12px' }}>
+                      <div style={{
+                        display: 'flex', alignItems: 'center', gap: '6px',
+                        padding: '14px 10px 6px'
+                      }}>
+                        <span style={{
+                          width: '5px', height: '5px',
+                          borderRadius: '50%',
+                          background: tier.tier === 1 ? CUSTOMER_PALETTE.accent.cyan
+                                  : tier.tier === 2 ? CUSTOMER_PALETTE.accent.violet
+                                  : CUSTOMER_PALETTE.accent.amber
+                        }} />
+                        <span style={{
+                          fontSize: '10px', fontWeight: 800,
+                          letterSpacing: '0.08em', textTransform: 'uppercase',
+                          color: 'rgba(255,255,255,0.45)'
+                        }}>{labelOf(tier, language)}</span>
+                      </div>
+                      {tier.hubs
+                        .filter((hub) => {
+                          if (hub.hidden) return false;
+                          if (!hub.children) return true;
+                          return hub.children.some((c) => !c.hidden);
+                        })
+                        .map((hub) => (
+                          <Hub
+                            key={hub.id}
+                            hub={hub}
+                            language={language}
+                            collapsed={false}
+                            isOpen={openHubs[hub.id]}
+                            isActive={isActive}
+                            onToggle={() => toggleHub(hub.id)}
+                            onNavigate={(r) => { setMobileOpen(false); navigate(r); }}
+                          />
+                        ))}
+                    </div>
+                  ))}
+              </nav>
+
+              <div style={{
+                borderTop: '1px solid rgba(255,255,255,0.06)',
+                padding: '12px',
+                display: 'flex', alignItems: 'center', gap: '10px'
+              }}>
+                <div style={{
+                  width: '36px', height: '36px',
+                  borderRadius: '50%',
+                  background: CUSTOMER_PALETTE.accent.violetSoft,
+                  color: CUSTOMER_PALETTE.accent.violet,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: '13px', fontWeight: 700,
+                  flexShrink: 0
+                }}>{(user?.name || 'M').charAt(0).toUpperCase()}</div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontSize: '13px', fontWeight: 700, color: '#FFF', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {user?.name || 'Kullanıcı'}
+                  </div>
+                  <div style={{ fontSize: '11px', color: 'rgba(255,255,255,0.55)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {user?.email || ''}
+                  </div>
+                </div>
+                <button
+                  onClick={() => { setMobileOpen(false); onSignOut?.(); }}
+                  aria-label="Çıkış"
+                  style={{
+                    width: '44px', height: '44px',
+                    background: 'transparent', border: 'none',
+                    color: 'rgba(255,255,255,0.7)',
+                    cursor: 'pointer',
+                    borderRadius: '8px',
+                    display: 'inline-flex', alignItems: 'center', justifyContent: 'center'
+                  }}
+                >
+                  <LogOut size={16} />
+                </button>
+              </div>
+
+              <style>{`
+                @keyframes sidebar-slide-in    { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+                @keyframes sidebar-backdrop-in { from { opacity: 0; } to { opacity: 1; } }
+              `}</style>
+            </aside>
+          </>
+        )}
+      </>
+    );
+  }
+
+  // ───────────────────────────────────────────────
+  // DESKTOP / TABLET (>=768px): unchanged below.
+  // ───────────────────────────────────────────────
   return (
     <aside style={{
       position: 'sticky',
