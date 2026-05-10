@@ -1,4 +1,7 @@
-import { useI18n, SUPPORTED_LANGS } from './i18n';
+// Sprint D-11 — Fixed import path (was './i18n' which resolved to a
+// non-existent module; only AdminLoginPage's static import-tree didn't
+// trigger the resolution before D-11 mounted this in the chrome layer).
+import { useI18n, SUPPORTED_LANGS } from '../i18n/i18n.jsx';
 import { useState } from 'react';
 
 export default function LanguageSwitcher({ compact = false }) {
