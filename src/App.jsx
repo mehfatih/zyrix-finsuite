@@ -34,6 +34,8 @@ const ShareLinksManagementPage    = React.lazy(() => import("./pages/v2/insights
 const ChatPage                    = React.lazy(() => import("./pages/v2/chat/ChatPage.jsx"));
 // Sprint D-9 — Slack & Microsoft Teams integrations settings
 const IntegrationsSettingsPage    = React.lazy(() => import("./pages/v2/integrations/IntegrationsPage.jsx"));
+// Sprint D-10 — Top-level error boundary primitive
+import { CinematicErrorBoundary } from "./components/v2/feedback";
 
 // ── Eagerly loaded (auth + always-on) ──────────────────────────
 import LoginPage          from "./pages/LoginPage";
@@ -255,6 +257,7 @@ void SkeletonScreen;
 
 export default function App() {
   return (
+    <CinematicErrorBoundary>
     <AuthProvider>
       <FeatureFlagsProvider>
       <CmdKProvider>
@@ -523,6 +526,7 @@ export default function App() {
       </CmdKProvider>
       </FeatureFlagsProvider>
     </AuthProvider>
+    </CinematicErrorBoundary>
   );
 }
 
