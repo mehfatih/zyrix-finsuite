@@ -1,18 +1,18 @@
 # Zyrix FinSuite AI Co-Pilot Suite — Program Summary
 
-**Date:** 2026-05-10
+**Date:** 2026-05-10 (D-11 update)
 **Repos:** `zyrix-finsuite` (frontend) + `zyrix-finsuite-backend`
-**Status:** **PROGRAM COMPLETE — V1 launch-ready behind a 6-step provisioning checklist (D-10 §4).**
+**Status:** **PROGRAM COMPLETE through D-11 — V1 launch-ready behind a 6-step provisioning checklist (D-10 §4) plus the D-11 verification matrix.**
 
 ---
 
 ## TL;DR
 
-Eleven sprints (D-1 → D-10 plus D-2.5 hardening) shipped over a focused window. The result is a **complete AI Co-Pilot product layer** sitting on top of an existing FinSuite ERP/CRM core: AI insight cards, daily morning briefs, weekly performance reports, public + private sharing, real-time notifications across 4 channels, an AI chat with tool use + voice + streaming, Slack workspace integration, and the production observability + rollout infrastructure to launch all of it safely.
+Twelve sprints (D-1 → D-11 plus D-2.5 hardening) shipped over a focused window. The result is a **complete AI Co-Pilot product layer** sitting on top of an existing FinSuite ERP/CRM core: AI insight cards, daily morning briefs, weekly performance reports, public + private sharing, real-time notifications across 4 channels, an AI chat with tool use + voice + streaming, Slack workspace integration, full localization + country-aware regulatory engine (Turkey + Saudi Arabia with effective-dated tax rates and ZATCA Phase 2 compliance), and the production observability + rollout infrastructure to launch all of it safely.
 
-The program achieved **strict zero-protected-file-edits compliance** (`aiBriefController.ts`, `merchantSnapshot.ts`, `kpiComputations.ts` were never touched), **`merchantId`-everywhere** schema discipline (the spec frequently said `companyId`/`userId`; we translated on every commit), **plain JSX + inline styles + design tokens** consistency (no Tailwind / TypeScript / shadcn introduced on the frontend), and **strict micro-commits with feature-flagged deferred env vars**. The sole npm-dep additions: `web-push` (D-4), `@sentry/node` (D-10), `@sentry/react` (D-10) — three dependencies for ten sprints of features.
+The program achieved **strict zero-protected-file-edits compliance** (`aiBriefController.ts`, `merchantSnapshot.ts`, `kpiComputations.ts` were never touched), **`merchantId`-everywhere** schema discipline (the spec frequently said `companyId`/`userId`; we translated on every commit), **plain JSX + inline styles + design tokens** consistency (no Tailwind / TypeScript / shadcn introduced on the frontend), and **strict micro-commits with feature-flagged deferred env vars**. The sole npm-dep additions across **all 12 sprints**: `web-push` (D-4), `@sentry/node` (D-10), `@sentry/react` (D-10) — three dependencies. **D-11 added zero new dependencies** thanks to Intl APIs + hand-rolled ZATCA TLV encoder + pure-string UBL serializer.
 
-Everything that reached "code complete but waiting on Mehmet to flip a switch" is feature-flagged and ships safely: VAPID for D-4 web push, the 5 Slack OAuth env vars for D-9, the 3 Sentry / rollout env vars for D-10. The system runs cleanly without any of them set; flipping them on requires only Railway env updates and a restart.
+Everything that reached "code complete but waiting on Mehmet to flip a switch" is feature-flagged and ships safely: VAPID for D-4 web push, the 5 Slack OAuth env vars for D-9, the 3 Sentry / rollout env vars for D-10. **D-11 added no new env vars** — the only new infrastructure is one database table (`TaxRateVersion`) plus 3 nullable Invoice columns. The system runs cleanly without any of the deferred env vars set; flipping them on requires only Railway env updates and a restart.
 
 ---
 
@@ -33,24 +33,26 @@ Everything that reached "code complete but waiting on Mehmet to flip a switch" i
 | **D-8** AI Chat | Streaming Gemini 2.0 Flash chat with function calling, voice input (Web Speech API), 90-day conversation retention, 8K-token sliding context window, 10-tool registry over `KPI_COMPUTATIONS`, Cmd+J shortcut, full-page route, floating bubble. |
 | **D-9** Slack Integration | OAuth v2 install, encrypted bot token storage (AES-256-GCM via existing 2FA helper), Block Kit insight renderer, slash commands (`/zyrix today / mrr / runway / balance / overdue`), interactive Resolve / Dismiss buttons, channel-mapping CRUD UI, multi-workspace per merchant. |
 | **D-10** Polish + Launch | Sentry on both repos, request-id middleware, `/health` dependency probe, AI usage admin dashboard, env-var rollout flag, in-app help center (TR/EN/AR), cinematic feedback primitives, 6 runbooks, bundle perf wins (74% charts chunk reduction), font weight cuts. |
+| **D-11** Localization + Country | Effective-dated `TaxRateVersion` table with admin CRUD + audit log; backend country profiles + `profileResolver` (TR/SA/OTHER); ZATCA Phase 2 UBL serializer + hand-rolled TLV QR encoder; geo-context endpoint (CF-IPCountry); `RegulatoryProvider` context; LanguageSwitcher mounted globally; `GeoMismatchBanner` once-per-session; `/admin/compliance/regulatory-profiles` editor; country-aware AI persona for chat + cfo voice. Zero new deps. Decoupled language / country fields on Merchant. |
 
 ### 1.2 By the numbers
 
 | Metric | Value |
 |---|---|
-| Sprints shipped | **11** (D-1 through D-10 plus D-2.5 hardening) |
-| Discovery + completion docs | **22** (every sprint had a Phase A discovery + Phase B completion report) |
-| Frontend commits in repo total | **310** (the AI Co-Pilot Suite touched ~half) |
-| Backend commits in repo total | **154** (the AI Co-Pilot Suite is ~70% of recent commits) |
-| Net new database tables | **18** across the 10 sprints (CustomerDailyBrief, MorningBriefSubscription, MorningBriefSend, WeeklyReport, WeeklyReportSubscription, WeeklyReportSend, Insight, InsightShare, SharingRecipient, PublicShareLink, ShareComment, ShareView, Notification (rebuilt), NotificationPreference, WebPushSubscription, ChatConversation, ChatMessage, SlackInstallation, SlackChannelMapping, SlackOutboundLog) |
-| New API endpoints | **~85** (auth-required customer endpoints + admin endpoints + 4 webhook endpoints + 2 health endpoints + 3 cron-job.org endpoints + 7 public token-credentialed endpoints) |
-| New frontend routes | **18** customer-facing + 1 admin AI usage page + 5 public token-credentialed pages |
-| New i18n bundles (TR/EN/AR) | **8** (publicShare, morningBrief, weeklyReport, chat, integrations, helpCenter, plus existing surface extensions) |
-| New npm deps total | **3** (`web-push@^3` D-4, `@sentry/node@^8` + `@sentry/react@^8` D-10) |
-| New env vars total | **11** (3 VAPID D-4, 5 Slack D-9, 3 Sentry/rollout D-10) — **all feature-flagged** so the system runs cleanly without any of them set |
+| Sprints shipped | **12** (D-1 through D-11 plus D-2.5 hardening) |
+| Discovery + completion docs | **24** (every sprint had a Phase A discovery + Phase B completion report; D-11 also added a verification matrix doc) |
+| Frontend commits in repo total | **~328** (the AI Co-Pilot Suite touched ~half) |
+| Backend commits in repo total | **~163** (the AI Co-Pilot Suite is ~70% of recent commits) |
+| Net new database tables | **19** across the 12 sprints (CustomerDailyBrief, MorningBriefSubscription, MorningBriefSend, WeeklyReport, WeeklyReportSubscription, WeeklyReportSend, Insight, InsightShare, SharingRecipient, PublicShareLink, ShareComment, ShareView, Notification (rebuilt), NotificationPreference, WebPushSubscription, ChatConversation, ChatMessage, SlackInstallation, SlackChannelMapping, SlackOutboundLog, **TaxRateVersion** (D-11)) |
+| Net additive Invoice columns | **3** (D-11: zatcaQrTlv, zatcaInvoiceHash, zatcaIsSimplified — all nullable for backwards compat) |
+| New API endpoints | **~92** (auth-required customer endpoints + admin endpoints + 4 webhook endpoints + 2 health endpoints + 3 cron-job.org endpoints + 7 public token-credentialed endpoints + 5 D-11 endpoints) |
+| New frontend routes | **19** customer-facing + 2 admin pages (AI usage + regulatory profiles) + 5 public token-credentialed pages |
+| New i18n bundles (TR/EN/AR) | **9** (publicShare, morningBrief, weeklyReport, chat, integrations, helpCenter, locale (D-11), plus existing surface extensions) |
+| New npm deps total | **3** (`web-push@^3` D-4, `@sentry/node@^8` + `@sentry/react@^8` D-10). **D-11 added zero.** |
+| New env vars total | **11** (3 VAPID D-4, 5 Slack D-9, 3 Sentry/rollout D-10). **D-11 added zero** (V2_DASHBOARD_ROLLOUT_PCT is from D-10). All feature-flagged so the system runs cleanly without any of them set. |
 | Cron-job.org schedules added | **4** (morning-brief 07:00, weekly-report Sun 18:00, chat-cleanup nightly, plus a Slack channel-validation deferred to a follow-up) |
 | Runbook documents | **6** (gemini outage, PDF crash, email bouncing, rate-limit storm, data corruption, OAuth token expiry) |
-| Manual SQL migration files | **8** under `prisma/manual-migrations/` (schema additions are idempotent and append-only — zero column drops, zero column type changes on deployed tables) |
+| Manual SQL migration files | **9** under `prisma/manual-migrations/` (schema additions are idempotent and append-only — zero column drops, zero column type changes on deployed tables; D-11 added one new file for TaxRateVersion + Invoice ZATCA columns) |
 
 ### 1.3 What was NOT built (intentional deferrals)
 
@@ -68,6 +70,12 @@ Everything that reached "code complete but waiting on Mehmet to flip a switch" i
 | Slack channel-validation cron | Backend handler not yet implemented; schedule deferred. | D-9 discovery §10.K |
 | CommandPalette icon wildcard refactor | `import * as Icons` defeats tree-shaking (~166 KB gzipped on dashboard pages). Real refactor needed. | D-10 completion §1.2 known follow-up |
 | Sentry source-map upload, daily Slack channel-validation, Slack Teams stretch | All follow-ups; either marked deferred or in a stand-alone tiny sprint. | Various |
+| Live ZATCA gateway submission | V1 generates Phase 2 XML on demand only; live submission needs ZATCA portal credentials + production cert. | D-11 discovery §10.I |
+| ZATCA cryptographic stamp signing | `previousInvoiceHash` is a placeholder; real XAdES signing comes with the live gateway sprint. | D-11 discovery §10.I |
+| `aiBriefController.ts` country-aware persona | Touching it would require modifying a protected file; layering a prefix is harder there because the prompt builds directly from merchant data. | D-11 completion §2 |
+| Per-locale i18n lazy loading | All 3 locales still ship as separate chunks but are eagerly imported. Real lazy loading needs a refactor of `src/i18n/dashboard/index.js`. | D-11 completion §2 |
+| GCC/MENA expansion (AE / EG / KW / QA / BH / OM / JO) | V1 backend profiles narrowed to TR + SA + OTHER. Frontend countryProfiles.js already has all 10 modeled. | D-11 completion §2 |
+| TR e-Fatura threshold versioning | Static value (5M TRY) on the TR profile. Versioning the threshold (parallel to TaxRateVersion) is V2 work. | D-11 completion §2 |
 
 The deferrals share a common shape: each one is **either explicitly post-launch polish work, or a feature whose value scales with merchant count**. None of them block the V1 launch for the 2 test merchants; all of them have a documented trigger ("when merchant base passes 50+", "when triage of a minified frame fails", etc.) for revisit.
 
@@ -83,15 +91,15 @@ The vendor specs frequently used `companyId / userId / accountId`. We translated
 
 ### 2.2 Protected files
 
-Three files were declared off-limits on day one: `aiBriefController.ts` (the daily insight generator), `merchantSnapshot.ts` (the data aggregator the AI reads), and `kpiComputations.ts` (the KPI registry). Why it mattered: D-8's chat tools, D-9's slash commands, and D-10's admin AI usage endpoint all read from these files as a public API surface — never editing them. The KPI registry stayed a single source of truth across 4 sprints.
+Three files were declared off-limits on day one: `aiBriefController.ts` (the daily insight generator), `merchantSnapshot.ts` (the data aggregator the AI reads), and `kpiComputations.ts` (the KPI registry). Why it mattered: D-8's chat tools, D-9's slash commands, D-10's admin AI usage endpoint, and D-11's country-aware AI persona all read from these files as a public API surface — never editing them. The KPI registry stayed a single source of truth across 5 sprints. D-11 specifically routed the persona prefix through `services/chat/persona.ts` + small layered changes to `services/chat/engine.ts` rather than touching `aiBriefController.ts`; the morning-brief persona switch is a documented deferred follow-up.
 
 ### 2.3 Plain JSX + inline styles + design tokens
 
-No Tailwind, no TypeScript on the frontend, no shadcn / Radix / Material. Every D-1 token (colors, gradients, shadows, type scale, spacing) imported from `@/design-system-v2/cinematic/tokens` into every D-3..D-10 page. Why it mattered: zero CSS-in-JS runtime cost, zero build-time tooling additions, zero theming bugs across 18 customer-facing routes. The ChatPanel, the IntegrationsPage, and the HelpCenterPage all share the same glass-tint values without a single source of design drift.
+No Tailwind, no TypeScript on the frontend, no shadcn / Radix / Material. Every D-1 token (colors, gradients, shadows, type scale, spacing) imported from `@/design-system-v2/cinematic/tokens` into every D-3..D-11 page. Why it mattered: zero CSS-in-JS runtime cost, zero build-time tooling additions, zero theming bugs across 19 customer-facing routes. The ChatPanel, the IntegrationsPage, the HelpCenterPage, and the GeoMismatchBanner all share the same glass-tint values without a single source of design drift.
 
 ### 2.4 Reuse over rebuild
 
-The D-4 notification engine + ChannelDriver interface absorbed both Web Push (D-4) and Slack (D-9) without modification. The D-7 OG image renderer reused the D-2 Puppeteer pool — one browser cluster, two products. The D-2.5 hardening's `PDF_MAX_BROWSERS` env var still controls the ceiling 8 sprints later. The D-8 ChatMessage token columns required zero schema changes to power the D-10 admin AI usage dashboard. **Each new sprint had less new infrastructure than the last.**
+The D-4 notification engine + ChannelDriver interface absorbed both Web Push (D-4) and Slack (D-9) without modification. The D-7 OG image renderer reused the D-2 Puppeteer pool — one browser cluster, two products. The D-2.5 hardening's `PDF_MAX_BROWSERS` env var still controls the ceiling 9 sprints later. The D-8 ChatMessage token columns required zero schema changes to power the D-10 admin AI usage dashboard. D-11 reused the existing `Merchant.{language, country, currency, timezone}` columns (already in place from prior sprints) rather than adding new ones; only the new `TaxRateVersion` table represents net-new schema. **Each new sprint had less new infrastructure than the last.**
 
 ### 2.5 Feature-flagged deferred env vars (D-9 → D-10)
 
@@ -99,7 +107,7 @@ Started in D-9 with the 5 Slack env vars: rather than block on Mehmet provisioni
 
 ### 2.6 Strict micro-commits + per-sprint Phase A/B split
 
-Every sprint had a Phase A discovery doc with surfaced env vars, decision matrix, and recommended picks; Phase B implementation only began after explicit approval. The Phase A doc became the source of truth for trade-offs (e.g. D-9 §10.A choosing Slack-only V1 over Slack+Teams). Phase B commits each landed small enough to review in one sitting (typical: 1-3 files; max: 7 files for a route + controller + service + middleware bundle). **Across 22 phase docs, one sprint got rescoped mid-flight (D-2.5 carved out of D-2's PDF infrastructure crisis); the rest shipped as discovered.**
+Every sprint had a Phase A discovery doc with surfaced env vars, decision matrix, and recommended picks; Phase B implementation only began after explicit approval. The Phase A doc became the source of truth for trade-offs (e.g. D-9 §10.A choosing Slack-only V1 over Slack+Teams; D-11 §10.A confirming the existing Merchant fields meant zero core-field migration). Phase B commits each landed small enough to review in one sitting (typical: 1-3 files; max: 7 files for a route + controller + service + middleware bundle). **Across 24 phase docs, one sprint got rescoped mid-flight (D-2.5 carved out of D-2's PDF infrastructure crisis); the rest shipped as discovered.**
 
 ---
 
@@ -238,7 +246,9 @@ When the 6-step checklist completes, every authenticated merchant gets:
 
 **Help center** — `/help` with 7 topics in TR / EN / AR; offline-capable.
 
-**Admin observability** — `/admin/analytics/ai-usage` with token aggregations + cost forecast; `/admin/ops/email-engagement` for delivery health; `/health` dependency status; Sentry on every backend error.
+**Admin observability** — `/admin/analytics/ai-usage` with token aggregations + cost forecast; `/admin/ops/email-engagement` for delivery health; `/admin/compliance/regulatory-profiles` for effective-dated tax rates; `/health` dependency status; Sentry on every backend error.
+
+**Localization + country-aware regulatory engine** (D-11) — TR/AR/EN language switcher mounted globally; merchant `language` and `country` are independent fields (Arabic-speaking merchant in Istanbul keeps Turkish KDV rules + Arabic UI; English-speaking expat in Riyadh keeps Saudi VAT/ZATCA + English UI). ZATCA Phase 2 UBL XML + TLV QR encoder for SA invoices. Effective-dated `TaxRateVersion` with admin CRUD + audit log. Geo-mismatch banner once per session when CF-IPCountry differs from registered country. Country-aware AI persona for chat + cfo voice.
 
 **Settings** — notification preferences, integrations, Slack channel mapping, 2FA, language, data export, audit log.
 
@@ -249,13 +259,16 @@ When the 6-step checklist completes, every authenticated merchant gets:
 The post-launch roadmap is shaped by what the 2 → N merchant scale-up will reveal. The audit doc and discovery docs together itemize the deferred items; here's the order of likely future work, ranked by where the leverage is:
 
 1. **Real Lighthouse measurement post-launch** — the three easy wins (lucide split + locale split + font cuts) should clear 95+. If specific routes still don't, the CommandPalette icon wildcard refactor is the next lever (~166 KB gzipped on dashboard pages).
-2. **Slack channel-validation cron** — small follow-up; backend handler + cron-job.org schedule.
-3. **Microsoft Teams integration** — its own sprint when Mehmet's customer base requests it.
-4. **PostHog analytics** — when merchant count passes 50.
-5. **Phased 5%→25%→50%→100% rollout** — when merchant count passes 10 and a real cohort can be staged.
-6. **Per-merchant AI rate limiting** — when one merchant's chat usage starts to overshadow others.
-7. **Mobile push** — pairs with a native app sprint.
-8. **Per-locale i18n lazy loading** — saves ~80 KB on cold start; pure perf optimization.
+2. **Live ZATCA gateway submission** (D-11 deferred) — V1 generates Phase 2 XML on demand only; live submission needs ZATCA portal credentials + production cert. Trigger when an SA merchant actually needs to file.
+3. **`aiBriefController.ts` country-aware persona** (D-11 deferred) — refactor sprint that lifts the prompt out of the protected controller so the persona prefix can layer on without modifying it.
+4. **Slack channel-validation cron** — small follow-up; backend handler + cron-job.org schedule.
+5. **Microsoft Teams integration** — its own sprint when Mehmet's customer base requests it.
+6. **GCC/MENA expansion** (D-11 deferred) — backend profiles narrowed to TR + SA + OTHER; frontend `countryProfiles.js` already has 8 more modeled. Trigger when a merchant in one of those countries signs up.
+7. **PostHog analytics** — when merchant count passes 50.
+8. **Phased 5%→25%→50%→100% rollout** — when merchant count passes 10 and a real cohort can be staged.
+9. **Per-merchant AI rate limiting** — when one merchant's chat usage starts to overshadow others.
+10. **Mobile push** — pairs with a native app sprint.
+11. **Per-locale i18n lazy loading** — saves ~80 KB on cold start; pure perf optimization.
 
 None of these are V1 launch gates.
 
@@ -278,8 +291,9 @@ None of these are V1 launch gates.
 | D-8 AI Chat | `ee413f8` | `5642e0b` |
 | D-9 Slack | `ca1abfb` | `8ca8e83` |
 | D-10 Polish + Launch | `34b8fa7` (audit) | `6a8105f` |
-| Program summary | _(this commit)_ | — |
+| D-11 Localization + Country | `b2fd59f` | `007d532` (+ `0f78ac4` verification matrix) |
+| Program summary | `77f743d` (D-10) → _(this commit, D-11 update)_ | — |
 
 ---
 
-**The AI Co-Pilot Suite is code-complete. Launch is a checklist.**
+**The AI Co-Pilot Suite is code-complete through D-11. Launch is a checklist (D-10 §4) plus the D-11 verification matrix.**
