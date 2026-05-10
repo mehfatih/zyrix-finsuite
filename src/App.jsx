@@ -7,6 +7,8 @@ import ImpersonationBanner from "./components/ImpersonationBanner.jsx";
 // Phase 15 — Customer Dashboard V2 foundation
 import { FeatureFlagsProvider } from "./contexts/FeatureFlagsContext.jsx";
 import { CmdKProvider } from "./contexts/CmdKContext.jsx";
+import { ChatProvider } from "./contexts/ChatContext.jsx";
+const ChatBubble = React.lazy(() => import("./components/v2/chat/ChatBubble.jsx"));
 import { UndoProvider } from "./contexts/UndoContext.jsx";
 import FeatureFlagDrawer from "./components/v2/FeatureFlagDrawer.jsx";
 import DashboardSwitchPill from "./components/v2/DashboardSwitchPill.jsx";
@@ -252,12 +254,16 @@ export default function App() {
     <AuthProvider>
       <FeatureFlagsProvider>
       <CmdKProvider>
+      <ChatProvider>
       <UndoProvider>
       <BrowserRouter>
         <ScrollToTop />
         <ImpersonationBanner />
         <DashboardSwitchPill />
         <FeatureFlagDrawer />
+        <Suspense fallback={null}>
+          <ChatBubble />
+        </Suspense>
         <a href="#main-content" className="skip-to-content" style={skipLinkStyle}>Skip to main content</a>
         <Suspense fallback={null}>
           <Routes>
@@ -505,6 +511,7 @@ export default function App() {
         </Suspense>
       </BrowserRouter>
       </UndoProvider>
+      </ChatProvider>
       </CmdKProvider>
       </FeatureFlagsProvider>
     </AuthProvider>
