@@ -46,12 +46,21 @@ export default defineConfig({
             if (id.includes("react-dom"))                       return "react-dom";
             if (id.includes("react-router"))                    return "router";
             if (id.includes("/react/"))                         return "react";
-            // Heavy admin-only chart deps in their own chunk so the
-            // landing-page critical path doesn't preload them.
+            // Sprint D-10 — Sentry browser SDK is loaded on app boot;
+            // isolating it keeps it from invalidating the main vendor
+            // chunk on minor lib upgrades.
+            if (id.includes("/@sentry/"))                       return "sentry";
+            // Heavy chart deps stay together; only the pages that
+            // import a chart component pull this chunk.
             if (id.includes("/recharts/")
-                || id.includes("/lucide-react/")
                 || id.includes("/d3-")
                 || id.includes("/victory-vendor/")) return "charts";
+            // Sprint D-10 — lucide-react: return undefined so Vite
+            // tree-shakes per-importer. With ~60 files each using
+            // 5-15 icons, the result is ~250 B × icons per page chunk
+            // instead of one 900KB shared library. The previous
+            // `return "vendor"` catch-all defeated tree-shaking.
+            if (id.includes("/lucide-react/"))                  return undefined;
             return "vendor";
           }
           // Shared dashboard primitives — used by every page
@@ -62,7 +71,12 @@ export default defineConfig({
               id.includes("/src/components/dashboard/charts/")) {
             return "dashboard-shared";
           }
-          // i18n bundles can be heavy — separate
+          // Sprint D-10 — locale-split the dashboard i18n chunk so the
+          // browser can parallelize and a future per-locale lazy loader
+          // (post-launch) can drop the inactive bundles entirely.
+          if (id.includes("/src/i18n/dashboard/") && id.endsWith(".tr.json")) return "i18n-dashboard-tr";
+          if (id.includes("/src/i18n/dashboard/") && id.endsWith(".en.json")) return "i18n-dashboard-en";
+          if (id.includes("/src/i18n/dashboard/") && id.endsWith(".ar.json")) return "i18n-dashboard-ar";
           if (id.includes("/src/i18n/dashboard/")) return "i18n-dashboard";
           if (id.includes("/src/i18n/")) return "i18n";
         },
