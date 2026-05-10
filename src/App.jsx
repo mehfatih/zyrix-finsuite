@@ -144,6 +144,8 @@ const AdminSupportOverview  = React.lazy(() => import("./pages/admin/support/Sup
 const AdminTicketsQueue     = React.lazy(() => import("./pages/admin/ops/TicketsQueuePage.jsx"));
 const AdminLiveChatMonitor  = React.lazy(() => import("./pages/admin/ops/LiveChatMonitorPage.jsx"));
 const AdminEmailCampaigns   = React.lazy(() => import("./pages/admin/ops/EmailCampaignsPage.jsx"));
+// Sprint D-5 — morning brief engagement live dashboard (ops cluster)
+const AdminEmailEngagement  = React.lazy(() => import("./pages/admin/ops/EmailEngagementPage.jsx"));
 const AdminAnnouncements    = React.lazy(() => import("./pages/admin/ops/AnnouncementsPage.jsx"));
 const AdminKBEditor         = React.lazy(() => import("./pages/admin/ops/KnowledgeBaseEditorPage.jsx"));
 const AdminMacroResponses   = React.lazy(() => import("./pages/admin/ops/MacroResponsesPage.jsx"));
@@ -339,6 +341,7 @@ export default function App() {
               <Route path="ops/tickets"       element={<AdminTicketsQueue />} />
               <Route path="ops/chat"          element={<AdminLiveChatMonitor />} />
               <Route path="ops/campaigns"     element={<AdminEmailCampaigns />} />
+              <Route path="ops/email-engagement" element={<AdminEmailEngagement />} />
               <Route path="ops/announcements" element={<AdminAnnouncements />} />
               <Route path="ops/kb"            element={<AdminKBEditor />} />
               <Route path="ops/macros"        element={<AdminMacroResponses />} />
