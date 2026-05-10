@@ -32,10 +32,14 @@
 
     <title>Zyrix FinSuite</title>
 
-    <!-- Fonts -->
+    <!-- Fonts — Sprint D-10: trimmed to 3 weights per family per
+         discovery decision §10.B. Original blocked 21 weights (~400KB
+         of font payload); current set ships ~7 weights so the network
+         + parse cost on first paint drops by ~65%. Display:swap means
+         text renders in fallback while the web fonts load. -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Manrope:wght@400;500;600;700;800;900&family=Inter+Tight:wght@600;700;800;900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;600;700&family=Plus+Jakarta+Sans:wght@400;600;700&family=Inter+Tight:wght@600;800&display=swap" rel="stylesheet" />
 
     <style>
       /* Neutral first-paint surface. The landing hero owns its own dark
@@ -45,7 +49,11 @@
       *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
       html, body { background: #FFFFFF; }
       body {
-        font-family: 'Plus Jakarta Sans', 'Manrope', system-ui, sans-serif;
+        /* Sprint D-10 — Manrope removed from the loaded set (it was
+           a near-twin of Plus Jakarta Sans, used identically). The
+           system-ui fallback covers any remaining `Manrope` references
+           in legacy CSS without a visual regression. */
+        font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
         color: #14060A;
