@@ -180,6 +180,8 @@ const AdminCustomReports    = React.lazy(() => import("./pages/admin/analytics/C
 const AdminScheduledReports = React.lazy(() => import("./pages/admin/analytics/ScheduledReportsPage.jsx"));
 const AdminRealtimeActivity = React.lazy(() => import("./pages/admin/analytics/RealtimeActivityPage.jsx"));
 const AdminDataExport       = React.lazy(() => import("./pages/admin/analytics/DataExportPage.jsx"));
+// Sprint D-10 — AI usage observability (D-8 ChatMessage tokens columns)
+const AdminAiUsage          = React.lazy(() => import("./pages/admin/analytics/AiUsagePage.jsx"));
 // Cluster F — Compliance
 const AdminComplianceOverview = React.lazy(() => import("./pages/admin/compliance/ComplianceOverviewPage.jsx"));
 const AdminKVKKRequests       = React.lazy(() => import("./pages/admin/compliance/KVKKRequestsPage.jsx"));
@@ -425,6 +427,7 @@ export default function App() {
               <Route path="analytics/scheduled"   element={<AdminScheduledReports />} />
               <Route path="analytics/realtime"    element={<AdminRealtimeActivity />} />
               <Route path="analytics/export"      element={<AdminDataExport />} />
+              <Route path="analytics/ai-usage"    element={<AdminAiUsage />} />
 
               {/* Cluster F — Compliance */}
               <Route path="compliance/overview"      element={<AdminComplianceOverview />} />
