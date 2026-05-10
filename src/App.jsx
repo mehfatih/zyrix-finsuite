@@ -24,6 +24,7 @@ const NotificationPreferencesPage = React.lazy(() => import("./pages/v2/notifica
 const UnsubscribePage             = React.lazy(() => import("./pages/v2/morningBrief/UnsubscribePage.jsx"));
 // Sprint D-6 — weekly report archive + viewer + unsubscribe
 const ReportsArchivePage          = React.lazy(() => import("./pages/v2/reports/ReportsArchivePage.jsx"));
+const ReportViewerPage            = React.lazy(() => import("./pages/v2/reports/ReportViewerPage.jsx"));
 
 // ── Eagerly loaded (auth + always-on) ──────────────────────────
 import LoginPage          from "./pages/LoginPage";
@@ -301,8 +302,9 @@ export default function App() {
             <Route path="/settings/notifications"  element={<RequireAuth><NotificationPreferencesPage /></RequireAuth>} />
             {/* Sprint D-5 — PUBLIC unsubscribe page; the URL token is the credential */}
             <Route path="/unsubscribe"             element={<UnsubscribePage />} />
-            {/* Sprint D-6 — weekly report archive (auth required) */}
+            {/* Sprint D-6 — weekly report archive + viewer (auth required) */}
             <Route path="/reports/weekly"          element={<RequireAuth><ReportsArchivePage /></RequireAuth>} />
+            <Route path="/reports/weekly/:id"      element={<RequireAuth><ReportViewerPage /></RequireAuth>} />
             <Route path="/payment"      element={<RequireAuth><PaymentPage /></RequireAuth>} />
             {/* Phase 14 — Admin Operations Center (separate auth) */}
             <Route path="/admin/login"  element={<AdminLoginPage />} />
