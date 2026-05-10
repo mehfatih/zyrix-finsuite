@@ -30,6 +30,8 @@ const ReportViewerPage            = React.lazy(() => import("./pages/v2/reports/
 const WeeklyUnsubscribePage       = React.lazy(() => import("./pages/v2/reports/WeeklyUnsubscribePage.jsx"));
 // Sprint D-7 — public share links management page
 const ShareLinksManagementPage    = React.lazy(() => import("./pages/v2/insights/ShareLinksManagementPage.jsx"));
+// Sprint D-8 — full-page AI chat
+const ChatPage                    = React.lazy(() => import("./pages/v2/chat/ChatPage.jsx"));
 
 // ── Eagerly loaded (auth + always-on) ──────────────────────────
 import LoginPage          from "./pages/LoginPage";
@@ -309,6 +311,8 @@ export default function App() {
             <Route path="/insights/shares"     element={<RequireAuth><SharesPage /></RequireAuth>} />
             {/* Sprint D-7 — public share-link management (auth required) */}
             <Route path="/insights/share-links" element={<RequireAuth><ShareLinksManagementPage /></RequireAuth>} />
+            {/* Sprint D-8 — full-page AI chat (auth required; lazy-loaded) */}
+            <Route path="/chat"                 element={<RequireAuth><ChatPage /></RequireAuth>} />
             <Route path="/notifications"           element={<RequireAuth><NotificationArchivePage /></RequireAuth>} />
             <Route path="/settings/notifications"  element={<RequireAuth><NotificationPreferencesPage /></RequireAuth>} />
             {/* Sprint D-5 — PUBLIC unsubscribe page; the URL token is the credential */}
