@@ -34,6 +34,8 @@ const ShareLinksManagementPage    = React.lazy(() => import("./pages/v2/insights
 const ChatPage                    = React.lazy(() => import("./pages/v2/chat/ChatPage.jsx"));
 // Sprint D-9 — Slack & Microsoft Teams integrations settings
 const IntegrationsSettingsPage    = React.lazy(() => import("./pages/v2/integrations/IntegrationsPage.jsx"));
+// Sprint D-10 — In-app help center for the AI Co-Pilot Suite
+const InAppHelpCenter             = React.lazy(() => import("./pages/v2/help/HelpCenterPage.jsx"));
 // Sprint D-10 — Top-level error boundary primitive
 import { CinematicErrorBoundary } from "./components/v2/feedback";
 
@@ -356,6 +358,9 @@ export default function App() {
             <Route path="/settings/notifications"  element={<RequireAuth><NotificationPreferencesPage /></RequireAuth>} />
             {/* Sprint D-9 — Slack + Teams integrations hub */}
             <Route path="/settings/integrations"   element={<RequireAuth><IntegrationsSettingsPage /></RequireAuth>} />
+            {/* Sprint D-10 — In-app help center */}
+            <Route path="/help"                    element={<RequireAuth><InAppHelpCenter /></RequireAuth>} />
+            <Route path="/help/:topic"             element={<RequireAuth><InAppHelpCenter /></RequireAuth>} />
             {/* Sprint D-5 — PUBLIC unsubscribe page; the URL token is the credential */}
             <Route path="/unsubscribe"             element={<UnsubscribePage />} />
             {/* Sprint D-6 — weekly report archive + viewer (auth required) */}
