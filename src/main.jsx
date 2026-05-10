@@ -10,7 +10,11 @@ import "./styles/cinematic.css";
 import { initAnalytics } from "./utils/analytics";
 import { initErrorReporting } from "./utils/errorReporting";
 import { initWebVitals } from "./utils/performance";
+// Sprint D-10 — Sentry browser SDK init. No-op when VITE_SENTRY_DSN
+// is unset per Mehmet's deferred-env-vars rule.
+import { initSentry } from "./services/observability/sentry";
 
+initSentry();
 initAnalytics();
 initErrorReporting();
 initWebVitals();
