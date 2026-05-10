@@ -240,13 +240,45 @@ const DataResidencyPage           = React.lazy(() => import("./pages/settings/Da
 
 function HomeRedirect() {
   const { user, loading } = useAuth();
+  // Sprint D-10 — V2 dashboard rollout. Fetch the rollout flag once
+  // when a customer lands here post-login, then route to /v2/dashboard
+  // or /dashboard based on the bucket. Manual opt-out (set by the
+  // existing DashboardSwitchPill) wins over the env-var pct.
+  const [rollout, setRollout] = React.useState({ loading: true, enabled: false });
+
+  React.useEffect(() => {
+    let cancelled = false;
+    if (!user) { setRollout({ loading: false, enabled: false }); return; }
+    const role = user?.role?.toUpperCase();
+    const isAdmin = role === "ADMIN" || role === "SUPER_ADMIN";
+    if (isAdmin) { setRollout({ loading: false, enabled: false }); return; }
+
+    (async () => {
+      try {
+        const { isV2OptedOut, getV2DashboardRollout } = await import("./api/v2/rollout");
+        if (isV2OptedOut()) {
+          if (!cancelled) setRollout({ loading: false, enabled: false });
+          return;
+        }
+        const data = await getV2DashboardRollout();
+        if (!cancelled) setRollout({ loading: false, enabled: !!data.enabled });
+      } catch {
+        // Network / 401 / backend down — fail closed to V1 default so
+        // the user always lands somewhere usable.
+        if (!cancelled) setRollout({ loading: false, enabled: false });
+      }
+    })();
+    return () => { cancelled = true; };
+  }, [user]);
+
   if (loading) return null;
   if (!user) return <Navigate to="/" replace />;
   const role = user?.role?.toUpperCase();
   const isAdmin = role === "ADMIN" || role === "SUPER_ADMIN";
   if (isAdmin) return <Navigate to="/admin" replace />;
   if (!user.onboardingDone) return <Navigate to="/onboarding" replace />;
-  return <Navigate to="/dashboard" replace />;
+  if (rollout.loading) return null;
+  return <Navigate to={rollout.enabled ? "/v2/dashboard" : "/dashboard"} replace />;
 }
 
 // No Suspense fallback. The body background is dark wine (#1F0205, set in
