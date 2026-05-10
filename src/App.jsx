@@ -26,6 +26,8 @@ const UnsubscribePage             = React.lazy(() => import("./pages/v2/morningB
 const ReportsArchivePage          = React.lazy(() => import("./pages/v2/reports/ReportsArchivePage.jsx"));
 const ReportViewerPage            = React.lazy(() => import("./pages/v2/reports/ReportViewerPage.jsx"));
 const WeeklyUnsubscribePage       = React.lazy(() => import("./pages/v2/reports/WeeklyUnsubscribePage.jsx"));
+// Sprint D-7 — public share links management page
+const ShareLinksManagementPage    = React.lazy(() => import("./pages/v2/insights/ShareLinksManagementPage.jsx"));
 
 // ── Eagerly loaded (auth + always-on) ──────────────────────────
 import LoginPage          from "./pages/LoginPage";
@@ -299,6 +301,8 @@ export default function App() {
             <Route path="/v2/_dev/charts"     element={<ChartsShowcase />} />
             <Route path="/insights/recipients" element={<RequireAuth><RecipientsPage /></RequireAuth>} />
             <Route path="/insights/shares"     element={<RequireAuth><SharesPage /></RequireAuth>} />
+            {/* Sprint D-7 — public share-link management (auth required) */}
+            <Route path="/insights/share-links" element={<RequireAuth><ShareLinksManagementPage /></RequireAuth>} />
             <Route path="/notifications"           element={<RequireAuth><NotificationArchivePage /></RequireAuth>} />
             <Route path="/settings/notifications"  element={<RequireAuth><NotificationPreferencesPage /></RequireAuth>} />
             {/* Sprint D-5 — PUBLIC unsubscribe page; the URL token is the credential */}

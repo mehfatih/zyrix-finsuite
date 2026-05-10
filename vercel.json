@@ -1,6 +1,9 @@
 {
   "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
+    { "source": "/s/:slug",      "destination": "https://finsuite-backend-production.up.railway.app/share/i/:slug" },
+    { "source": "/r/:slug",      "destination": "https://finsuite-backend-production.up.railway.app/share/r/:slug" },
+    { "source": "/og/share/:slug", "destination": "https://finsuite-backend-production.up.railway.app/og/share/:slug" },
+    { "source": "/(.*)",         "destination": "/index.html" }
   ],
   "headers": [
     {
