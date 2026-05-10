@@ -67,6 +67,8 @@ export default function SlackInstallationCard({ installation, language = 'tr', o
           onClick={requestUninstall}
           disabled={busy}
           title={confirming ? _('confirm', language) : ''}
+          aria-label={confirming ? _('confirm', language) : `${_('disconnect', language)} — ${installation.workspaceName}`}
+          aria-busy={busy}
           style={{
             display: 'inline-flex',
             alignItems: 'center',

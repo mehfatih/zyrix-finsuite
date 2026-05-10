@@ -260,10 +260,12 @@ export default function IntegrationsPage({ language = 'tr' }) {
                     onClick={handleConnect}
                     disabled={busy}
                     style={connectButtonStyle(busy)}
+                    aria-label={_('connect', language)}
+                    aria-busy={busy}
                   >
                     {busy
-                      ? <><Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> {_('connecting', language)}</>
-                      : <><Plug size={16} /> {_('connect', language)}</>
+                      ? <><Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} aria-hidden="true" /> {_('connecting', language)}</>
+                      : <><Plug size={16} aria-hidden="true" /> {_('connect', language)}</>
                     }
                   </button>
                 )}

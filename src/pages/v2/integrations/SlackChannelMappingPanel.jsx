@@ -212,9 +212,11 @@ export default function SlackChannelMappingPanel({ installationId, language = 't
           {SEVERITIES.map((sev) => {
             const row = rows.find((r) => r.severity === sev) || { severity: sev, channelId: '', channelName: '', enabled: true };
             return (
-              <div key={sev} style={rowStyle()}>
+              <div key={sev} style={rowStyle()} role="group" aria-labelledby={`slack-mapping-label-${sev}`}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: SPACE.sm, minWidth: 130 }}>
-                  <NeonBadge tone={SEVERITY_TONE[sev]} size="md">{sevLabel(sev, language)}</NeonBadge>
+                  <NeonBadge tone={SEVERITY_TONE[sev]} size="md">
+                    <span id={`slack-mapping-label-${sev}`}>{sevLabel(sev, language)}</span>
+                  </NeonBadge>
                 </div>
 
                 <select
@@ -227,6 +229,7 @@ export default function SlackChannelMappingPanel({ installationId, language = 't
                   }}
                   disabled={!channels}
                   style={selectStyle()}
+                  aria-label={`${sevLabel(sev, language)} — ${_('heading', language)}`}
                 >
                   <option value="">{_('none', language)}</option>
                   {(channels || []).map((c) => (
@@ -242,6 +245,7 @@ export default function SlackChannelMappingPanel({ installationId, language = 't
                     checked={!!row.enabled}
                     onChange={(e) => updateRow(sev, { enabled: e.target.checked })}
                     disabled={!row.channelId}
+                    aria-label={`${_('enable', language)} — ${sevLabel(sev, language)}`}
                   />
                   <span>{_('enable', language)}</span>
                 </label>
@@ -252,6 +256,7 @@ export default function SlackChannelMappingPanel({ installationId, language = 't
                   disabled={!row.channelId || testingFor === sev}
                   style={ghostBtnStyle(testingFor === sev)}
                   title={_('test', language)}
+                  aria-label={`${_('test', language)} — ${sevLabel(sev, language)}`}
                 >
                   {testingFor === sev
                     ? <Loader2 size={14} style={{ animation: 'spin 1s linear infinite' }} />
