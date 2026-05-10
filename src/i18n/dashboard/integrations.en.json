@@ -1,0 +1,59 @@
+{
+  "_meta": "Sprint D-9 — canonical EN copy for the /settings/integrations surface (IntegrationsPage, SlackInstallationCard, SlackChannelMappingPanel). Components currently inline these strings; this file is the translator's source of truth.",
+
+  "page.title":             "Integrations",
+  "page.subtitle":          "Let your AI insights flow where your team already works.",
+  "page.enterprise":        "Enterprise",
+
+  "slack.name":             "Slack",
+  "slack.tagline":          "Surface critical insights in your live channels.",
+  "slack.bullet.mapping":   "Channel mapping (e.g. critical → #alerts)",
+  "slack.bullet.actions":   "Two-way actions (Resolve, Dismiss)",
+  "slack.bullet.commands":  "Slash commands (/zyrix today, /zyrix mrr)",
+
+  "slack.state.connected":   "connected",
+  "slack.state.setupPending": "Setup pending",
+  "slack.state.setupPendingHint": "Slack app isn't configured on Railway yet. The connect button appears here once your admin provisions SLACK_CLIENT_ID and the related secrets.",
+  "slack.state.noWorkspaces": "No connected workspaces yet.",
+
+  "slack.action.connect":    "Connect Slack",
+  "slack.action.connecting": "Connecting…",
+
+  "slack.toast.connected":   "Slack workspace connected.",
+  "slack.toast.error":       "Slack connection failed.",
+  "slack.error.load":        "Could not load integrations.",
+
+  "install.installedOn":     "Installed",
+  "install.scopes":          "Scopes",
+  "install.disconnect":      "Disconnect",
+  "install.disconnecting":   "Disconnecting…",
+  "install.confirm":         "Are you sure? Slack delivery to this workspace will stop.",
+
+  "mapping.heading":         "Channel mapping",
+  "mapping.subheading":      "Pick a Slack channel for each event type. Types left empty are not sent.",
+  "mapping.noneOption":      "— Do not send —",
+  "mapping.enable":          "Enabled",
+  "mapping.test":            "Test send",
+  "mapping.testing":         "Sending…",
+  "mapping.testSent":        "Test message sent.",
+  "mapping.testFailed":      "Test send failed.",
+  "mapping.pickFirst":       "Pick a channel first.",
+  "mapping.save":            "Save",
+  "mapping.saving":          "Saving…",
+  "mapping.saved":           "Saved",
+  "mapping.saveFailed":      "Could not save mappings.",
+  "mapping.refresh":         "Refresh channels",
+  "mapping.refreshing":      "Refreshing…",
+  "mapping.loadingChannels": "Loading channels…",
+  "mapping.loadError":       "Could not load Slack channels.",
+  "mapping.privateMark":     "private",
+
+  "severity.CRITICAL":       "Critical",
+  "severity.ATTENTION":      "Attention",
+  "severity.OPPORTUNITY":    "Opportunity",
+  "severity.SHARE_EVENT":    "Share",
+
+  "teams.name":              "Microsoft Teams",
+  "teams.tagline":            "For the Microsoft 365 world. Coming soon.",
+  "teams.comingSoon":         "Coming soon"
+}

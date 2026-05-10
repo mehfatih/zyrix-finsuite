@@ -1,0 +1,59 @@
+{
+  "_meta": "Sprint D-9 — canonical TR copy for the /settings/integrations surface (IntegrationsPage, SlackInstallationCard, SlackChannelMappingPanel). Components currently inline these strings; this file is the translator's source of truth.",
+
+  "page.title":             "Entegrasyonlar",
+  "page.subtitle":          "AI içgörülerin ekibinin çalıştığı yere aksın.",
+  "page.enterprise":        "Enterprise",
+
+  "slack.name":             "Slack",
+  "slack.tagline":          "Kritik içgörüleri canlı kanallara göster.",
+  "slack.bullet.mapping":   "Kanal eşlemesi (örn. kritik → #alerts)",
+  "slack.bullet.actions":   "Çift yönlü aksiyonlar (Çözüldü, Yoksay)",
+  "slack.bullet.commands":  "Slash komutları (/zyrix today, /zyrix mrr)",
+
+  "slack.state.connected":  "bağlı",
+  "slack.state.setupPending": "Kurulum bekleniyor",
+  "slack.state.setupPendingHint": "Slack uygulaması henüz Railway üzerinde yapılandırılmadı. Yöneticin SLACK_CLIENT_ID gibi anahtarları sağladığında bağlantı butonu burada görünür.",
+  "slack.state.noWorkspaces": "Henüz bağlı çalışma alanı yok.",
+
+  "slack.action.connect":    "Slack’i Bağla",
+  "slack.action.connecting": "Bağlanıyor…",
+
+  "slack.toast.connected":   "Slack çalışma alanı bağlandı.",
+  "slack.toast.error":       "Slack bağlantısı başarısız oldu.",
+  "slack.error.load":        "Entegrasyon listesi yüklenemedi.",
+
+  "install.installedOn":     "Yüklendi",
+  "install.scopes":          "İzinler",
+  "install.disconnect":      "Bağlantıyı kes",
+  "install.disconnecting":   "Kesiliyor…",
+  "install.confirm":         "Emin misin? Bu çalışma alanı için Slack mesajları durur.",
+
+  "mapping.heading":         "Kanal eşlemesi",
+  "mapping.subheading":      "Her olay türü için bir Slack kanalı seç. Boş bırakılan türler gönderilmez.",
+  "mapping.noneOption":      "— Gönderme —",
+  "mapping.enable":          "Aktif",
+  "mapping.test":            "Test gönder",
+  "mapping.testing":         "Gönderiliyor…",
+  "mapping.testSent":        "Test mesajı gönderildi.",
+  "mapping.testFailed":      "Test gönderimi başarısız.",
+  "mapping.pickFirst":       "Önce kanal seç.",
+  "mapping.save":            "Kaydet",
+  "mapping.saving":          "Kaydediliyor…",
+  "mapping.saved":           "Kaydedildi",
+  "mapping.saveFailed":      "Eşleme kaydedilemedi.",
+  "mapping.refresh":         "Kanalları yenile",
+  "mapping.refreshing":      "Yenileniyor…",
+  "mapping.loadingChannels": "Kanallar yükleniyor…",
+  "mapping.loadError":       "Slack kanalları yüklenemedi.",
+  "mapping.privateMark":     "özel",
+
+  "severity.CRITICAL":       "Kritik",
+  "severity.ATTENTION":      "Dikkat",
+  "severity.OPPORTUNITY":    "Fırsat",
+  "severity.SHARE_EVENT":    "Paylaşım",
+
+  "teams.name":              "Microsoft Teams",
+  "teams.tagline":            "Microsoft 365 dünyası için. Yakında.",
+  "teams.comingSoon":         "Yakında"
+}

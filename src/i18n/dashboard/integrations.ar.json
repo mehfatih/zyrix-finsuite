@@ -1,0 +1,59 @@
+{
+  "_meta": "Sprint D-9 — canonical AR copy for the /settings/integrations surface (IntegrationsPage, SlackInstallationCard, SlackChannelMappingPanel). Components currently inline these strings; this file is the translator's source of truth.",
+
+  "page.title":             "التكاملات",
+  "page.subtitle":          "دع رؤى الذكاء الاصطناعي تتدفق إلى حيث يعمل فريقك.",
+  "page.enterprise":        "إنتربرايز",
+
+  "slack.name":             "سلاك",
+  "slack.tagline":          "اعرض الرؤى الحرجة في قنواتك المباشرة.",
+  "slack.bullet.mapping":   "ربط القنوات (مثل critical → #alerts)",
+  "slack.bullet.actions":   "إجراءات ثنائية الاتجاه (محلول، تجاهل)",
+  "slack.bullet.commands":  "أوامر الشرطة المائلة (/zyrix today, /zyrix mrr)",
+
+  "slack.state.connected":   "متصل",
+  "slack.state.setupPending": "الإعداد قيد الانتظار",
+  "slack.state.setupPendingHint": "لم يتم إعداد تطبيق Slack على Railway بعد. سيظهر زر الاتصال هنا بمجرد توفير SLACK_CLIENT_ID والأسرار المرتبطة.",
+  "slack.state.noWorkspaces": "لا توجد مساحات عمل متصلة بعد.",
+
+  "slack.action.connect":    "اربط Slack",
+  "slack.action.connecting": "جارٍ الاتصال…",
+
+  "slack.toast.connected":   "تم ربط مساحة عمل Slack.",
+  "slack.toast.error":       "فشل الاتصال بـ Slack.",
+  "slack.error.load":        "تعذر تحميل قائمة التكاملات.",
+
+  "install.installedOn":     "تم التثبيت",
+  "install.scopes":          "الصلاحيات",
+  "install.disconnect":      "قطع الاتصال",
+  "install.disconnecting":   "جارٍ القطع…",
+  "install.confirm":         "هل أنت متأكد؟ ستتوقف رسائل Slack لمساحة العمل هذه.",
+
+  "mapping.heading":         "ربط القنوات",
+  "mapping.subheading":      "اختر قناة Slack لكل نوع حدث. الأنواع المتروكة فارغة لن تُرسل.",
+  "mapping.noneOption":      "— لا تُرسل —",
+  "mapping.enable":          "مفعّل",
+  "mapping.test":            "إرسال اختباري",
+  "mapping.testing":         "جارٍ الإرسال…",
+  "mapping.testSent":        "تم إرسال رسالة الاختبار.",
+  "mapping.testFailed":      "فشل الإرسال الاختباري.",
+  "mapping.pickFirst":       "اختر قناة أولًا.",
+  "mapping.save":            "حفظ",
+  "mapping.saving":          "جارٍ الحفظ…",
+  "mapping.saved":           "تم الحفظ",
+  "mapping.saveFailed":      "تعذر حفظ الربط.",
+  "mapping.refresh":         "تحديث القنوات",
+  "mapping.refreshing":      "جارٍ التحديث…",
+  "mapping.loadingChannels": "جارٍ تحميل القنوات…",
+  "mapping.loadError":       "تعذر تحميل قنوات Slack.",
+  "mapping.privateMark":     "خاص",
+
+  "severity.CRITICAL":       "حرج",
+  "severity.ATTENTION":      "انتباه",
+  "severity.OPPORTUNITY":    "فرصة",
+  "severity.SHARE_EVENT":    "مشاركة",
+
+  "teams.name":              "مايكروسوفت تيمز",
+  "teams.tagline":            "لعالم Microsoft 365. قريبًا.",
+  "teams.comingSoon":         "قريبًا"
+}
