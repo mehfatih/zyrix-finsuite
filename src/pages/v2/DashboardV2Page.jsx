@@ -14,6 +14,7 @@ import CashFlowSankey from '@/components/v2/charts/CashFlowSankey';
 import CustomerBubbleMap from '@/components/v2/charts/CustomerBubbleMap';
 import InvoiceFunnel from '@/components/v2/charts/InvoiceFunnel';
 import TaxIntelligenceCalendar from '@/components/v2/dashboard/TaxIntelligenceCalendar';
+import WeeklyReportBanner from '@/components/v2/reports/WeeklyReportBanner';
 
 import { CUSTOMER_PALETTE } from '@/design-system-v2/colors';
 import { fetchKpiValues } from '@/api/v2/kpiData';
@@ -206,6 +207,9 @@ export default function DashboardV2Page() {
             </button>
           )}
         </header>
+
+        {/* Sprint D-6 — fresh weekly report banner */}
+        <WeeklyReportBanner language={language} />
 
         {/* KPI Grid */}
         <div style={{
