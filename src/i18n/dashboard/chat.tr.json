@@ -1,0 +1,47 @@
+{
+  "_meta": "Sprint D-8 — canonical TR copy for the AI chat surface (ChatBubble, ChatPanel, ChatPage, ConversationSidebar, MessageThread empty state, ChatInput placeholder, SuggestedPrompts seed list, voice mic labels, action button labels, error messages). Components currently inline these strings; this file is the translator's source of truth.",
+
+  "bubble.openTitle":      "Sohbeti aç (Cmd+J)",
+  "bubble.closeTitle":     "Sohbeti kapat",
+
+  "panel.title":           "Zyrix AI Co-Pilot",
+  "panel.toggleSidebar":   "Sohbet geçmişi",
+  "panel.closeAria":       "Sohbeti kapat",
+
+  "thread.emptyHint":      "Bir şey sor — Zyrix AI Co-Pilot işletmeni biliyor.",
+  "thread.shortcutHint":   "Cmd+J / Ctrl+J · Esc kapatır",
+
+  "input.placeholder":     "Bir şey sor…",
+  "input.sendAria":        "Gönder",
+  "input.voiceStartAria":  "Sesli giriş başlat",
+  "input.voiceStopAria":   "Sesli girişi durdur",
+  "input.voiceStartTitle": "Sesli giriş",
+  "input.voiceStopTitle":  "Sesli girişi durdur",
+
+  "sidebar.newChat":       "+ Yeni sohbet",
+  "sidebar.empty":         "Henüz sohbet yok",
+  "sidebar.now":           "az önce",
+  "sidebar.toggleAria":    "Sohbet geçmişini aç/kapat",
+
+  "suggestion.1":          "Bu ayki en büyük masrafım ne?",
+  "suggestion.2":          "Geçen aya göre ne değişti?",
+  "suggestion.3":          "Önümüzdeki ay nakit dengem ne olacak?",
+  "suggestion.4":          "Hangi vergi ödemelerim yaklaşıyor?",
+  "suggestion.5":          "Hangi müşterim en kârlı?",
+
+  "action.create_reminder":   "Hatırlatıcı oluştur",
+  "action.dismiss_insight":   "İçgörüyü kapat",
+  "action.mark_invoice_paid": "Faturayı ödendi olarak işaretle",
+  "action.runLabel":          "Çalıştır",
+  "action.doneLabel":         "Tamam",
+  "action.errorLabel":        "Hata",
+
+  "citation.openInvoice":     "Faturayı aç",
+  "citation.openCustomer":    "Müşteri",
+  "citation.openInsight":     "İçgörü",
+
+  "error.sendFailed":         "Mesaj gönderilemedi.",
+  "error.streamDisconnected": "Bağlantı kesildi.",
+  "error.geminiUnavailable":  "AI Co-Pilot şu anda yanıt veremiyor.",
+  "error.rateLimited":        "Çok hızlı — biraz bekle."
+}

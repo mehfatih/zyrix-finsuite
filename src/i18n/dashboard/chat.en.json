@@ -1,0 +1,47 @@
+{
+  "_meta": "Sprint D-8 — canonical EN copy for the AI chat surface (ChatBubble, ChatPanel, ChatPage, ConversationSidebar, MessageThread empty state, ChatInput placeholder, SuggestedPrompts seed list, voice mic labels, action button labels, error messages). Components currently inline these strings; this file is the translator's source of truth.",
+
+  "bubble.openTitle":      "Open chat (Cmd+J)",
+  "bubble.closeTitle":     "Close chat",
+
+  "panel.title":           "Zyrix AI Co-Pilot",
+  "panel.toggleSidebar":   "Conversation history",
+  "panel.closeAria":       "Close chat",
+
+  "thread.emptyHint":      "Ask anything — Zyrix AI Co-Pilot knows your business.",
+  "thread.shortcutHint":   "Cmd+J / Ctrl+J · Esc to close",
+
+  "input.placeholder":     "Ask anything…",
+  "input.sendAria":        "Send",
+  "input.voiceStartAria":  "Start voice input",
+  "input.voiceStopAria":   "Stop voice input",
+  "input.voiceStartTitle": "Voice input",
+  "input.voiceStopTitle":  "Stop voice input",
+
+  "sidebar.newChat":       "+ New chat",
+  "sidebar.empty":         "No conversations yet",
+  "sidebar.now":           "now",
+  "sidebar.toggleAria":    "Toggle conversation history",
+
+  "suggestion.1":          "What is my biggest expense this month?",
+  "suggestion.2":          "What changed vs last month?",
+  "suggestion.3":          "What will my cash balance be next month?",
+  "suggestion.4":          "Which tax payments are coming up?",
+  "suggestion.5":          "Which customer is most profitable?",
+
+  "action.create_reminder":   "Create reminder",
+  "action.dismiss_insight":   "Dismiss insight",
+  "action.mark_invoice_paid": "Mark invoice paid",
+  "action.runLabel":          "Run",
+  "action.doneLabel":         "Done",
+  "action.errorLabel":        "Error",
+
+  "citation.openInvoice":     "Open invoice",
+  "citation.openCustomer":    "Customer",
+  "citation.openInsight":     "Insight",
+
+  "error.sendFailed":         "Could not send message.",
+  "error.streamDisconnected": "Connection lost.",
+  "error.geminiUnavailable":  "AI Co-Pilot can't respond right now.",
+  "error.rateLimited":        "Too fast — please wait a bit."
+}

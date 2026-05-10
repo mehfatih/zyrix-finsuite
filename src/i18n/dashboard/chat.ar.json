@@ -1,0 +1,47 @@
+{
+  "_meta": "Sprint D-8 — canonical AR copy for the AI chat surface (ChatBubble, ChatPanel, ChatPage, ConversationSidebar, MessageThread empty state, ChatInput placeholder, SuggestedPrompts seed list, voice mic labels, action button labels, error messages). Components currently inline these strings; this file is the translator's source of truth.",
+
+  "bubble.openTitle":      "افتح المحادثة (Cmd+J)",
+  "bubble.closeTitle":     "إغلاق المحادثة",
+
+  "panel.title":           "زيريكس - المساعد الذكي",
+  "panel.toggleSidebar":   "سجل المحادثات",
+  "panel.closeAria":       "إغلاق المحادثة",
+
+  "thread.emptyHint":      "اسأل أي شيء — مساعد زيريكس الذكي يعرف عملك.",
+  "thread.shortcutHint":   "Cmd+J / Ctrl+J · Esc للإغلاق",
+
+  "input.placeholder":     "اسأل أي شيء…",
+  "input.sendAria":        "إرسال",
+  "input.voiceStartAria":  "بدء الإدخال الصوتي",
+  "input.voiceStopAria":   "إيقاف الإدخال الصوتي",
+  "input.voiceStartTitle": "إدخال صوتي",
+  "input.voiceStopTitle":  "إيقاف الإدخال الصوتي",
+
+  "sidebar.newChat":       "+ محادثة جديدة",
+  "sidebar.empty":         "لا توجد محادثات بعد",
+  "sidebar.now":           "الآن",
+  "sidebar.toggleAria":    "إظهار/إخفاء سجل المحادثات",
+
+  "suggestion.1":          "ما أكبر مصاريفي هذا الشهر؟",
+  "suggestion.2":          "ما الذي تغير مقارنةً بالشهر الماضي؟",
+  "suggestion.3":          "كم سيكون رصيدي النقدي الشهر القادم؟",
+  "suggestion.4":          "أي مدفوعات ضريبية قادمة؟",
+  "suggestion.5":          "أي عميل هو الأكثر ربحاً؟",
+
+  "action.create_reminder":   "إنشاء تذكير",
+  "action.dismiss_insight":   "إخفاء الرؤية",
+  "action.mark_invoice_paid": "وضع علامة مدفوعة",
+  "action.runLabel":          "تنفيذ",
+  "action.doneLabel":         "تم",
+  "action.errorLabel":        "خطأ",
+
+  "citation.openInvoice":     "فتح الفاتورة",
+  "citation.openCustomer":    "العميل",
+  "citation.openInsight":     "الرؤية",
+
+  "error.sendFailed":         "تعذّر إرسال الرسالة.",
+  "error.streamDisconnected": "انقطع الاتصال.",
+  "error.geminiUnavailable":  "لا يمكن للمساعد الذكي الردّ الآن.",
+  "error.rateLimited":        "سريع جدًا — انتظر قليلاً."
+}
