@@ -16,6 +16,8 @@ import FeatureFlagDrawer from "./components/v2/FeatureFlagDrawer.jsx";
 import DashboardSwitchPill from "./components/v2/DashboardSwitchPill.jsx";
 // Sprint D-11 — Floating language switcher (auth-only; top-right).
 import FloatingLanguageSwitcher from "./components/v2/FloatingLanguageSwitcher.jsx";
+// Sprint D-11 — Geo-mismatch banner (subtle, once per session).
+import GeoMismatchBanner from "./components/v2/GeoMismatchBanner.jsx";
 const DashboardV2Page       = React.lazy(() => import("./pages/v2/DashboardV2Page.jsx"));
 // Sprint D-1 — internal cinematic showcase routes (not surfaced in navigation).
 const FoundationShowcase    = React.lazy(() => import("./pages/v2/_dev/FoundationShowcase.jsx"));
@@ -310,6 +312,7 @@ export default function App() {
         <DashboardSwitchPill />
         <FeatureFlagDrawer />
         <FloatingLanguageSwitcher />
+        <GeoMismatchBanner />
         <Suspense fallback={null}>
           <ChatBubble />
         </Suspense>
