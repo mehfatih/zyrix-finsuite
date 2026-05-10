@@ -32,6 +32,8 @@ const WeeklyUnsubscribePage       = React.lazy(() => import("./pages/v2/reports/
 const ShareLinksManagementPage    = React.lazy(() => import("./pages/v2/insights/ShareLinksManagementPage.jsx"));
 // Sprint D-8 — full-page AI chat
 const ChatPage                    = React.lazy(() => import("./pages/v2/chat/ChatPage.jsx"));
+// Sprint D-9 — Slack & Microsoft Teams integrations settings
+const IntegrationsSettingsPage    = React.lazy(() => import("./pages/v2/integrations/IntegrationsPage.jsx"));
 
 // ── Eagerly loaded (auth + always-on) ──────────────────────────
 import LoginPage          from "./pages/LoginPage";
@@ -315,6 +317,8 @@ export default function App() {
             <Route path="/chat"                 element={<RequireAuth><ChatPage /></RequireAuth>} />
             <Route path="/notifications"           element={<RequireAuth><NotificationArchivePage /></RequireAuth>} />
             <Route path="/settings/notifications"  element={<RequireAuth><NotificationPreferencesPage /></RequireAuth>} />
+            {/* Sprint D-9 — Slack + Teams integrations hub */}
+            <Route path="/settings/integrations"   element={<RequireAuth><IntegrationsSettingsPage /></RequireAuth>} />
             {/* Sprint D-5 — PUBLIC unsubscribe page; the URL token is the credential */}
             <Route path="/unsubscribe"             element={<UnsubscribePage />} />
             {/* Sprint D-6 — weekly report archive + viewer (auth required) */}
