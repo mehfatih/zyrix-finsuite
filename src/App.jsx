@@ -10,6 +10,8 @@ import { CmdKProvider } from "./contexts/CmdKContext.jsx";
 import { ChatProvider } from "./contexts/ChatContext.jsx";
 const ChatBubble = React.lazy(() => import("./components/v2/chat/ChatBubble.jsx"));
 import { UndoProvider } from "./contexts/UndoContext.jsx";
+// Sprint D-11 — Country + language regulatory context.
+import { RegulatoryProvider } from "./contexts/RegulatoryContext.jsx";
 import FeatureFlagDrawer from "./components/v2/FeatureFlagDrawer.jsx";
 import DashboardSwitchPill from "./components/v2/DashboardSwitchPill.jsx";
 const DashboardV2Page       = React.lazy(() => import("./pages/v2/DashboardV2Page.jsx"));
@@ -295,6 +297,7 @@ export default function App() {
   return (
     <CinematicErrorBoundary>
     <AuthProvider>
+      <RegulatoryProvider>
       <FeatureFlagsProvider>
       <CmdKProvider>
       <ChatProvider>
@@ -565,6 +568,7 @@ export default function App() {
       </ChatProvider>
       </CmdKProvider>
       </FeatureFlagsProvider>
+      </RegulatoryProvider>
     </AuthProvider>
     </CinematicErrorBoundary>
   );
