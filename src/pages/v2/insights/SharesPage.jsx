@@ -3,11 +3,12 @@
 // Filterable timeline by date / channel / status. Click row → details.
 // ================================================================
 import { useEffect, useMemo, useState } from 'react';
-import { Mail, MessageCircle, CheckCircle2, XCircle, Clock, Download, History, ExternalLink } from 'lucide-react';
+import { Mail, MessageCircle, CheckCircle2, XCircle, Clock, Download, History, ExternalLink, Share2 } from 'lucide-react';
 import { CINEMATIC, RADIUS, TYPE_STACK, TYPE_SCALE, SPACE } from '@/design-system-v2/cinematic/tokens';
 import { glowOf } from '@/design-system-v2/cinematic/shadows';
 import { GlassCard, GradientMesh, NeonBadge } from '@/components/foundation';
 import RecipientAvatarChip from '@/components/v2/sharing/RecipientAvatarChip';
+import { CinematicSkeleton, CinematicEmptyState, CinematicErrorBlock } from '@/components/v2/feedback';
 import { listShares } from '@/api/v2/sharing';
 
 const LABEL = {
@@ -106,12 +107,17 @@ export default function SharesPage({ language = 'tr' }) {
 
         {/* Timeline */}
         {loading ? (
-          <div style={emptyCenter}>…</div>
+          <CinematicSkeleton variant="list" rows={5} ariaLabel="loading shares" />
         ) : error ? (
-          <div style={{ ...emptyCenter, color: CINEMATIC.accent.crimsonGlow }}>{String(error.message || error)}</div>
+          <CinematicErrorBlock error={error} language={language} />
         ) : filtered.length === 0 ? (
-          <GlassCard variant="subtle" style={{ ...emptyCenter, padding: SPACE['3xl'], textAlign: 'center' }}>
-            <span style={{ color: CINEMATIC.text.pearlFaint, fontSize: 13 }}>{_('empty', language)}</span>
+          <GlassCard variant="subtle" style={{ padding: SPACE.md }}>
+            <CinematicEmptyState
+              icon={<Share2 />}
+              title={_('empty', language)}
+              tone="cyan"
+              size="normal"
+            />
           </GlassCard>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: SPACE.md }}>

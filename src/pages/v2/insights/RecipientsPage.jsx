@@ -9,6 +9,7 @@ import { CINEMATIC, RADIUS, TYPE_STACK, TYPE_SCALE, SPACE } from '@/design-syste
 import { glowOf } from '@/design-system-v2/cinematic/shadows';
 import { GlassCard, GradientMesh, NeonBadge } from '@/components/foundation';
 import RecipientAvatarChip from '@/components/v2/sharing/RecipientAvatarChip';
+import { CinematicSkeleton, CinematicEmptyState, CinematicErrorBlock } from '@/components/v2/feedback';
 import { listRecipients, createRecipient, updateRecipient, deleteRecipient } from '@/api/v2/sharing';
 
 const LABEL = {
@@ -146,14 +147,17 @@ export default function RecipientsPage({ language = 'tr' }) {
 
         {/* Grid */}
         {loading ? (
-          <div style={{ ...emptyCenter }}>…</div>
+          <CinematicSkeleton variant="list" rows={4} ariaLabel="loading recipients" />
         ) : error ? (
-          <div style={{ ...emptyCenter, color: CINEMATIC.accent.crimsonGlow }}>{String(error.message || error)}</div>
+          <CinematicErrorBlock error={error} language={language} />
         ) : recipients.length === 0 && !creating ? (
-          <GlassCard variant="subtle" style={{ ...emptyCenter, padding: SPACE['3xl'], textAlign: 'center' }}>
-            <pre style={{ margin: 0, fontFamily: 'inherit', whiteSpace: 'pre-wrap', color: CINEMATIC.text.pearlFaint, fontSize: 13 }}>
-              {_('empty', language)}
-            </pre>
+          <GlassCard variant="subtle" style={{ padding: SPACE.md }}>
+            <CinematicEmptyState
+              icon={<Users />}
+              title={_('empty', language).split('\n')[0]}
+              description={_('empty', language).split('\n').slice(1).join(' ')}
+              tone="violet"
+            />
           </GlassCard>
         ) : (
           <div style={{

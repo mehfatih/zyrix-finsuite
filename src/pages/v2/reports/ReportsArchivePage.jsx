@@ -10,6 +10,7 @@ import { CINEMATIC, RADIUS, TYPE_STACK, TYPE_SCALE, SPACE } from '@/design-syste
 import { glowOf } from '@/design-system-v2/cinematic/shadows';
 import { GlassCard, GradientMesh, NeonBadge } from '@/components/foundation';
 import { listReports, pdfUrl, regenerateReport } from '@/api/v2/weeklyReport';
+import { CinematicSkeleton, CinematicEmptyState, CinematicErrorBlock } from '@/components/v2/feedback';
 
 const LABEL = {
   pageTitle:   { tr: 'Haftalık Raporlar',    en: 'Weekly Reports',           ar: 'التقارير الأسبوعية' },
@@ -122,31 +123,21 @@ export default function ReportsArchivePage({ language = 'tr' }) {
         </header>
 
         {error && (
-          <div role="alert" style={{
-            padding: '10px 14px',
-            background: 'rgba(255, 61, 90, 0.10)',
-            color: CINEMATIC.accent.crimsonGlow,
-            border: '1px solid rgba(255, 61, 90, 0.35)',
-            borderRadius: RADIUS.sm,
-            fontSize: 12,
-            marginBottom: SPACE.lg
-          }}>{String(error.message || error)}</div>
+          <div style={{ marginBottom: SPACE.lg }}>
+            <CinematicErrorBlock error={error} language={language} />
+          </div>
         )}
 
         {loading ? (
-          <GlassCard variant="subtle" style={{ textAlign: 'center', padding: SPACE['3xl'] }}>
-            <Loader2 size={18} style={{ animation: 'cn-aurora-rotate 0.9s linear infinite', verticalAlign: 'middle', marginInlineEnd: 8 }} />
-            {_('loading', language)}
-          </GlassCard>
+          <CinematicSkeleton variant="list" rows={3} ariaLabel={_('loading', language)} />
         ) : reports.length === 0 ? (
-          <GlassCard variant="standard" style={{ textAlign: 'center', padding: SPACE['3xl'] }}>
-            <Calendar size={36} style={{ color: CINEMATIC.text.pearlFaint, marginBottom: SPACE.sm }} />
-            <h2 style={{ ...TYPE_SCALE.headingMd, margin: 0, color: CINEMATIC.text.pearlWhite }}>
-              {_('emptyTitle', language)}
-            </h2>
-            <p style={{ marginTop: SPACE.sm, color: CINEMATIC.text.pearlDim, fontSize: 13 }}>
-              {_('empty', language)}
-            </p>
+          <GlassCard variant="standard" style={{ padding: SPACE.md }}>
+            <CinematicEmptyState
+              icon={<Calendar />}
+              title={_('emptyTitle', language)}
+              description={_('empty', language)}
+              tone="violet"
+            />
           </GlassCard>
         ) : (
           <div style={{

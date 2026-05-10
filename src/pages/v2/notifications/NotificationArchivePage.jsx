@@ -11,6 +11,7 @@ import { glowOf } from '@/design-system-v2/cinematic/shadows';
 import { GlassCard, GradientMesh, NeonBadge } from '@/components/foundation';
 import NotificationListItem from '@/components/v2/notifications/NotificationListItem';
 import { listNotifications, markRead, bulkRead, archive as apiArchive } from '@/api/v2/notifications';
+import { CinematicSkeleton, CinematicEmptyState, CinematicErrorBlock } from '@/components/v2/feedback';
 
 const LABEL = {
   pageTitle:   { tr: 'Bildirimler',           en: 'Notifications',           ar: 'الإشعارات' },
@@ -149,13 +150,17 @@ export default function NotificationArchivePage({ language = 'tr' }) {
 
         {/* List */}
         {loading ? (
-          <GlassCard variant="subtle" style={emptyCenter}>{_('loading', language)}</GlassCard>
+          <CinematicSkeleton variant="list" rows={6} ariaLabel={_('loading', language)} />
         ) : error ? (
-          <GlassCard variant="subtle" style={{ ...emptyCenter, color: CINEMATIC.accent.crimsonGlow }}>
-            {String(error.message || error)}
-          </GlassCard>
+          <CinematicErrorBlock error={error} language={language} />
         ) : filtered.length === 0 ? (
-          <GlassCard variant="subtle" style={emptyCenter}>{_('empty', language)}</GlassCard>
+          <GlassCard variant="subtle" style={{ padding: SPACE.md }}>
+            <CinematicEmptyState
+              icon={<Bell />}
+              title={_('empty', language)}
+              tone="cyan"
+            />
+          </GlassCard>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {filtered.map((n) => (

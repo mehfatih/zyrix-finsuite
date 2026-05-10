@@ -14,6 +14,7 @@ import { glowOf } from '@/design-system-v2/cinematic/shadows';
 import { GlassCard, GradientMesh, NeonBadge } from '@/components/foundation';
 import { listShareLinks, revokeShareLink } from '@/api/v2/publicShareLinks';
 import ShareLinkModal from '@/components/v2/insights/ShareLinkModal';
+import { CinematicSkeleton, CinematicEmptyState, CinematicErrorBlock } from '@/components/v2/feedback';
 
 const LABEL = {
   pageTitle:    { tr: 'Paylaşım Bağlantıları', en: 'Share Links',         ar: 'روابط المشاركة' },
@@ -133,23 +134,19 @@ export default function ShareLinksManagementPage({ language = 'tr' }) {
         </header>
 
         {error && (
-          <div role="alert" style={errorBanner}>{String(error.message || error)}</div>
+          <CinematicErrorBlock error={error} language={language} />
         )}
 
         {loading ? (
-          <GlassCard variant="subtle" style={{ textAlign: 'center', padding: SPACE['3xl'] }}>
-            <Loader2 size={18} style={{ animation: 'cn-aurora-rotate 0.9s linear infinite', verticalAlign: 'middle', marginInlineEnd: 8 }} />
-            {_('loading', language)}
-          </GlassCard>
+          <CinematicSkeleton variant="list" rows={4} ariaLabel={_('loading', language)} />
         ) : rows.length === 0 ? (
-          <GlassCard variant="standard" style={{ textAlign: 'center', padding: SPACE['3xl'] }}>
-            <Link2 size={36} style={{ color: CINEMATIC.text.pearlFaint, marginBottom: SPACE.sm }} />
-            <h2 style={{ ...TYPE_SCALE.headingMd, margin: 0, color: CINEMATIC.text.pearlWhite }}>
-              {_('empty', language)}
-            </h2>
-            <p style={{ marginTop: SPACE.sm, color: CINEMATIC.text.pearlDim, fontSize: 13 }}>
-              {_('emptyHint', language)}
-            </p>
+          <GlassCard variant="standard" style={{ padding: SPACE.md }}>
+            <CinematicEmptyState
+              icon={<Link2 />}
+              title={_('empty', language)}
+              description={_('emptyHint', language)}
+              tone="cyan"
+            />
           </GlassCard>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: SPACE.md }}>
