@@ -10,6 +10,7 @@ import { glowOf } from '@/design-system-v2/cinematic/shadows';
 import { GlassCard, GradientMesh, NeonBadge } from '@/components/foundation';
 import { getPreferences, updatePreferences } from '@/api/v2/notifications';
 import MorningBriefPanel from './MorningBriefPanel';
+import WeeklyReportPanel from './WeeklyReportPanel';
 
 const LABEL = {
   pageTitle:  { tr: 'Bildirim Ayarları',     en: 'Notification Settings',   ar: 'إعدادات الإشعارات' },
@@ -127,6 +128,9 @@ export default function NotificationPreferencesPage({ language = 'tr' }) {
 
             {/* Sprint D-5 — Morning brief subscription */}
             <MorningBriefPanel language={language} />
+
+            {/* Sprint D-6 — Weekly report subscription */}
+            <WeeklyReportPanel language={language} />
 
             {/* Digest + quiet hours */}
             <GlassCard variant="standard">
