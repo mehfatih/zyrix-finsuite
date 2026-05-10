@@ -9,6 +9,7 @@ import { CINEMATIC, RADIUS, TYPE_STACK, TYPE_SCALE, SPACE } from '@/design-syste
 import { glowOf } from '@/design-system-v2/cinematic/shadows';
 import { GlassCard, GradientMesh, NeonBadge } from '@/components/foundation';
 import { getPreferences, updatePreferences } from '@/api/v2/notifications';
+import MorningBriefPanel from './MorningBriefPanel';
 
 const LABEL = {
   pageTitle:  { tr: 'Bildirim Ayarları',     en: 'Notification Settings',   ar: 'إعدادات الإشعارات' },
@@ -123,6 +124,9 @@ export default function NotificationPreferencesPage({ language = 'tr' }) {
                 prefs={prefs} setPrefs={set} language={language} _={_}
               />
             </GlassCard>
+
+            {/* Sprint D-5 — Morning brief subscription */}
+            <MorningBriefPanel language={language} />
 
             {/* Digest + quiet hours */}
             <GlassCard variant="standard">
