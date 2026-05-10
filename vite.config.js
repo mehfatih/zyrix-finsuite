@@ -38,36 +38,6 @@ export default defineConfig({
     outDir: "dist",
     sourcemap: false,
     cssCodeSplit: true,
-    rollupOptions: {
-      output: {
-        manualChunks(id) {
-          // Vendor splitting — keep React core small + isolated
-          if (id.includes("node_modules")) {
-            if (id.includes("react-dom"))                       return "react-dom";
-            if (id.includes("react-router"))                    return "router";
-            if (id.includes("/react/"))                         return "react";
-            // Heavy admin-only chart deps in their own chunk so the
-            // landing-page critical path doesn't preload them.
-            if (id.includes("/recharts/")
-                || id.includes("/lucide-react/")
-                || id.includes("/d3-")
-                || id.includes("/victory-vendor/")) return "charts";
-            return "vendor";
-          }
-          // Shared dashboard primitives — used by every page
-          if (id.includes("/src/components/dashboard/PageHeader") ||
-              id.includes("/src/components/dashboard/Card") ||
-              id.includes("/src/components/dashboard/KpiCard") ||
-              id.includes("/src/components/dashboard/EmptyState") ||
-              id.includes("/src/components/dashboard/charts/")) {
-            return "dashboard-shared";
-          }
-          // i18n bundles can be heavy — separate
-          if (id.includes("/src/i18n/dashboard/")) return "i18n-dashboard";
-          if (id.includes("/src/i18n/")) return "i18n";
-        },
-      },
-    },
     chunkSizeWarningLimit: 600,
   },
 
