@@ -200,6 +200,8 @@ const AdminComplianceReports  = React.lazy(() => import("./pages/admin/complianc
 const AdminDataRetention      = React.lazy(() => import("./pages/admin/compliance/DataRetentionPage.jsx"));
 const AdminSubprocessors      = React.lazy(() => import("./pages/admin/compliance/SubprocessorsPage.jsx"));
 const AdminRightToBeForgotten = React.lazy(() => import("./pages/admin/compliance/RightToBeForgottenPage.jsx"));
+// Sprint D-11 — Tax-rate version timeline editor
+const AdminRegulatoryProfiles = React.lazy(() => import("./pages/admin/compliance/RegulatoryProfilesPage.jsx"));
 // Cluster G — System
 const AdminSystemOverview   = React.lazy(() => import("./pages/admin/system/SystemOverviewPage.jsx"));
 const AdminSystemHealth     = React.lazy(() => import("./pages/admin/system/SystemHealthPage.jsx"));
@@ -453,6 +455,8 @@ export default function App() {
               <Route path="compliance/retention"     element={<AdminDataRetention />} />
               <Route path="compliance/subprocessors" element={<AdminSubprocessors />} />
               <Route path="compliance/forgotten"     element={<AdminRightToBeForgotten />} />
+              {/* Sprint D-11 — tax-rate version editor */}
+              <Route path="compliance/regulatory-profiles" element={<AdminRegulatoryProfiles />} />
 
               {/* Cluster G — System */}
               <Route path="system/overview"    element={<AdminSystemOverview />} />
